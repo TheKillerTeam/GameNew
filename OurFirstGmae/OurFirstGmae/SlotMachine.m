@@ -16,12 +16,12 @@
     UIImageView *iconImageView;
     UIImageView *container;
     UILabel *jobNameLb;
+    UIButton *startBtn;
     
     
 }
 @property (strong,nonatomic)NSArray *slotIcon;
 @property (strong,nonatomic)NSArray *iconText;
-@property (weak,nonatomic)UIButton *startBtn;
 @property (weak,nonatomic)NSString *jobName;
 @end
 
@@ -86,16 +86,16 @@
     [_presentView addSubview:jobNameLb];
     
     
-    _startBtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    startBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     
-    [self.startBtn setTitle:@"Start" forState:UIControlStateNormal];
-    [self.startBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
-    self.startBtn.backgroundColor=[UIColor blackColor];
+    [startBtn setTitle:@"Start" forState:UIControlStateNormal];
+    [startBtn setTitleColor:[UIColor redColor] forState:UIControlStateNormal];
+    startBtn.backgroundColor=[UIColor blackColor];
     
-    [self.startBtn setFrame:CGRectMake(0, slotClass.frame.size.height+jobNameLb.frame.size.height, _presentView.frame.size.width, _presentView.frame.size.height-(slotClass.frame.size.height+jobNameLb.frame.size.height))];
-    [self.startBtn addTarget:self action:@selector(start) forControlEvents:UIControlEventTouchUpInside];
+    [startBtn setFrame:CGRectMake(0, slotClass.frame.size.height+jobNameLb.frame.size.height, _presentView.frame.size.width, _presentView.frame.size.height-(slotClass.frame.size.height+jobNameLb.frame.size.height))];
+    [startBtn addTarget:self action:@selector(start) forControlEvents:UIControlEventTouchUpInside];
     
-    [_presentView insertSubview:_startBtn aboveSubview:jobNameLb];
+    [_presentView addSubview:startBtn];
 
     
     
@@ -132,10 +132,10 @@
 }
 
 -(void)slotMachineWillStart:(SlotMachineClass *)slotClass{
-    _startBtn.enabled=NO;
+    startBtn.enabled=NO;
 }
 -(void)slotMachineDidEnd:(SlotMachineClass *)slotClass{
-    _startBtn.enabled=YES;
+    startBtn.enabled=YES;
     jobNameLb.text =_jobName;
 }
 -(NSArray*)iconsForMachine:(SlotMachineClass *)slotClass{
