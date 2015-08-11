@@ -262,22 +262,24 @@
     for (Player *player in self.match.players) {
         
         tempDragImageView = [[dragImageView alloc]initWithFrame:CGRectMake(0, 0, 100, 100)];
+        tempDragImageView.backgroundColor=[UIColor clearColor];
         tempDragImageView.image = player.playerImage;
         
         [playerDragImageViewArray addObject:tempDragImageView];
     }
 }
 
--(void)transImage:(UIImage*)image{
-    
-    UIImageView *testView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 400, 400)];
-    testView.image=image;
-    [self.view addSubview:testView];
-}
+//-(void)transImage:(UIImage*)image{
+//    
+//    UIImageView *testView =[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 400, 400)];
+//    testView.image=image;
+//    [self.view addSubview:testView];
+//}
 
 -(void)fromCircleView{
     
     circleView *circle =[[circleView alloc]initWithFrame:CGRectMake(0, 0, self.thePlayerView.frame.size.width, self.thePlayerView.frame.size.height)];
+    circle.backgroundColor=[UIColor clearColor];
     circle.ImgArray  = playerDragImageViewArray;
     [self.thePlayerView addSubview:circle];
     [circle loadView];

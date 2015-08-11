@@ -13,6 +13,7 @@
 - (void)awakeFromNib {
     // Initialization code
     self.backgroundColor=[UIColor colorWithWhite:1 alpha:0];
+    self.playerImageImageView.backgroundColor = [UIColor clearColor];
 
 }
 

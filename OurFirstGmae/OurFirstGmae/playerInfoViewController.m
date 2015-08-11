@@ -94,15 +94,23 @@
 
 - (IBAction)nextButton:(id)sender {
     
-    UIGraphicsBeginImageContext(_crop.bounds.size);
-    [_crop.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIGraphicsBeginImageContext(_crop.cover.bounds.size);
+    [_crop.cover.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *myImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
+    
+    
+    
     
     [self.delegate transImage:myImage];
 
     [self dismissViewControllerAnimated:true completion:nil];
 }
+- (IBAction)backBtnPressed:(id)sender {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+
 
 #pragma mark - NetworkControllerDelegate
 

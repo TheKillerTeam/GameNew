@@ -145,7 +145,7 @@ static NetworkController *sharedController = nil;
     [writer writeByte:MessagePlayerConnected];
     
     UIImage *img = [UIImage imageNamed:PLAYER_IMAGE_DEFAULT];
-    NSData *imageData = UIImageJPEGRepresentation(img, 1.0f);
+    NSData *imageData = UIImagePNGRepresentation(img);
     NSString *base64string = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     [writer writeString:base64string];
     
@@ -179,7 +179,7 @@ static NetworkController *sharedController = nil;
     
     [writer writeByte:MessagePlayerImageUpdated];
     
-    NSData *imageData = UIImageJPEGRepresentation(image, 1.0f);
+    NSData *imageData = UIImagePNGRepresentation(image);
     NSString *base64string = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     [writer writeString:base64string];
     

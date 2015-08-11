@@ -46,6 +46,7 @@
     
     //TODO:if theres a saved playerImage, load it instead of using default
     playerImage = [UIImage imageNamed:PLAYER_IMAGE_DEFAULT];
+    _playerImageImageView.backgroundColor=[UIColor clearColor];
     self.playerImageImageView.image = playerImage;
 }
 
@@ -170,6 +171,7 @@
 - (void)transImage:(UIImage *)image {
     
     playerImage = image;
+    
     self.playerImageImageView.image = playerImage;
 }
 
