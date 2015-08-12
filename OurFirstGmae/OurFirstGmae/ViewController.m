@@ -18,6 +18,9 @@
 
 #import "SlotMachine.h"
 #import "TransitionDelegate.h"
+#import "LoadingViewController.h"
+#import "outView.h"
+#import "MorningOutViewController.h"
 
 #define INPUT_BAR_HEIGHT 60
 #define SYSTEM_ID @"SYSTEM"
@@ -40,6 +43,10 @@
     
      BOOL firstTime;
     SlotMachine *SlotVc ;
+    LoadingViewController *loadingView;
+    MorningOutViewController* morningOutView;
+    outView *nightOutView;
+    
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *chatBoxTableView;
@@ -113,11 +120,17 @@
     
     
     
-    /////slotMachine
+    /////the other views
     SlotVc = [[SlotMachine alloc]init];
     self.transitionController = [[TransitionDelegate alloc] init];
     firstTime=YES;
     
+    morningOutView =[MorningOutViewController new];
+    nightOutView = [outView new];
+    loadingView =[LoadingViewController new];
+    
+    
+  
 }
 -(void)viewDidAppear:(BOOL)animated{
     
@@ -134,7 +147,10 @@
 
 -(void)callSlotMachine{
     if(firstTime){
-        
+        UIView *view= [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+        view.backgroundColor = [UIColor blackColor];
+        view.alpha=0.5;
+        [self.view addSubview:view];
         SlotVc = [self.storyboard instantiateViewControllerWithIdentifier:@"slotMachine"];
         SlotVc.view.backgroundColor = [UIColor clearColor];
         [SlotVc setTransitioningDelegate:_transitionController];
@@ -142,6 +158,57 @@
         [self presentViewController:SlotVc animated:YES completion:nil];
         firstTime=NO;
     }
+}
+- (IBAction)textBtn:(id)sender {
+    //    -(void)callLoadingView{
+    //        -(void)callMorningOutView{
+    //            -(void)callNightOutView{
+    
+//    [self callLoadingView];
+//    [self callMorningOutView];
+//    [self callNightOutView];
+    [self callSlotMachine];
+    
+}
+-(void)callLoadingView{
+    UIView *view= [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    view.backgroundColor = [UIColor blackColor];
+    view.alpha=0.5;
+    [self.view addSubview:view];
+    loadingView = [self.storyboard instantiateViewControllerWithIdentifier:@"loadingView"];
+    loadingView.view.backgroundColor = [UIColor clearColor];
+
+    loadingView.modalPresentationStyle= UIModalPresentationCustom;
+    [self presentViewController:loadingView animated:YES completion:nil];
+    
+}
+
+
+-(void)callMorningOutView{
+    UIView *view= [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    view.backgroundColor = [UIColor blackColor];
+    view.alpha=0.5;
+    [self.view addSubview:view];
+    
+    morningOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"morningOutView"];
+    morningOutView.view.backgroundColor = [UIColor clearColor];
+    [morningOutView setTransitioningDelegate:_transitionController];
+    morningOutView.modalPresentationStyle= UIModalPresentationCustom;
+    [self presentViewController:morningOutView animated:YES completion:nil];
+}
+
+
+-(void)callNightOutView{
+    UIView *view= [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    view.backgroundColor = [UIColor blackColor];
+    view.alpha=0.5;
+    [self.view addSubview:view];
+    nightOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"nightOutView"];
+    nightOutView.view.backgroundColor = [UIColor clearColor];
+    [nightOutView setTransitioningDelegate:_transitionController];
+    nightOutView.modalPresentationStyle= UIModalPresentationCustom;
+    [self presentViewController:nightOutView animated:YES completion:nil];
+    
 }
 
 
@@ -235,6 +302,7 @@
     [self.view endEditing:TRUE];
     self.chatTextField.text = nil;
 }
+
 
 //若點擊畫面
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {

@@ -7,13 +7,16 @@
 //
 #import <QuartzCore/QuartzCore.h>
 #import "outView.h"
-#import "DrawTriangleView.h"
+
+
 
 @interface outView ()
 {
     NSTimer *delayTime1;
     NSTimer *delayTime2;
-    DrawTriangleView *triangle;
+    CABasicAnimation* shake;
+    UIView *addView;
+    UIView *addView2;
     
 }
 @property (weak, nonatomic) IBOutlet UIImageView *outOfplayerImgView;
@@ -21,52 +24,93 @@
 
 @implementation outView
 static int i = 1000;
-static int j = 1021;
+static int l = 1000;
+static int j = 1011;
 static int k = 10;
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    delayTime1 =[NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(addView) userInfo:nil repeats:YES];
-//    _outOfplayerImgView.image = [UIImage imageNamed:@"player7.jpg"];
-//    [self.view addSubview:_outOfplayerImgView];
+    delayTime1 =[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(addView) userInfo:nil repeats:YES];
+
     
     
 }
 - (void)addView{
-                    
-                    
-                    if (i>1021) {
-                        _outOfplayerImgView.image=[UIImage imageNamed:@"play6.jpg"];
+    
+    
+                    if (i>1011) {
                         [delayTime1 invalidate];
                         delayTime1 = nil;
-                        delayTime2=[NSTimer scheduledTimerWithTimeInterval:0.05 target:self selector:@selector(removeView) userInfo:nil repeats:YES];
+
+                         shake = [CABasicAnimation animationWithKeyPath:@"transform.translation.x"];
+                        
+                        //设置抖动幅度
+                        shake.fromValue = [NSNumber numberWithFloat:-20];
+                        
+                        shake.toValue = [NSNumber numberWithFloat:+20];
+                        
+                        shake.duration = 0.1;
+                        
+                        shake.autoreverses = YES; //是否重复
+                        
+                        shake.repeatCount = 6;
+                        shake.delegate =self;
+                        [shake setValue:@"shake" forKey:@"animationShake"];
+                         [addView.layer addAnimation:shake forKey:@"view"];
+                        [addView2.layer addAnimation:shake forKey:@"view"];
+                        
+               
+
                         
                         
                         
                     }
                     else{
                         
-                        triangle = [[DrawTriangleView alloc]initWithFrame:CGRectMake((self.view.frame.size.width/2)-k/2, k, k, 2*k)];
-                        NSLog(@"view wide:%d",90+2*k);
-                        [self.view addSubview:triangle];
+
+                        
+                        
+                        addView = [[UIView alloc]initWithFrame:CGRectMake(self.view.frame.size.width/2, 0, -k+10, self.view.frame.size.height)];
+                        addView2 = [[UIView alloc]initWithFrame:CGRectMake(self.view.frame.size.width/2, 0, k-10, self.view.frame.size.height)];
+                        addView.backgroundColor=[UIColor blackColor];
+                        addView2.backgroundColor=[UIColor blackColor];
+                        [self.view addSubview:addView2];
+                        [self.view addSubview:addView];
+                        
                         k = k + 10;
-                        triangle.tag=i;
+                        addView.tag=i;
+                        addView2.tag=l;
                         i++;
+                        l++;
+                   
                         
                     }
                     
                     
 }
                 
-                
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
+    if([[anim valueForKey:@"animationShake"]isEqualToString:@"shake"]){
+        if (flag) {
+            _outOfplayerImgView.image=[UIImage imageNamed:@"play6.jpg"];
+            delayTime2=[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(removeView) userInfo:nil repeats:YES];
+        }
+        
+    }
+    
+    
+    
+}
 -(void)removeView{
                     
-                    if(j>999){
+                    if(j>999 || l>999){
                         UIView *view = [self.view viewWithTag:j];
                         [view removeFromSuperview];
                         j--;
-                        
+                        UIView *view1 = [self.view viewWithTag:l];
+                        [view1 removeFromSuperview];
+                        l--;
                     }
                     if(j==1000)
                     {
@@ -74,7 +118,7 @@ static int k = 10;
                         [delayTime2 invalidate];
                         delayTime2 = nil;
                     }
-                    
+
                     
                     
 }

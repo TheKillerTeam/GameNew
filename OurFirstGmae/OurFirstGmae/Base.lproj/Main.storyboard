@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="sDf-Ln-svD">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="7706" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="BYZ-38-t0r">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7703"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
@@ -42,6 +42,12 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="5X1-cx-jO2"/>
                                 </connections>
                             </textField>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gEY-Ps-WbP">
+                                <rect key="frame" x="56" y="120" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="znh-9e-Fo4">
                                 <rect key="frame" x="16" y="383" width="67" height="30"/>
                                 <state key="normal" title="VoteDone">
@@ -219,9 +225,19 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="srB-ov-F7J">
+                                <rect key="frame" x="56" y="120" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="textBtn:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1IN-Pw-QAT"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.65909090909090917" green="0.3659927329202966" blue="0.15089723035205796" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
+                            <constraint firstItem="gEY-Ps-WbP" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="100" id="24C-O8-UIx"/>
                             <constraint firstItem="IDb-2d-ITH" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="334" id="3LZ-DB-NZe"/>
                             <constraint firstAttribute="trailingMargin" secondItem="IDb-2d-ITH" secondAttribute="trailing" constant="-15" id="4gn-w5-yXS"/>
                             <constraint firstItem="smQ-nu-RCR" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="7tT-p7-z99"/>
@@ -240,6 +256,7 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="5vS-yA-BXb" secondAttribute="bottom" constant="15" id="bRg-xe-M8w"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="GbH-GN-Wzs" secondAttribute="bottom" constant="15" id="eOg-wh-E19"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="znh-9e-Fo4" secondAttribute="bottom" constant="254" id="gRX-br-hL8"/>
+                            <constraint firstItem="gEY-Ps-WbP" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="40" id="huW-wS-zc5"/>
                             <constraint firstItem="vl1-dQ-qKD" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" id="igD-1n-sOq"/>
                             <constraint firstAttribute="bottomMargin" secondItem="IDb-2d-ITH" secondAttribute="bottom" constant="58" id="kNI-kM-957"/>
                             <constraint firstItem="fiq-dG-2BP" firstAttribute="leading" secondItem="5vS-yA-BXb" secondAttribute="trailing" constant="8" id="kOp-yW-rSu"/>
@@ -301,12 +318,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="8jF-Tg-Awu" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2361.5" y="302.5"/>
+            <point key="canvasLocation" x="1877.5" y="370.5"/>
         </scene>
         <!--Loading View Controller-->
         <scene sceneID="Nb7-b6-D63">
             <objects>
-                <viewController id="sDf-Ln-svD" customClass="LoadingViewController" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="loadingView" id="sDf-Ln-svD" customClass="LoadingViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jlO-xe-sbi"/>
                         <viewControllerLayoutGuide type="bottom" id="ZTP-ty-DbX"/>
@@ -335,12 +352,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UeX-N9-fhW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="953.5" y="-677.5"/>
+            <point key="canvasLocation" x="1621.5" y="-677.5"/>
         </scene>
         <!--Out View-->
         <scene sceneID="1g8-hS-zxm">
             <objects>
-                <viewController id="aG6-n9-SfQ" customClass="outView" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="nightOutView" id="aG6-n9-SfQ" customClass="outView" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="76B-ke-lFc"/>
                         <viewControllerLayoutGuide type="bottom" id="rMa-WF-Oah"/>
@@ -357,7 +374,7 @@
                                 </constraints>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" red="0.46250628762180468" green="0.20402428015019425" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" red="0.95817116252612067" green="1" blue="0.95529580377354228" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="rMa-WF-Oah" firstAttribute="top" secondItem="DKu-8N-h7N" secondAttribute="bottom" constant="8" id="2Sj-j9-4sY"/>
                             <constraint firstItem="DKu-8N-h7N" firstAttribute="leading" secondItem="YLU-QE-lN6" secondAttribute="leadingMargin" constant="71" id="Kl9-r6-Jb8"/>
@@ -372,12 +389,12 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mME-FO-aky" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1449.5" y="-677.5"/>
+            <point key="canvasLocation" x="2853.5" y="-677.5"/>
         </scene>
-        <!--View Controller-->
+        <!--Morning Out View Controller-->
         <scene sceneID="lNy-QZ-eG9">
             <objects>
-                <viewController id="IDM-ah-913" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="morningOutView" id="IDM-ah-913" customClass="MorningOutViewController" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="jMW-82-eAY"/>
                         <viewControllerLayoutGuide type="bottom" id="NsV-om-FhN"/>
@@ -385,13 +402,39 @@
                     <view key="view" contentMode="scaleToFill" id="VGK-X5-zk8">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="play7.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="bZj-8A-smG">
+                                <rect key="frame" x="87" y="367" width="200" height="300"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XOz-nm-OUb">
+                                <rect key="frame" x="16" y="20" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="testBtn:" destination="IDM-ah-913" eventType="touchUpInside" id="zhC-q7-eV7"/>
+                                </connections>
+                            </button>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="lYM-bT-MaW" appends="YES" id="sXP-A7-JRg"/>
+                        </connections>
                     </view>
                     <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
+                    <connections>
+                        <outlet property="morningOutImgView" destination="bZj-8A-smG" id="mI0-E1-c52"/>
+                        <outlet property="swip" destination="lYM-bT-MaW" id="UvR-op-ume"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gd7-PZ-9CZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <swipeGestureRecognizer direction="up" id="lYM-bT-MaW">
+                    <connections>
+                        <action selector="swipeUp:" destination="IDM-ah-913" id="lCZ-Qp-158"/>
+                    </connections>
+                </swipeGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="2232" y="-1157"/>
+            <point key="canvasLocation" x="2243.5" y="-677.5"/>
         </scene>
         <!--Player Info View Controller-->
         <scene sceneID="WvG-jW-Fct">
@@ -658,7 +701,7 @@
                     </connections>
                 </pinchGestureRecognizer>
             </objects>
-            <point key="canvasLocation" x="555.5" y="742.5"/>
+            <point key="canvasLocation" x="687.5" y="370.5"/>
         </scene>
     </scenes>
     <resources>
