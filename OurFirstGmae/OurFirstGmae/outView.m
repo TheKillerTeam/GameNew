@@ -32,7 +32,12 @@ static int k = 10;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     delayTime1 =[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(addView) userInfo:nil repeats:YES];
-
+    
+    UIView *view =[[UIView alloc]initWithFrame:self.view.frame];
+    view.backgroundColor=[UIColor blackColor];
+    view.alpha=0.5;
+    [self.view insertSubview:view belowSubview:_outOfplayerImgView];
+    
     
     
 }
@@ -134,6 +139,9 @@ static int k = 10;
     return YES;
 }
 
+- (IBAction)dissmissBtn:(id)sender {
+        [self dismissViewControllerAnimated:YES completion:nil];
+}
 
 
 

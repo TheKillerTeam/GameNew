@@ -136,8 +136,12 @@
     
     [self callSlotMachine];
     
+//    _willRemoveView =[self.view viewWithTag:555];
+//    [view removeFromSuperview];
     
-    
+}
+-(void)viewWillAppear:(BOOL)animated{
+
 }
 
 - (void)didReceiveMemoryWarning {
@@ -147,10 +151,7 @@
 
 -(void)callSlotMachine{
     if(firstTime){
-        UIView *view= [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-        view.backgroundColor = [UIColor blackColor];
-        view.alpha=0.5;
-        [self.view addSubview:view];
+
         SlotVc = [self.storyboard instantiateViewControllerWithIdentifier:@"slotMachine"];
         SlotVc.view.backgroundColor = [UIColor clearColor];
         [SlotVc setTransitioningDelegate:_transitionController];
@@ -164,19 +165,16 @@
     //        -(void)callMorningOutView{
     //            -(void)callNightOutView{
     
-//    [self callLoadingView];
+    [self callLoadingView];
 //    [self callMorningOutView];
 //    [self callNightOutView];
-    [self callSlotMachine];
-    
+//    [self callSlotMachine];
+//    
 }
 -(void)callLoadingView{
-    UIView *view= [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    view.backgroundColor = [UIColor blackColor];
-    view.alpha=0.5;
-    [self.view addSubview:view];
+
     loadingView = [self.storyboard instantiateViewControllerWithIdentifier:@"loadingView"];
-    loadingView.view.backgroundColor = [UIColor clearColor];
+    loadingView.view.backgroundColor = [UIColor blackColor];
 
     loadingView.modalPresentationStyle= UIModalPresentationCustom;
     [self presentViewController:loadingView animated:YES completion:nil];
@@ -185,10 +183,7 @@
 
 
 -(void)callMorningOutView{
-    UIView *view= [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    view.backgroundColor = [UIColor blackColor];
-    view.alpha=0.5;
-    [self.view addSubview:view];
+
     
     morningOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"morningOutView"];
     morningOutView.view.backgroundColor = [UIColor clearColor];
@@ -199,10 +194,7 @@
 
 
 -(void)callNightOutView{
-    UIView *view= [[UIView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
-    view.backgroundColor = [UIColor blackColor];
-    view.alpha=0.5;
-    [self.view addSubview:view];
+
     nightOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"nightOutView"];
     nightOutView.view.backgroundColor = [UIColor clearColor];
     [nightOutView setTransitioningDelegate:_transitionController];

@@ -8,7 +8,7 @@
 
 #import "SlotMachine.h"
 #import "SlotMachineClass.h"
-
+#import "ViewController.h"
 #import <UIKit/UIKit.h>
 @interface SlotMachine ()
 {
@@ -17,7 +17,7 @@
     UIImageView *container;
     UILabel *jobNameLb;
     UIButton *startBtn;
-    
+    ViewController*vc;
     
 }
 @property (strong,nonatomic)NSArray *slotIcon;
@@ -29,8 +29,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+ 
     
-   
+
     // Do any additional setup after loading the view.
     
     self.slotIcon = [NSArray arrayWithObjects:[UIImage imageNamed:@"Batman"],[UIImage imageNamed:@"Mario"],[UIImage imageNamed:@"Doraemon"],[UIImage imageNamed:@"Nobi Nobita"], nil];
@@ -52,7 +53,14 @@
     
     slotClass.delegate=self;
     slotClass.dataSource=self;
-   
+    
+    
+    
+    UIView *view =[[UIView alloc]initWithFrame:self.view.frame];
+    view.backgroundColor=[UIColor blackColor];
+    view.alpha=0.5;
+    view.tag=2000;
+    [self.view insertSubview:view belowSubview:_presentView];
     [_presentView addSubview:slotClass];
     
     
@@ -117,6 +125,8 @@
 
 
 -(void)start{
+    UIView *v = [self.view viewWithTag:2000];
+    [v removeFromSuperview];
     [self dismissViewControllerAnimated:YES completion:nil];
 
     

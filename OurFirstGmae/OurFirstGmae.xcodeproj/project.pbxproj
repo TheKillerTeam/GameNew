@@ -347,7 +347,6 @@
 				09C38E0C1B79F5680087ED5B /* OutView-Morning */,
 				0970E8341B788A610016B168 /* Outview-Night */,
 				0901A1911B78738900AAEDCF /* LoadingView */,
-				0970E8381B788A9B0016B168 /* PresentVIewFunction */,
 				09B63CF71B7851E0000DC6C3 /* SlotMachine */,
 				09B1EE871B64B3CC00E7C671 /* Circle */,
 				09E901441B67428700555908 /* PlayerInformationView */,
@@ -400,6 +399,7 @@
 				09B63CF21B7851CE000DC6C3 /* SlotMachine.m */,
 				09B63CF31B7851CE000DC6C3 /* SlotMachineClass.h */,
 				09B63CF41B7851CE000DC6C3 /* SlotMachineClass.m */,
+				0970E8381B788A9B0016B168 /* PresentVIewFunction */,
 			);
 			name = SlotMachine;
 			sourceTree = "<group>";

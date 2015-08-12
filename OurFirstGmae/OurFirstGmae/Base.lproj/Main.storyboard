@@ -373,6 +373,15 @@
                                     <constraint firstAttribute="height" constant="300" id="cs1-IH-GZp"/>
                                 </constraints>
                             </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oeb-t0-zSp">
+                                <rect key="frame" x="40" y="28" width="46" height="30"/>
+                                <state key="normal" title="Button">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="dissmissBtn:" destination="aG6-n9-SfQ" eventType="touchUpInside" id="nhG-qB-Hjl"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.95817116252612067" green="1" blue="0.95529580377354228" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
