@@ -24,13 +24,28 @@ typedef enum {
     
 } NetworkState;
 
-
 typedef enum {
     
     ChatToAll = 0,
     ChatToTeam = 1,
     
 } ChatType;
+
+typedef enum {
+    
+    GameStateNotInGame = 0,
+    GameStateGameStart = 1,
+    GameStateNightStart = 2,
+    GameStateNightDiscussion = 3,
+    GameStateNightVote = 4,
+    GameStateDayStart = 5,
+    GameStateDayDiscussion = 6,
+    GameStateDayVote = 7,
+    GameStateJudgementDiscussion = 8,
+    GameStateJudgementVote = 9,
+    GameStateGameOver = 10,
+    
+} GameState;
 
 @class Match;
 
@@ -41,6 +56,8 @@ typedef enum {
 - (void)updateChat:(NSString *)chat withPlayerId:(NSString *)playerId;
 - (void)updateVoteFor:(int)voteFor fromVotedFor:(int)votedFor withPlayerId:(NSString *)playerId;
 
+- (void)gameStateChanged:(GameState)gameState;
+
 @end
 
 @interface NetworkController : NSObject
@@ -50,6 +67,8 @@ typedef enum {
 @property (assign) id <NetworkControllerDelegate> delegate;
 @property (assign, readonly) NetworkState networkState;
 
+@property (assign, readonly) GameState gameState;
+
 + (NetworkController *)sharedInstance;
 - (void)authenticateLocalUser;
 - (void)connect;
@@ -58,6 +77,7 @@ typedef enum {
 - (void)sendUpdatePlayerImage:(UIImage *)image;
 - (void)sendChat:(NSString *)chat withChatType:(ChatType)chatType;
 - (void)sendVoteFor:(int)playerIndex;
+- (void)setGameState:(GameState)gameState;
 
 
 @end

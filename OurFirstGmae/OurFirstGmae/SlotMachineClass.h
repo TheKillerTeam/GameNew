@@ -7,7 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+
 @class SlotMachineClass;
+
 @protocol SlotMachineClassDelegate <NSObject>
 -(void)slotMachineWillStart:(SlotMachineClass*)slotClass;
 -(void)slotMachineDidEnd:(SlotMachineClass *)slotClass;
@@ -20,8 +22,6 @@
 -(NSArray*)iconsForMachine:(SlotMachineClass*)slotClass;
 
 @end
-
-
 
 @interface SlotMachineClass : UIView
 

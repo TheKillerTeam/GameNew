@@ -5,6 +5,7 @@
 //  Created by CAI CHENG-HONG on 2015/7/17.
 //  Copyright (c) 2015年 CAI CHENG-HONG. All rights reserved.
 //
+
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
 #import "playerCell.h"
@@ -26,8 +27,16 @@
 #define SYSTEM_ID @"SYSTEM"
 #define SYSTEM_IMAGE @"Batman.png"
 
+#define BACKGROUND_IMAGE_DAY @"play7.jpg"
+#define BACKGROUND_IMAGE_NIGHT @"play6.jpg"
 
+#define PLAYER_TEAM_CIVILIAN    0
+#define PLAYER_TEAM_SHERIFF     1
+#define PLAYER_TEAM_MAFIA       2
 
+#define PLAYER_TEAM_CIVILIAN_STRING @"平民"
+#define PLAYER_TEAM_SHERIFF_STRING  @"警察"
+#define PLAYER_TEAM_MAFIA_STRING    @"殺手"
 
 @interface ViewController () <NetworkControllerDelegate, UITableViewDelegate, UITableViewDataSource,NSStreamDelegate, UITextFieldDelegate> {
     
@@ -40,13 +49,14 @@
     NSMutableArray *chatData;
     NSMutableArray *voteData;
     int selfVoteFor;
+    BOOL selfShouldVote;
+    int selfTeam;
     
-     BOOL firstTime;
     SlotMachine *SlotVc ;
     LoadingViewController *loadingView;
     MorningOutViewController* morningOutView;
     outView *nightOutView;
-    
+    UIViewController *rootVC;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *chatBoxTableView;
@@ -57,8 +67,9 @@
 @property (weak, nonatomic) IBOutlet UIView *thePlayerView;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImg;
 @property (weak, nonatomic) IBOutlet UILabel *debugLabel;
+@property (weak, nonatomic) IBOutlet UILabel *gameStateLabel;
 @property (nonatomic, strong) TransitionDelegate *transitionController;
-
+@property (weak, nonatomic) IBOutlet UILabel *playerTeamLabel;
 
 @end
 
@@ -89,7 +100,7 @@
     
     self.playerListTableView.delegate=self;
     self.playerListTableView.dataSource=self;
-    self.backgroundImg.image=[UIImage imageNamed:@"play7.jpg"];
+    self.backgroundImg.image=[UIImage imageNamed:BACKGROUND_IMAGE_DAY];
 
     ///////cicle
     [self initImageView];
@@ -104,10 +115,12 @@
         [voteData addObject:num];
     }
     selfVoteFor = 99;
+    selfShouldVote = false;
     
     //network
     [NetworkController sharedInstance].delegate = self;
     [self networkStateChanged:[NetworkController sharedInstance].networkState];
+//    [self gameStateChanged:[NetworkController sharedInstance].gameState];
     
     //hello
     NSArray *tmpChatArray = [NSArray arrayWithObjects:SYSTEM_ID, @"Hello everyone, 歡迎來到遊戲!", nil];
@@ -117,31 +130,28 @@
 
     NSIndexPath* chatip = [NSIndexPath indexPathForRow:chatData.count-1 inSection:0];
     [self.chatBoxTableView scrollToRowAtIndexPath:chatip atScrollPosition:UITableViewScrollPositionBottom animated:true];
-    
-    
-    
+
     /////the other views
     SlotVc = [[SlotMachine alloc]init];
     self.transitionController = [[TransitionDelegate alloc] init];
-    firstTime=YES;
     
     morningOutView =[MorningOutViewController new];
     nightOutView = [outView new];
     loadingView =[LoadingViewController new];
     
-    
-  
+    //
+    for (Player *p in self.match.players) {
+        if ([p.playerId isEqualToString:[GKLocalPlayer localPlayer].playerID]) {
+            
+            selfTeam = p.playerTeam;
+            break;
+        }
+    }
 }
--(void)viewDidAppear:(BOOL)animated{
-    
-    [self callSlotMachine];
-    
-//    _willRemoveView =[self.view viewWithTag:555];
-//    [view removeFromSuperview];
-    
-}
--(void)viewWillAppear:(BOOL)animated{
 
+- (void) viewDidAppear:(BOOL)animated {
+    
+    [self gameStateChanged:[NetworkController sharedInstance].gameState];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -149,28 +159,20 @@
     // Dispose of any resources that can be recreated.
 }
 
--(void)callSlotMachine{
-    if(firstTime){
-
-        SlotVc = [self.storyboard instantiateViewControllerWithIdentifier:@"slotMachine"];
-        SlotVc.view.backgroundColor = [UIColor clearColor];
-        [SlotVc setTransitioningDelegate:_transitionController];
-        SlotVc.modalPresentationStyle= UIModalPresentationCustom;
-        [self presentViewController:SlotVc animated:YES completion:nil];
-        firstTime=NO;
-    }
-}
-- (IBAction)textBtn:(id)sender {
-    //    -(void)callLoadingView{
-    //        -(void)callMorningOutView{
-    //            -(void)callNightOutView{
+-(void)callSlotMachineWithOutputIndex:(NSInteger)outputIndex {
     
-    [self callLoadingView];
-//    [self callMorningOutView];
-//    [self callNightOutView];
-//    [self callSlotMachine];
-//    
+    SlotVc = [self.storyboard instantiateViewControllerWithIdentifier:@"slotMachine"];
+    SlotVc.view.backgroundColor = [UIColor clearColor];
+    [SlotVc setTransitioningDelegate:_transitionController];
+    SlotVc.modalPresentationStyle= UIModalPresentationCustom;
+    
+    [SlotVc setOutputIndex:outputIndex];
+    
+    [self presentViewController:SlotVc animated:YES completion:nil];
+    
+    [self performSelector:@selector(dismissSlotMachine) withObject:self afterDelay:3];
 }
+
 -(void)callLoadingView{
 
     loadingView = [self.storyboard instantiateViewControllerWithIdentifier:@"loadingView"];
@@ -226,26 +228,26 @@
     
 }
 
-- (void)performTransition:(UIViewAnimationOptions)options{
-    
-    static int count = 0;
-    NSArray *animationImages = @[[UIImage imageNamed:@"play6.jpg"], [UIImage imageNamed:@"play7.jpg"]];
-    UIImage *image = [animationImages objectAtIndex:(count % [animationImages count])];
+- (void)switchDayNightBackgroundImage{
     
     [UIView transitionWithView:self.backgroundImg
-                      duration:1.0f // animation duration
-                       options:options
+                      duration:.5f
+                       options:UIViewAnimationOptionTransitionCrossDissolve
                     animations:^{
-                        self.backgroundImg.image = image; // change to other image
-                    } completion:^(BOOL finished) {
-                        [self backgroundImg]; // once finished, repeat again
-                        count++; // this is to keep the reference of which image should be loaded next
-                    }];
+                        self.backgroundImg.image =
+                        [UIImagePNGRepresentation(self.backgroundImg.image) isEqualToData:UIImagePNGRepresentation([UIImage imageNamed:BACKGROUND_IMAGE_DAY])]?
+                        [UIImage imageNamed:BACKGROUND_IMAGE_NIGHT]:
+                        [UIImage imageNamed:BACKGROUND_IMAGE_DAY];
+                    }
+                    completion:nil
+     ];
 }
 
 - (IBAction)finalSelectBtnPressed:(id)sender {
     
-    [self performTransition:UIViewAnimationOptionTransitionCrossDissolve];
+    selfShouldVote = selfShouldVote? false: true;
+    [self.playerListTableView reloadData];
+//    [self switchDayNightBackgroundImage];
 }
 
 - (IBAction)controlListBtnPressed:(id)sender {
@@ -295,11 +297,42 @@
     self.chatTextField.text = nil;
 }
 
-
 //若點擊畫面
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     
     [self.view endEditing:TRUE];
+}
+
+- (void)dismissSlotMachine {
+    
+    [self dismissViewControllerAnimated:true completion:nil];
+    
+    switch (selfTeam) {
+            
+        case PLAYER_TEAM_CIVILIAN:
+            
+            self.playerTeamLabel.text = PLAYER_TEAM_CIVILIAN_STRING;
+            break;
+            
+        case PLAYER_TEAM_SHERIFF:
+            
+            self.playerTeamLabel.text = PLAYER_TEAM_SHERIFF_STRING;
+            break;
+            
+        case PLAYER_TEAM_MAFIA:
+            
+            self.playerTeamLabel.text = PLAYER_TEAM_MAFIA_STRING;
+            break;
+            
+        default:
+            break;
+    }
+}
+
+- (void)switchToNextGameState {
+    
+    GameState currentGameState = [NetworkController sharedInstance].gameState;
+    [[NetworkController sharedInstance] setGameState:currentGameState+1];
 }
 
 #pragma mark - UITextFieldDelegate Methods
@@ -359,6 +392,17 @@
         cell.playerPhoto.image = p.playerImage;
         cell.playerName.text = p.alias;
         cell.vote.text = [NSString stringWithFormat:@"%d",[[voteData objectAtIndex:indexPath.row] intValue]];
+        
+        if (selfShouldVote) {
+            
+            cell.userInteractionEnabled = true;
+            cell.vote.hidden = false;
+            
+        }else {
+            
+            cell.userInteractionEnabled = false;
+            cell.vote.hidden = true;
+        }
         return cell;
         
     }else if (tableView == self.chatBoxTableView) {
@@ -588,7 +632,9 @@
         case NetworkStateReceivedMatchStatus:
             
             self.debugLabel.text = @"Received Match Status,\nReady to Look for a Match";
-            [self dismissViewControllerAnimated:self completion:nil];
+            [[NetworkController sharedInstance] setGameState:GameStateNotInGame];
+            rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+            [rootVC dismissViewControllerAnimated:true completion:nil];
             break;
             
         case NetworkStatePendingMatch:
@@ -611,8 +657,6 @@
 - (void)matchStarted:(Match *)match {
     
 }
-
-
 
 - (void)updateChat:(NSString *)chat withPlayerId:(NSString *)playerId {
 
@@ -689,6 +733,87 @@
     }
     
     [self.playerListTableView reloadData];
+}
+
+- (void)gameStateChanged:(GameState)gameState {
+    
+    switch(gameState) {
+            
+        case GameStateNotInGame:
+            
+            self.gameStateLabel.text = @"NotInGame";
+            break;
+            
+        case GameStateGameStart:
+            
+            self.gameStateLabel.text = @"GameStart";
+            
+            //teamUpPlayers
+            
+            //gameStartAnimation
+            
+            //slotMachineAnimation
+            [self callSlotMachineWithOutputIndex:selfTeam];
+//            [self performSelector:@selector(dismissSlotMachine) withObject:self afterDelay:5];
+            
+            //changeGameState
+            [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:5];
+            
+            break;
+            
+        case GameStateNightStart:
+            
+            self.gameStateLabel.text = @"NightStart";
+            
+            //nightBeginAnimation
+            [self switchDayNightBackgroundImage];
+            
+            break;
+            
+        case GameStateNightDiscussion:
+            
+            self.gameStateLabel.text = @"NightDiscussion";
+            break;
+            
+        case GameStateNightVote:
+            
+            self.gameStateLabel.text = @"NightVote";
+            break;
+            
+        case GameStateDayStart:
+            
+            self.gameStateLabel.text = @"DayStart";
+            
+            //dayBeginAnimation
+            [self switchDayNightBackgroundImage];
+            
+            break;
+            
+        case GameStateDayDiscussion:
+            
+            self.gameStateLabel.text = @"DayDiscussion";
+            break;
+            
+        case GameStateDayVote:
+            
+            self.gameStateLabel.text = @"DayVote";
+            break;
+            
+        case GameStateJudgementDiscussion:
+            
+            self.gameStateLabel.text = @"JudgementDiscussion";
+            break;
+            
+        case GameStateJudgementVote:
+            
+            self.gameStateLabel.text = @"JudgementVote";
+            break;
+            
+        case GameStateGameOver:
+            
+            self.gameStateLabel.text = @"GameOver";
+            break;
+    }
 }
 
 @end

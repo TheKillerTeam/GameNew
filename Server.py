@@ -3,6 +3,7 @@ from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 from time import time
 from struct import *
+import random
 
 MESSAGE_PLAYER_CONNECTED = 0
 MESSAGE_NOT_IN_MATCH = 1
@@ -22,7 +23,28 @@ CHAT_TO_TEAM = 1
 
 PLAYER_STATE_ONE = 0
 
-PLAYER_TEAM_ONE = 1
+PLAYER_TEAM_CIVILIAN = 0
+PLAYER_TEAM_SHERIFF = 1
+PLAYER_TEAM_MAFIA = 2
+
+TEAM_LIST = []
+TEAM_LIST.append([0,0,0])#0
+TEAM_LIST.append([0,0,1])#1
+TEAM_LIST.append([1,1,0])#2
+TEAM_LIST.append([1,1,1])#3
+TEAM_LIST.append([2,1,1])#4
+TEAM_LIST.append([3,1,1])#5
+TEAM_LIST.append([4,1,1])#6
+TEAM_LIST.append([5,1,1])#7
+TEAM_LIST.append([6,1,1])#8
+TEAM_LIST.append([5,2,2])#9
+TEAM_LIST.append([6,2,2])#10
+TEAM_LIST.append([7,2,2])#11
+TEAM_LIST.append([6,3,3])#12
+TEAM_LIST.append([7,3,3])#13
+TEAM_LIST.append([8,3,3])#14
+TEAM_LIST.append([7,4,4])#15
+TEAM_LIST.append([8,4,4])#16
 
 SECS_FOR_SHUTDOWN = 5
 
@@ -117,11 +139,12 @@ class GamePlayer:
         self.alias = alias
         self.match = None
         self.playerState = PLAYER_STATE_ONE
-        self.playerTeam = PLAYER_TEAM_ONE
+        self.playerTeam = PLAYER_TEAM_CIVILIAN
         self.voteFor = 99
+        self.voteCount = 0
 
     def __repr__(self):
-        return "%s:%d,%d,%d" % (self.alias, self.playerState, self.playerTeam, self.voteFor)
+        return "%s:%d,%d,%d,%d" % (self.alias, self.playerState, self.playerTeam, self.voteFor,self.voteCount)
 
     def write(self, message):
         message.writeString(self.playerImage)
@@ -195,7 +218,11 @@ class GameFactory(Factory):
                 votedFor = existingPlayer.voteFor
                 if existingPlayer.voteFor == voteFor:
                     existingPlayer.voteFor = 99
+                    self.players[voteFor].voteCount = self.players[voteFor].voteCount - 1
                 else:
+                    self.players[voteFor].voteCount = self.players[voteFor].voteCount + 1
+                    if existingPlayer.voteFor != 99:
+                        self.players[existingPlayer.voteFor].voteCount = self.players[existingPlayer.voteFor].voteCount - 1
                     existingPlayer.voteFor = voteFor
         for existingPlayer in self.players:
             if existingPlayer.playerId != playerId:
@@ -209,11 +236,19 @@ class GameFactory(Factory):
                     return
                 matchPlayers.append(existingPlayer)
         match = GameMatch(matchPlayers)
+        teamList = []
+        for teamIndex in range(3):
+            for i in range(TEAM_LIST[len(matchPlayers)][teamIndex]):
+                teamList.append(teamIndex)
+        random.shuffle(teamList)
+        index = 0
         for matchPlayer in matchPlayers:
             matchPlayer.match = match
             matchPlayer.playerState = PLAYER_STATE_ONE
-            matchPlayer.playerTeam = PLAYER_TEAM_ONE
+            matchPlayer.playerTeam = teamList[index]
             matchPlayer.voteFor = 99
+            index += 1
+        for matchPlayer in matchPlayers:
             matchPlayer.protocol.sendMatchStarted(match)
 
 class GameProtocol(Protocol):

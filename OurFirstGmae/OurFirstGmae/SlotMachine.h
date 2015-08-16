@@ -8,6 +8,11 @@
 
 #import <UIKit/UIKit.h>
 #import "SlotMachineClass.h"
+
 @interface SlotMachine : UIViewController<SlotMachineClassDataSource,SlotMachineClassDelegate>
+
 @property(nonatomic)UIView*presentView;
+
+- (void)setOutputIndex:(NSInteger)outputIndex;
+
 @end

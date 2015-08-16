@@ -12,7 +12,7 @@
 #import "Match.h"
 #import "Player.h"
 
-#define SERVER_IP @"192.168.196.160"
+#define SERVER_IP @"220.134.136.189"
 #define PLAYER_IMAGE_DEFAULT @"news2.jpg"
 
 typedef enum {
@@ -28,8 +28,6 @@ typedef enum {
     MessageUpdateVote = 8,              //from Server
     
 } MessageType;
-
-//TODO:continue to add sendChat, updateChat function & add receiver, sender on Server
 
 @interface NetworkController () <NSStreamDelegate, GKMatchmakerViewControllerDelegate> {
     
@@ -84,6 +82,15 @@ static NetworkController *sharedController = nil;
     }
 }
 
+- (void)setGameState:(GameState)gameState {
+    
+    _gameState = gameState;
+    
+    if (_delegate) {
+        [_delegate gameStateChanged:_gameState];
+    }
+}
+
 - (void)dismissMatchmaker {
     
     [_presentingViewController dismissViewControllerAnimated:YES completion:nil];
@@ -109,6 +116,8 @@ static NetworkController *sharedController = nil;
                        name:GKPlayerAuthenticationDidChangeNotificationName
                      object:nil];
         }
+        
+        [self setGameState:_gameState];
     }
     return self;
 }
@@ -222,6 +231,7 @@ static NetworkController *sharedController = nil;
     if (msgType == MessageNotInMatch) {
         
         [self setNetworkState:NetworkStateReceivedMatchStatus];
+        [self setGameState:GameStateNotInGame];
         
     }else if (msgType == MessageMatchStarted) {
         
@@ -243,6 +253,8 @@ static NetworkController *sharedController = nil;
         }
         Match *match = [[Match alloc] initWithState:matchState players:players];
         [_delegate matchStarted:match];
+        
+        [self setGameState:GameStateGameStart];
         
     }else if (msgType == MessageUpdateChat) {
         
@@ -571,7 +583,6 @@ static NetworkController *sharedController = nil;
     if (!_gameCenterAvailable) return;
     
     [self setNetworkState:NetworkStatePendingMatch];
-    
     _presentingViewController = viewController;
     [_presentingViewController dismissViewControllerAnimated:NO completion:nil];
     

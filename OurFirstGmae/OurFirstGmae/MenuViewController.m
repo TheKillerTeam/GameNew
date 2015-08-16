@@ -13,7 +13,6 @@
 #import "NetworkController.h"
 #import "Match.h"
 #import "Player.h"
-#import "TestGameViewController.h"
 #import "playerInfoViewController.h"
 #import "ViewController.h"
 
@@ -33,6 +32,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *player2Label;
 @property (weak, nonatomic) IBOutlet UIPickerView *playerCountsPickerView;
 @property (weak, nonatomic) IBOutlet UIImageView *playerImageImageView;
+@property (weak, nonatomic) IBOutlet UILabel *gameStateLabel;
 
 @end
 
@@ -54,6 +54,7 @@
     
     [NetworkController sharedInstance].delegate = self;
     [self networkStateChanged:[NetworkController sharedInstance].networkState];
+    [self gameStateChanged:[NetworkController sharedInstance].gameState];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -164,6 +165,67 @@
 
 - (void)updateVoteFor:(int)voteFor fromVotedFor:(int)votedFor withPlayerId:(NSString *)playerId {
     
+}
+
+- (void)gameStateChanged:(GameState)gameState {
+    
+    switch(gameState) {
+            
+        case GameStateNotInGame:
+            
+            self.gameStateLabel.text = @"NotInGame";
+            break;
+            
+        case GameStateGameStart:
+            
+            self.gameStateLabel.text = @"GameStart";
+            break;
+            
+        case GameStateNightStart:
+            
+            self.gameStateLabel.text = @"NightStart";
+            break;
+            
+        case GameStateNightDiscussion:
+            
+            self.gameStateLabel.text = @"NightDiscussion";
+            break;
+            
+        case GameStateNightVote:
+            
+            self.gameStateLabel.text = @"NightVote";
+            break;
+            
+        case GameStateDayStart:
+            
+            self.gameStateLabel.text = @"DayStart";
+            break;
+            
+        case GameStateDayDiscussion:
+            
+            self.gameStateLabel.text = @"DayDiscussion";
+            break;
+            
+        case GameStateDayVote:
+            
+            self.gameStateLabel.text = @"DayVote";
+            break;
+            
+        case GameStateJudgementDiscussion:
+            
+            self.gameStateLabel.text = @"JudgementDiscussion";
+            break;
+            
+        case GameStateJudgementVote:
+            
+            self.gameStateLabel.text = @"JudgementVote";
+            break;
+            
+        case GameStateGameOver:
+            
+            self.gameStateLabel.text = @"GameOver";
+            break;
+    }
 }
 
 #pragma mark - playerInfoViewControllerDelegate
