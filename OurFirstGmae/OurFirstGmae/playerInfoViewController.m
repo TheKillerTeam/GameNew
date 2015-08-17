@@ -182,6 +182,14 @@
     
 }
 
+- (void)allowVote {
+    
+}
+
+- (void)playerDied:(NSString *)playerId {
+    
+}
+
 - (void)gameStateChanged:(GameState)gameState {
     
 }

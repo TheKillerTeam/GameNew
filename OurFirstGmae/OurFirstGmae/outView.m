@@ -5,10 +5,11 @@
 //  Created by CAI CHENG-HONG on 2015/8/10.
 //  Copyright (c) 2015年 CAI CHENG-HONG. All rights reserved.
 //
+
 #import <QuartzCore/QuartzCore.h>
 #import "outView.h"
 
-
+#define DEAD_PLAYER_IMAGE @"news2.jpg"
 
 @interface outView ()
 {
@@ -31,6 +32,9 @@ static int k = 10;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+    
+    _outOfplayerImgView.image = self.playerImage;
+    
     delayTime1 =[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(addView) userInfo:nil repeats:YES];
     
     UIView *view =[[UIView alloc]initWithFrame:self.view.frame];
@@ -98,7 +102,7 @@ static int k = 10;
 - (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag {
     if([[anim valueForKey:@"animationShake"]isEqualToString:@"shake"]){
         if (flag) {
-            _outOfplayerImgView.image=[UIImage imageNamed:@"play6.jpg"];
+            _outOfplayerImgView.image=[UIImage imageNamed:DEAD_PLAYER_IMAGE];
             delayTime2=[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(removeView) userInfo:nil repeats:YES];
         }
         

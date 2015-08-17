@@ -10,4 +10,6 @@
 
 @interface outView : UIViewController
 
+@property (nonatomic, strong) UIImage *playerImage;
+
 @end

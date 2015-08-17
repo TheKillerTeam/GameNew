@@ -38,12 +38,13 @@ typedef enum {
     GameStateNightStart = 2,
     GameStateNightDiscussion = 3,
     GameStateNightVote = 4,
-    GameStateDayStart = 5,
-    GameStateDayDiscussion = 6,
-    GameStateDayVote = 7,
-    GameStateJudgementDiscussion = 8,
-    GameStateJudgementVote = 9,
-    GameStateGameOver = 10,
+    GameStateShowNightResults = 5,
+    GameStateDayStart = 6,
+    GameStateDayDiscussion = 7,
+    GameStateDayVote = 8,
+    GameStateJudgementDiscussion = 9,
+    GameStateJudgementVote = 10,
+    GameStateGameOver = 11,
     
 } GameState;
 
@@ -55,6 +56,9 @@ typedef enum {
 - (void)matchStarted:(Match *)match;
 - (void)updateChat:(NSString *)chat withPlayerId:(NSString *)playerId;
 - (void)updateVoteFor:(int)voteFor fromVotedFor:(int)votedFor withPlayerId:(NSString *)playerId;
+- (void)allowVote;
+- (void)playerDied:(NSString *)playerId;
+- (void)playerHasLastWords:(NSString *)lastWords withPlayerId:(NSString *)playerId;
 
 - (void)gameStateChanged:(GameState)gameState;
 
@@ -78,6 +82,9 @@ typedef enum {
 - (void)sendChat:(NSString *)chat withChatType:(ChatType)chatType;
 - (void)sendVoteFor:(int)playerIndex;
 - (void)setGameState:(GameState)gameState;
-
+- (void)sendStartDiscussion;
+- (void)sendResetVote;
+- (void)sendConfirmVote;
+- (void)sendLastWords:(NSString *)lastWords;
 
 @end

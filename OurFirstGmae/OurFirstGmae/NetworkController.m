@@ -26,6 +26,13 @@ typedef enum {
     MessageUpdateChat = 6,              //from Server
     MessagePlayerVoteFor = 7,       //to Server
     MessageUpdateVote = 8,              //from Server
+    MessageStartDiscussion = 9,      //to Server
+    MessageResetVote = 10,           //to Server
+    MessageAllowVote = 11,              //from Server
+    MessagePlayerConfirmVote = 12,  //to Server
+    MessagePlayerDied = 13,             //from Server
+    MessagePlayerSendLastWords = 14,//to Server
+    MessagePlayerHasLastWords = 15,    //from Server
     
 } MessageType;
 
@@ -222,6 +229,50 @@ static NetworkController *sharedController = nil;
     [self sendData:writer.data];
 }
 
+- (void)sendStartDiscussion {
+
+    MessageWriter * writer = [MessageWriter new];
+    
+    [writer writeByte:MessageStartDiscussion];
+    [writer writeByte:0];
+    
+    [self sendData:writer.data];
+}
+
+- (void)sendResetVote {
+    
+    MessageWriter * writer = [MessageWriter new];
+    
+    [writer writeByte:MessageResetVote];
+    [writer writeString:[GKLocalPlayer localPlayer].playerID];
+    
+    [self sendData:writer.data];
+}
+
+- (void)sendConfirmVote {
+    
+    MessageWriter * writer = [MessageWriter new];
+    
+    [writer writeByte:MessagePlayerConfirmVote];
+    
+    [writer writeString:[GKLocalPlayer localPlayer].playerID];
+    
+    [self sendData:writer.data];
+}
+
+- (void)sendLastWords:(NSString *)lastWords {
+    
+    MessageWriter * writer = [MessageWriter new];
+    
+    [writer writeByte:MessagePlayerSendLastWords];
+    
+    [writer writeString:lastWords];
+    
+    [writer writeString:[GKLocalPlayer localPlayer].playerID];
+    
+    [self sendData:writer.data];
+}
+
 - (void)processMessage:(NSData *)data {
     
     MessageReader * reader = [[MessageReader alloc] initWithData:data];
@@ -268,6 +319,21 @@ static NetworkController *sharedController = nil;
         int votedFor = [reader readByte];
         NSString *playerId = [reader readString];
         [self.delegate updateVoteFor:voteFor fromVotedFor:votedFor withPlayerId:playerId];
+        
+    }else if (msgType == MessageAllowVote) {
+        
+        [self.delegate allowVote];
+        
+    }else if (msgType == MessagePlayerDied) {
+        
+        NSString *playerId = [reader readString];
+        [self.delegate playerDied:playerId];
+        
+    }else if (msgType == MessagePlayerHasLastWords) {
+        
+        NSString *lastWords = [reader readString];
+        NSString *playerId = [reader readString];
+        [self.delegate playerHasLastWords:lastWords withPlayerId:playerId];
     }
 }
 

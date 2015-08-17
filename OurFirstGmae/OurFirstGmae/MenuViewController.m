@@ -6,7 +6,7 @@
 //  Copyright (c) 2015年 CAI CHENG-HONG. All rights reserved.
 //
 
-//TODO: @結束遊戲 @結束後再重新開始 @斷線重聯 @邀請好友 @縮小App不會斷線 @追蹤是否有網路連線
+//TODO: @結束遊戲 @結束後再重新開始 @邀請好友 @縮小App不會斷線 @追蹤是否有網路連線
 //@編輯外觀時由之前的結果開始編輯 @編輯外觀新增返回按鈕 @外觀存檔
 
 #import "MenuViewController.h"
@@ -167,6 +167,14 @@
     
 }
 
+- (void)allowVote {
+    
+}
+
+- (void)playerDied:(NSString *)playerId {
+    
+}
+
 - (void)gameStateChanged:(GameState)gameState {
     
     switch(gameState) {
@@ -194,6 +202,11 @@
         case GameStateNightVote:
             
             self.gameStateLabel.text = @"NightVote";
+            break;
+            
+        case GameStateShowNightResults:
+            
+            self.gameStateLabel.text = @"ShowNightResults";
             break;
             
         case GameStateDayStart:
