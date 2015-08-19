@@ -17,24 +17,28 @@
 
 typedef enum {
     
-    MessagePlayerConnected = 0,     //to Server
-    MessageNotInMatch = 1,              //from Server
-    MessageStartMatch = 2,          //to Server
-    MessageMatchStarted = 3,            //from Server
-    MessagePlayerImageUpdated = 4,  //to Server
-    MessagePlayerSendChat = 5,      //to Server
-    MessageUpdateChat = 6,              //from Server
-    MessagePlayerVoteFor = 7,       //to Server
-    MessageUpdateVote = 8,              //from Server
-    MessageStartDiscussion = 9,      //to Server
-    MessageResetVote = 10,           //to Server
-    MessageAllowVote = 11,              //from Server
-    MessagePlayerConfirmVote = 12,  //to Server
-    MessagePlayerDied = 13,             //from Server
-    MessagePlayerSendLastWords = 14,//to Server
-    MessagePlayerHasLastWords = 15,    //from Server
+    MessagePlayerConnected = 0,         //to Server
+    MessageNotInMatch = 1,                  //from Server
+    MessageStartMatch = 2,              //to Server
+    MessageMatchStarted = 3,                //from Server
+    MessagePlayerImageUpdated = 4,      //to Server
+    MessagePlayerSendChat = 5,          //to Server
+    MessageUpdateChat = 6,                  //from Server
+    MessagePlayerVoteFor = 7,           //to Server
+    MessageUpdateVote = 8,                  //from Server
+    MessageStartDiscussion = 9,         //to Server
+    MessageResetVote = 10,              //to Server
+    MessageAllowVote = 11,                  //from Server
+    MessagePlayerNightConfirmVote = 12, //to Server
+    MessagePlayerDayConfirmVote = 13,   //to Server
+    MessagePlayerDied = 14,                 //from Server
+    MessageJudgePlayer = 15,                //from Server
+    MessagePlayerSendLastWords = 16,    //to Server
+    MessagePlayerHasLastWords = 17,         //from Server
     
 } MessageType;
+
+
 
 @interface NetworkController () <NSStreamDelegate, GKMatchmakerViewControllerDelegate> {
     
@@ -249,11 +253,22 @@ static NetworkController *sharedController = nil;
     [self sendData:writer.data];
 }
 
-- (void)sendConfirmVote {
+- (void)sendNightConfirmVote {
     
     MessageWriter * writer = [MessageWriter new];
     
-    [writer writeByte:MessagePlayerConfirmVote];
+    [writer writeByte:MessagePlayerNightConfirmVote];
+    
+    [writer writeString:[GKLocalPlayer localPlayer].playerID];
+    
+    [self sendData:writer.data];
+}
+
+- (void)sendDayConfirmVote {
+    
+    MessageWriter * writer = [MessageWriter new];
+    
+    [writer writeByte:MessagePlayerDayConfirmVote];
     
     [writer writeString:[GKLocalPlayer localPlayer].playerID];
     
@@ -328,6 +343,11 @@ static NetworkController *sharedController = nil;
         
         NSString *playerId = [reader readString];
         [self.delegate playerDied:playerId];
+        
+    }else if (msgType == MessageJudgePlayer) {
+        
+        NSString *playerId = [reader readString];
+        [self.delegate judgePlayer:playerId];
         
     }else if (msgType == MessagePlayerHasLastWords) {
         

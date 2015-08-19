@@ -74,7 +74,13 @@
     NSMutableArray *nightResults;
     NSMutableArray *nightResultsForAll;
     
+    NSMutableArray *dayResults;
+    
     NSDate *lastVoteTime;
+    float interval;
+    
+    BOOL waitForLastWords;
+    BOOL noOneToJudge;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *chatBoxTableView;
@@ -89,6 +95,9 @@
 @property (nonatomic, strong) TransitionDelegate *transitionController;
 @property (weak, nonatomic) IBOutlet UILabel *playerTeamLabel;
 @property (weak, nonatomic) IBOutlet UIButton *confirmVoteButton;
+@property (weak, nonatomic) IBOutlet UIView *judgementVoteView;
+@property (weak, nonatomic) IBOutlet UILabel *guityCountLabel;
+@property (weak, nonatomic) IBOutlet UILabel *innocentCountLabel;
 
 @end
 
@@ -155,6 +164,8 @@
     
     nightResults = [NSMutableArray new];
     nightResultsForAll = [NSMutableArray new];
+    
+    dayResults = [NSMutableArray new];
     
     lastVoteTime = [NSDate date];
 }
@@ -240,7 +251,7 @@
     
     [self presentViewController:nightOutView animated:YES completion:^{
         
-        [self performSelector:@selector(dismissNightOutView) withObject:self afterDelay:5];
+        [self performSelector:@selector(dismissNightOutView) withObject:self afterDelay:5.0f];
     }];
     
 }
@@ -267,16 +278,27 @@
     
 }
 
-- (void)switchDayNightBackgroundImage{
+- (void)showDayBackgroundImage{
     
     [UIView transitionWithView:self.backgroundImg
                       duration:1.0f
                        options:UIViewAnimationOptionTransitionCrossDissolve
                     animations:^{
-                        self.backgroundImg.image =
-                        [UIImagePNGRepresentation(self.backgroundImg.image) isEqualToData:UIImagePNGRepresentation([UIImage imageNamed:BACKGROUND_IMAGE_DAY])]?
-                        [UIImage imageNamed:BACKGROUND_IMAGE_NIGHT]:
-                        [UIImage imageNamed:BACKGROUND_IMAGE_DAY];
+                        self.backgroundImg.image = [UIImage imageNamed:BACKGROUND_IMAGE_DAY];
+                    }
+                    completion:^(BOOL finished) {
+                        
+                    }
+     ];
+}
+
+- (void)showNightBackgroundImage{
+    
+    [UIView transitionWithView:self.backgroundImg
+                      duration:1.0f
+                       options:UIViewAnimationOptionTransitionCrossDissolve
+                    animations:^{
+                        self.backgroundImg.image = [UIImage imageNamed:BACKGROUND_IMAGE_NIGHT];
                     }
                     completion:^(BOOL finished) {
                         //changeGameState
@@ -290,13 +312,24 @@
     selfShouldVote = false;
     [self.playerListTableView reloadData];
     
-    [self processVoteResult];
+    if ([NetworkController sharedInstance].gameState == GameStateNightDiscussion ||
+        [NetworkController sharedInstance].gameState == GameStateNightVote) {
+        
+        [self processNightVoteResult];
+
+    }else if ([NetworkController sharedInstance].gameState == GameStateDayDiscussion ||
+              [NetworkController sharedInstance].gameState == GameStateDayVote) {
+        
+        [self processDayVoteResult];
+
+    }
+
     self.confirmVoteButton.enabled = false;
 }
 
-- (void)processVoteResult {
+- (void)processNightVoteResult {
     
-    [[NetworkController sharedInstance] sendConfirmVote];
+    [[NetworkController sharedInstance] sendNightConfirmVote];
     
     if (selfTeam == PLAYER_TEAM_MAFIA) {
         
@@ -335,6 +368,21 @@
             }
         }
         [self showSystemMessage:@"你今晚沒有調查任何人"];
+    }
+}
+
+- (void)processDayVoteResult {
+    
+    [[NetworkController sharedInstance] sendDayConfirmVote];
+    
+    if (selfVoteFor != 99) {
+            
+        Player *playerChosen = [self.match.players objectAtIndex:selfVoteFor];
+        [self showSystemMessage:[NSString stringWithFormat:@"你決定投票審判%@", playerChosen.alias]];
+            
+    }else {
+            
+        [self showSystemMessage:@"你決定不審判任何人"];
     }
 }
 
@@ -425,30 +473,36 @@
 
 - (void)dismissNightOutView {
     
-    [self dismissViewControllerAnimated:true completion:nil];
-    
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"你已經死了" message:@"在你斷氣之前,你還有最後一口氣能留下遺囑" preferredStyle:UIAlertControllerStyleAlert];
-    
-    UIAlertAction *done = [UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    [self dismissViewControllerAnimated:true completion:^{
         
-        NSString *lastWords = [alert.textFields[0] text];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"你已經死了" message:@"在你斷氣之前,你還有最後一口氣能留下遺囑" preferredStyle:UIAlertControllerStyleAlert];
         
-        if (lastWords.length == 0) {
+        UIAlertAction *done = [UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
-            [[NetworkController sharedInstance] sendLastWords:LAST_WORDS_EMPTY];
+            NSString *lastWords = [alert.textFields[0] text];
             
-        }else {
+            if (lastWords.length == 0) {
+                
+                [[NetworkController sharedInstance] sendLastWords:LAST_WORDS_EMPTY];
+                
+            }else {
+                
+                [[NetworkController sharedInstance] sendLastWords:lastWords];
+            }
+        }];
+        
+        [alert addAction:done];
+        
+        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
             
-            [[NetworkController sharedInstance] sendLastWords:lastWords];
-        }
+            textField.placeholder = @"leave your lastwords here";
+        }];
+        
+        [self performSelector:@selector(presentAlertViewController:) withObject:alert afterDelay:2.0f];
     }];
-    
-    [alert addAction:done];
-    
-    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-        
-        textField.placeholder = @"leave your lastwords here";
-    }];
+}
+
+- (void)presentAlertViewController:(UIAlertController *)alert {
     
     [self presentViewController:alert animated:false completion:nil];
 }
@@ -459,16 +513,36 @@
     [[NetworkController sharedInstance] setGameState:currentGameState+1];
 }
 
+- (void)switchToGameStateNightStart {
+    
+    [[NetworkController sharedInstance] setGameState:GameStateNightStart];
+}
+
 - (void)resetVote {
     
     //for self
+    NSIndexPath *indexPath = [NSIndexPath indexPathForRow:selfVoteFor inSection:0];
+    playerCell *cell = (playerCell *)[self.playerListTableView cellForRowAtIndexPath:indexPath];
+    cell.vote.textColor = [UIColor blackColor];
+    selfVoteFor = 99;
     NSNumber *num = [NSNumber numberWithInt:0];
     for (int i=0; i<voteData.count; i++) {
         [voteData replaceObjectAtIndex:i withObject:num];
     }
+    [self.playerListTableView reloadData];
     
     //for server
     [[NetworkController sharedInstance] sendResetVote];
+}
+
+- (IBAction)guiltyButtonPressed:(id)sender {
+    
+    
+}
+
+- (IBAction)InnocentButtonPressed:(id)sender {
+    
+    
 }
 
 #pragma mark - UITextFieldDelegate Methods
@@ -916,14 +990,21 @@
     }else if ([NetworkController sharedInstance].gameState == GameStateDayDiscussion ||
               [NetworkController sharedInstance].gameState == GameStateDayVote) {
         
-        //TODO:allowDayVote
+        selfShouldVote = true;
+        selfShouldSeeVote = true;
+        self.confirmVoteButton.enabled = true;
     }
     [self.playerListTableView reloadData];
 }
 
 - (void)playerDied:(NSString *)playerId {
     
+    nightResults = [NSMutableArray new];
+    nightResultsForAll = [NSMutableArray new];
+    
     if ([playerId isEqualToString:@"noOne"]) {
+        
+        waitForLastWords = false;
         
         [nightResultsForAll addObject:@"作晚月黑風高,但是所有人都平安的度過了"];
 
@@ -931,11 +1012,10 @@
             
             [nightResults addObject:@"殺手今晚沒有殺人"];
         }
-        [[NetworkController sharedInstance] setGameState:GameStateShowNightResults];
-        [[NetworkController sharedInstance] setGameState:GameStateDayStart];
-        
     }else {
     
+        waitForLastWords = true;
+        
         if ([[GKLocalPlayer localPlayer].playerID isEqualToString:playerId]) {
         
             [nightResults addObject:@"你在今晚不幸地被殺手殺死了"];
@@ -944,7 +1024,7 @@
                 
                 if ([p.playerId isEqualToString:playerId]) {
                     
-                    [self callNightOutViewWithPlayerImage:p.playerImage];
+                    [self performSelector:@selector(callNightOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
                     
                     break;
                 }
@@ -971,9 +1051,45 @@
                 break;
             }
         }
-        [[NetworkController sharedInstance] setGameState:GameStateShowNightResults];
     }
+    [[NetworkController sharedInstance] setGameState:GameStateShowNightResults];
 }
+
+- (void)judgePlayer:(NSString *)playerId {
+    
+    dayResults = [NSMutableArray new];
+    
+    if ([playerId isEqualToString:@"noOne"]) {
+        
+        noOneToJudge = true;
+        
+        [dayResults addObject:@"依據投票結果,沒有人被送上審判台"];
+    
+    }else {
+        
+        noOneToJudge = false;
+        
+        if ([[GKLocalPlayer localPlayer].playerID isEqualToString:playerId]) {
+            
+            [dayResults addObject:@"依據投票結果,你被送上了審判台"];
+
+        }else {
+            
+            for (Player *p in self.match.players) {
+                
+                if ([p.playerId isEqualToString:playerId]) {
+                    
+                    [dayResults addObject:[NSString stringWithFormat:@"依據投票結果,%@被送上了審判台", p.alias]];
+                    break;
+                }
+            }
+        }
+    }
+    //TODO:[self showJudgePlayerAnimation:p.playerImage];
+
+    [[NetworkController sharedInstance] setGameState:GameStateShowDayResults];
+}
+
 
 - (void)playerHasLastWords:(NSString *)lastWords withPlayerId:(NSString *)playerId {
     
@@ -1006,11 +1122,10 @@
                     [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_CIVILIAN_STRING]];
                 }
             }
-            [[NetworkController sharedInstance] setGameState:GameStateDayStart];
-            
             break;
         }
     }
+    [self switchToNextGameState];
 }
 
 - (void)gameStateChanged:(GameState)gameState {
@@ -1038,7 +1153,7 @@
             self.gameStateLabel.text = @"NightStart";
             
             //nightBeginAnimation
-            [self switchDayNightBackgroundImage];
+            [self showNightBackgroundImage];
             
             //showSystemMessage
             [self showSystemMessage:@"夜晚降臨"];
@@ -1119,10 +1234,13 @@
             
             self.gameStateLabel.text = @"ShowNightResults";
             
+            //disable chat
+            self.chatTextField.enabled = false;
+            
             //showNightResult
             if (nightResults.count != 0) {
                 
-                float interval = 1.5f;
+                interval = 1.5f;
                 
                 for (NSString *result in nightResults) {
                     
@@ -1132,6 +1250,10 @@
                 }
             }
             
+            if (waitForLastWords == false) {
+                [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:interval];
+            }
+            
             break;
             
         case GameStateDayStart:
@@ -1139,7 +1261,7 @@
             self.gameStateLabel.text = @"DayStart";
             
             //dayBeginAnimation
-            [self switchDayNightBackgroundImage];
+            [self showDayBackgroundImage];
             
             //showSystemMessage
             [self showSystemMessage:@"太陽升起,白天到來"];
@@ -1155,7 +1277,7 @@
             //showNightResultForAll
             if (nightResultsForAll.count != 0) {
                 
-                float interval = 1.5f;
+                interval = 1.5f;
 
                 for (NSString *result in nightResultsForAll) {
                     
@@ -1166,27 +1288,119 @@
             }
             
             //check for gameOver
+            //TODO:gameOver check
+            [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:interval];
             
             break;
             
         case GameStateDayDiscussion:
             
             self.gameStateLabel.text = @"DayDiscussion";
+            
+            [[NetworkController sharedInstance] sendStartDiscussion];
+            
+            [self showSystemMessage:@"所有人可以開始討論及選擇對象"];
+            
+            //allowChatToAll
+            selfChatType = ChatToAll;
+            self.chatTextField.enabled = true;
+            
+            //allow Receive/Send Vote
+            selfShouldUpdateVote = true;
+            selfShouldSendVote = true;
+            
+            //resetVote
+            [self resetVote];
+            
+            [self.playerListTableView reloadData];
+            
+            //changeGameState
+            [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:3];
+            
             break;
             
         case GameStateDayVote:
             
             self.gameStateLabel.text = @"DayVote";
+            
+            //showSystemMessage
+            [self showSystemMessage:@"所有人請確認選擇"];
+            
+            break;
+            
+        case GameStateShowDayResults:
+            
+            self.gameStateLabel.text = @"ShowDayResults";
+            
+            //disable chat
+            self.chatTextField.enabled = false;
+            
+            //showDayResults
+            if (dayResults.count != 0) {
+                
+                interval = 1.5f;
+                
+                for (NSString *result in dayResults) {
+                    
+                    [self performSelector:@selector(showSystemMessage:) withObject:result afterDelay:interval];
+                    
+                    interval += 1.5f;
+                }
+            }
+            
+            if (noOneToJudge == false) {
+                
+                [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:interval];
+                
+            }else {
+                
+                [self performSelector:@selector(switchToGameStateNightStart) withObject:nil afterDelay:interval];
+            }
+            
             break;
             
         case GameStateJudgementDiscussion:
             
             self.gameStateLabel.text = @"JudgementDiscussion";
+            
+            [[NetworkController sharedInstance] sendStartDiscussion];
+            
+            [self showSystemMessage:@"審判開始,所有人可以開始質詢及投票"];
+       
+            //allowChatToAll
+            selfChatType = ChatToAll;
+            self.chatTextField.enabled = true;
+            
+            //disable Vote
+            selfShouldUpdateVote = false;
+            selfShouldSendVote = false;
+            selfShouldVote = false;
+            selfShouldSeeVote = false;
+            [self.playerListTableView reloadData];
+            
+            //TODO:guilty or not vote
+            self.judgementVoteView.hidden = false;
+//            //allow Receive/Send Vote
+//            selfShouldUpdateVote = true;
+//            selfShouldSendVote = true;
+//            
+//            //resetVote
+//            [self resetVote];
+//            
+//            [self.playerListTableView reloadData];
+            
+            //changeGameState
+            [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:3];
+
             break;
             
         case GameStateJudgementVote:
             
             self.gameStateLabel.text = @"JudgementVote";
+            
+            //showSystemMessage
+            [self showSystemMessage:@"所有人請確認投票"];
+
             break;
             
         case GameStateGameOver:

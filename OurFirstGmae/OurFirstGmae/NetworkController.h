@@ -42,9 +42,10 @@ typedef enum {
     GameStateDayStart = 6,
     GameStateDayDiscussion = 7,
     GameStateDayVote = 8,
-    GameStateJudgementDiscussion = 9,
-    GameStateJudgementVote = 10,
-    GameStateGameOver = 11,
+    GameStateShowDayResults = 9,
+    GameStateJudgementDiscussion = 10,
+    GameStateJudgementVote = 11,
+    GameStateGameOver = 12,
     
 } GameState;
 
@@ -58,6 +59,7 @@ typedef enum {
 - (void)updateVoteFor:(int)voteFor fromVotedFor:(int)votedFor withPlayerId:(NSString *)playerId;
 - (void)allowVote;
 - (void)playerDied:(NSString *)playerId;
+- (void)judgePlayer:(NSString *)playerId;
 - (void)playerHasLastWords:(NSString *)lastWords withPlayerId:(NSString *)playerId;
 
 - (void)gameStateChanged:(GameState)gameState;
@@ -84,7 +86,8 @@ typedef enum {
 - (void)setGameState:(GameState)gameState;
 - (void)sendStartDiscussion;
 - (void)sendResetVote;
-- (void)sendConfirmVote;
+- (void)sendNightConfirmVote;
+- (void)sendDayConfirmVote;
 - (void)sendLastWords:(NSString *)lastWords;
 
 @end
