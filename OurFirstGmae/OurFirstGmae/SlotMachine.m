@@ -114,8 +114,8 @@
 -(void)viewDidAppear:(BOOL)animated{
     NSInteger iconArrayCount = _slotIcon.count;
     NSInteger slotIndex = arc4random()%iconArrayCount;
-    iconImageView.image = [_slotIcon objectAtIndex:1];  // 改變結果
-    _jobName=[_iconText objectAtIndex:1];
+    iconImageView.image = [_slotIcon objectAtIndex:slotIndex];  // 改變結果
+    _jobName=[_iconText objectAtIndex:slotIndex];
     slotClass.slotResult = [NSArray arrayWithObject:[NSNumber numberWithInteger:slotIndex]];
     
     [slotClass startSlide];

@@ -19,7 +19,8 @@
     UIImageView *imageView;
     UITableView *clothFrame;
     NSArray *uniformArray ;
-   
+    NSArray *sentUniform;
+    NSArray *hairArray;
     UIImageView *mask;
 
 }
