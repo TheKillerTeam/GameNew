@@ -17,10 +17,10 @@
     CGRect contentViewBound = self.contentView.bounds;
     // grab the frame for the imageView
     CGRect imageViewFrame = self.imageView.frame;
-    // change x position
-    imageViewFrame.origin.x = contentViewBound.size.width - imageViewFrame.size.width-80;
-    
-    imageViewFrame.size.width=120;
+    imageViewFrame.origin.x =0;
+    imageViewFrame.origin.y =0;
+    imageViewFrame.size.width=self.contentView.frame.size.width;
+    imageViewFrame.size.height=self.contentView.frame.size.height;
     // assign the new frame
     self.imageView.frame = imageViewFrame;
 }

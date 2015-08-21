@@ -17,12 +17,13 @@
 @interface playerInfoViewController ()<UIImagePickerControllerDelegate,UINavigationControllerDelegate, NetworkControllerDelegate>
 {
     UIImagePickerController *ImagePicker;
+    CGRect originalFrame ;
     
 }
 @property (weak, nonatomic) IBOutlet UIImageView *playPhoto;
 @property (weak, nonatomic) IBOutlet cropView *crop;
 @property (weak, nonatomic) IBOutlet UILabel *debugLabel;
-
+@property (strong,nonatomic) UIImageView *scan;
 @end
 
 @implementation playerInfoViewController
@@ -30,18 +31,52 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-  
-    _crop.layer.borderWidth=1.0;
-    _crop.layer.borderColor=[UIColor redColor].CGColor;
+//  
+//    _crop.layer.borderWidth=1.0;
+//    _crop.layer.borderColor=[UIColor redColor].CGColor;
     
     [_crop step];
     
     [NetworkController sharedInstance].delegate = self;
     [self networkStateChanged:[NetworkController sharedInstance].networkState];
+       NSLog(@"selfframe %@",NSStringFromCGRect(self.view.frame));
+    
+    
+    self.scan =[[UIImageView alloc]initWithFrame:CGRectMake(-10000,0 , 10000, 100)];
+    UIImage *image= [UIImage imageNamed:@"Rectangle 1.png"];
+    [_scan setImage:image];
+    originalFrame=_scan.frame;
+    [self.view insertSubview:_scan atIndex:0];
+   
+
+}
+
+-(void)slide{
+  
+    _scan.frame=originalFrame;
+    
+    [UIView animateWithDuration:5.0f animations:^{
+
+        CGRect finalPosition = _scan.frame;
+        finalPosition.origin.x =self.view.frame.size.width;
+        finalPosition.origin.y =10;
+        _scan.frame=finalPosition;
+        
+
+        
+    }completion:^(BOOL finished){
+        if(finished)
+            [self slide];
+    }];
+    
+    
+    
+    [UIView commitAnimations];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
-
+    [super viewDidAppear:YES];
+    [self slide];
 }
 
 - (void)didReceiveMemoryWarning {

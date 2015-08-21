@@ -243,7 +243,6 @@
 
 
 -(void)callMorningOutView{
-
     
     morningOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"morningOutView"];
     morningOutView.view.backgroundColor = [UIColor clearColor];
@@ -254,7 +253,6 @@
 
 
 - (void)callNightOutViewWithPlayerImage:(UIImage *)playerImage{
-
     nightOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"nightOutView"];
     
     nightOutView.playerImage = playerImage;
