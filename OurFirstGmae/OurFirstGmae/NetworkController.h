@@ -83,6 +83,7 @@ typedef enum {
 - (void)sendUpdatePlayerImage:(UIImage *)image;
 - (void)sendChat:(NSString *)chat withChatType:(ChatType)chatType;
 - (void)sendVoteFor:(int)playerIndex;
+- (void)sendJudgeFor:(int)judge;
 - (void)setGameState:(GameState)gameState;
 - (void)sendStartDiscussion;
 - (void)sendResetVote;
