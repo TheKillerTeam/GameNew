@@ -145,8 +145,6 @@ static BOOL isSlide =NO;
             [self.delegate slotMachineDidEnd:self];
         }
      
-        
-//              NSLog(@"positionArray %@",positionArray.description);
         scrollLayer.position = CGPointMake(scrollLayer.position.x, ((NSNumber *)[positionArray objectAtIndex:0]).floatValue);
        
         NSMutableArray *toBeDeletedLayerArray = [NSMutableArray array];
@@ -198,7 +196,6 @@ static BOOL isSlide =NO;
     
     
     static NSString *const keyPath = @"position.y";
-//    NSLog(@"_slotResult %@",_slotResult.description);
 
     for(int i= 0 ; i<_slotResult.count ; i++){
        

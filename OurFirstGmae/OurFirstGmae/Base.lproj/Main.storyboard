@@ -232,9 +232,6 @@
                                                         </label>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Chat" lineBreakMode="tailTruncation" numberOfLines="5" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="p4d-gD-x0d">
                                                             <rect key="frame" x="62" y="23" width="300" height="17"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="300" id="0ep-FP-Ng4"/>
-                                                            </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
@@ -242,6 +239,7 @@
                                                     </subviews>
                                                     <constraints>
                                                         <constraint firstItem="xaT-uu-t4B" firstAttribute="top" secondItem="mpc-Vb-pQD" secondAttribute="top" constant="4" id="2vq-S1-fgN"/>
+                                                        <constraint firstAttribute="trailing" secondItem="p4d-gD-x0d" secondAttribute="trailing" constant="13" id="864-qY-9Db"/>
                                                         <constraint firstItem="Rov-Mt-KA5" firstAttribute="leading" secondItem="mpc-Vb-pQD" secondAttribute="leading" constant="4" id="S1U-Ma-j78"/>
                                                         <constraint firstItem="p4d-gD-x0d" firstAttribute="leading" secondItem="Rov-Mt-KA5" secondAttribute="trailing" constant="20" id="YYl-HK-o8J"/>
                                                         <constraint firstAttribute="trailing" secondItem="xaT-uu-t4B" secondAttribute="trailing" constant="4" id="Yhy-6n-OOr"/>
@@ -363,7 +361,9 @@
                         <outlet property="debugLabel" destination="lcc-Yi-eTC" id="a1t-w0-xFF"/>
                         <outlet property="extraBtn" destination="5vS-yA-BXb" id="nbS-2q-cUs"/>
                         <outlet property="gameStateLabel" destination="PqZ-XR-DkQ" id="nFS-Qz-zc2"/>
+                        <outlet property="guiltyButton" destination="Cws-2K-mrE" id="JO8-Aa-y3U"/>
                         <outlet property="guityCountLabel" destination="KvU-7t-rIY" id="Ccy-8V-0HL"/>
+                        <outlet property="innocentButton" destination="gtT-JI-LMh" id="eHd-7G-IsO"/>
                         <outlet property="innocentCountLabel" destination="UtV-9v-emE" id="TmB-aX-0U4"/>
                         <outlet property="judgementVoteView" destination="xth-fH-AZj" id="IWr-9j-l6N"/>
                         <outlet property="playerListTableView" destination="vl1-dQ-qKD" id="qaR-wh-a0O"/>
@@ -448,15 +448,6 @@
                                     <constraint firstAttribute="height" constant="300" id="cs1-IH-GZp"/>
                                 </constraints>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Oeb-t0-zSp">
-                                <rect key="frame" x="40" y="28" width="46" height="30"/>
-                                <state key="normal" title="Button">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="dissmissBtn:" destination="aG6-n9-SfQ" eventType="touchUpInside" id="nhG-qB-Hjl"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.95817116252612067" green="1" blue="0.95529580377354228" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
@@ -490,15 +481,6 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="play7.jpg" translatesAutoresizingMaskIntoConstraints="NO" id="bZj-8A-smG">
                                 <rect key="frame" x="87" y="367" width="200" height="300"/>
                             </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XOz-nm-OUb">
-                                <rect key="frame" x="16" y="20" width="46" height="30"/>
-                                <state key="normal" title="Button">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="testBtn:" destination="IDM-ah-913" eventType="touchUpInside" id="zhC-q7-eV7"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <connections>

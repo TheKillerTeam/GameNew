@@ -15,15 +15,17 @@ MESSAGE_UPDATE_CHAT = 6
 MESSAGE_PLAYER_VOTE_FOR = 7
 MESSAGE_PLAYER_JUDGE_FOR = 8
 MESSAGE_UPDATE_VOTE = 9
-MESSAGE_START_DISCUSSION = 10
-MESSAGE_RESET_VOTE = 11
-MESSAGE_ALLOW_VOTE = 12
-MESSAGE_PLAYER_NIGHT_CONFIRM_VOTE = 13
-MESSAGE_PLAYER_DAY_CONFIRM_VOTE = 14
-MESSAGE_PLAYER_DIED = 15
-MESSAGE_JUDGE_PLAYER = 16
-MESSAGE_PLAYER_SEND_LAST_WORDS = 17
-MESSAGE_PLAYER_HAS_LAST_WORDS = 18
+MESSAGE_UPDATE_JUDGE = 10
+MESSAGE_START_DISCUSSION = 11
+MESSAGE_RESET_VOTE = 12
+MESSAGE_ALLOW_VOTE = 13
+MESSAGE_PLAYER_NIGHT_CONFIRM_VOTE = 14
+MESSAGE_PLAYER_DAY_CONFIRM_VOTE = 15
+MESSAGE_PLAYER_JUDGEMENT_CONFIRM_VOTE = 16
+MESSAGE_PLAYER_DIED = 17
+MESSAGE_JUDGE_PLAYER = 18
+MESSAGE_PLAYER_SEND_LAST_WORDS = 19
+MESSAGE_PLAYER_HAS_LAST_WORDS = 20
 
 MATCH_STATE_ACTIVE = 0
 MATCH_STATE_GAME_OVER = 1
@@ -64,6 +66,9 @@ RESETED = 1
 
 NOTCONFIRMED = 0
 CONFIRMED = 1
+
+JUDGE_GUILTY = 0
+JUDGE_INNOCENT = 1
 
 class MessageReader:
 
@@ -158,12 +163,13 @@ class GamePlayer:
         self.playerState = PLAYER_STATE_ALIVE
         self.playerTeam = PLAYER_TEAM_CIVILIAN
         self.voteFor = 99
+        self.judgeFor = 99
         self.voteCount = 0
         self.reseted = RESETED
         self.confirmVote = NOTCONFIRMED
 
     def __repr__(self):
-        return "%s:%d,%d,%d,%d" % (self.alias, self.playerState, self.playerTeam, self.voteFor, self.voteCount)
+        return "%s:%d,%d,%d,%d,%d" % (self.alias, self.playerState, self.playerTeam, self.voteFor, self.judgeFor, self.voteCount)
 
     def write(self, message):
         message.writeString(self.playerImage)
@@ -223,17 +229,29 @@ class GameFactory(Factory):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 votedFor = existingPlayer.voteFor
-                if existingPlayer.voteFor == voteFor:
+                if votedFor == voteFor:
                     existingPlayer.voteFor = 99
                     self.players[voteFor].voteCount = self.players[voteFor].voteCount - 1
                 else:
                     self.players[voteFor].voteCount = self.players[voteFor].voteCount + 1
-                    if existingPlayer.voteFor != 99:
+                    if votedFor != 99:
                         self.players[existingPlayer.voteFor].voteCount = self.players[existingPlayer.voteFor].voteCount - 1
                     existingPlayer.voteFor = voteFor
         for existingPlayer in self.players:
             if existingPlayer.playerId != playerId:
                 existingPlayer.protocol.sendUpdateVote(voteFor, votedFor, playerId)
+                
+    def playerJudgeFor(self, protocol, judgeFor, playerId):
+        for existingPlayer in self.players:
+            if existingPlayer.playerId == playerId:
+                judgedFor = existingPlayer.judgeFor
+                if judgedFor == judgeFor:
+                    existingPlayer.judgeFor = 99
+                else:
+                    existingPlayer.judgeFor = judgeFor
+        for existingPlayer in self.players:
+            if existingPlayer.playerId != playerId:
+                existingPlayer.protocol.sendUpdateJudge(judgeFor, judgedFor, playerId)
 
     def startDiscussion(self, protocol):
         allReseted = True;
@@ -247,6 +265,7 @@ class GameFactory(Factory):
     def resetVote(self, protocol, playerId):
         for existingPlayer in self.players:
             existingPlayer.voteFor = 99
+            existingPlayer.judgeFor = 99
             existingPlayer.voteCount = 0
             existingPlayer.confirmVote = NOTCONFIRMED
         for existingPlayer in self.players:
@@ -322,6 +341,31 @@ class GameFactory(Factory):
             if noOneToJudge == True:
                 for existingPlayer in self.players:
                     existingPlayer.protocol.sendJudgePlayer("noOne")
+                    
+    def playerJudgementConfirmVote(self, protocol, playerId):
+        for existingPlayer in self.players:
+            if existingPlayer.playerId == playerId:
+                existingPlayer.confirmVote = CONFIRMED
+        allConfirmed = True;
+        for existingPlayer in self.players:
+            if existingPlayer.confirmVote == NOTCONFIRMED:
+                allConfirmed = False
+        if allConfirmed == True:
+            alivePlayerCount = 0
+            for existingPlayer in self.players:
+                #if existingPlayer.playerState == PLAYER_STATE_ALIVE:
+                alivePlayerCount += 1
+            guiltyVoteCount = 0
+            for existingPlayer in self.players:
+                if existingPlayer.judgeFor == JUDGE_GUILTY:
+                    #if existingPlayer.playerState == PLAYER_STATE_ALIVE:
+                    guiltyVoteCount += 1;
+            if guiltyVoteCount *2 >= alivePlayerCount:
+                for existingPlayer in self.players:
+                    existingPlayer.protocol.sendPlayerDied(existingPlayer.playerId)
+            else:
+                for existingPlayer in self.players:
+                    existingPlayer.protocol.sendPlayerDied("noOne")
         
     def playerSendLastWords(self, protocol, lastWords, playerId):
         for existingPlayer in self.players:
@@ -433,6 +477,15 @@ class GameProtocol(Protocol):
         message.writeString(playerId)
         self.log("Sent MESSAGE_UPDATE_VOTE")
         self.sendMessage(message)
+        
+    def sendUpdateJudge(self, judgeFor, judgedFor, playerId):
+        message = MessageWriter()
+        message.writeByte(MESSAGE_UPDATE_JUDGE)
+        message.writeByte(judgeFor)
+        message.writeByte(judgedFor)
+        message.writeString(playerId)
+        self.log("Sent MESSAGE_UPDATE_JUDGE")
+        self.sendMessage(message)
 
     def playerVoteFor(self, message):
         voteFor = message.readByte()
@@ -440,6 +493,12 @@ class GameProtocol(Protocol):
         self.log("Recv MESSAGE_PLAYER_VOTE_FOR %s %d" % (playerId, voteFor))
         self.factory.playerVoteFor(self, voteFor, playerId)
         
+    def playerJudgeFor(self, message):
+        judgeFor = message.readByte()
+        playerId = message.readString()
+        self.log("Recv MESSAGE_PLAYER_JUDGE_FOR %s %d" % (playerId, judgeFor))
+        self.factory.playerJudgeFor(self, judgeFor, playerId)
+    
     def startDiscussion(self, message):
         uselessData = message.readByte()
         self.log("Recv MESSAGE_START_DISCUSSION")
@@ -459,6 +518,11 @@ class GameProtocol(Protocol):
         playerId = message.readString()
         self.log("Recv MESSAGE_PLAYER_DAY_CONFIRM_VOTE %s" % (playerId))
         self.factory.playerDayConfirmVote(self, playerId)
+
+    def playerJudgementConfirmVote(self, message):
+        playerId = message.readString()
+        self.log("Recv MESSAGE_PLAYER_JUDGEMENT_CONFIRM_VOTE %s" % (playerId))
+        self.factory.playerJudgementConfirmVote(self, playerId)
 
     def sendPlayerDied(self, playerId):
         message = MessageWriter()
@@ -506,6 +570,8 @@ class GameProtocol(Protocol):
             return self.playerSendChat(message)
         if messageId == MESSAGE_PLAYER_VOTE_FOR:
             return self.playerVoteFor(message)
+        if messageId == MESSAGE_PLAYER_JUDGE_FOR:
+            return self.playerJudgeFor(message)
         if messageId == MESSAGE_START_DISCUSSION:
             return self.startDiscussion(message)
         if messageId == MESSAGE_RESET_VOTE:
@@ -514,6 +580,8 @@ class GameProtocol(Protocol):
             return self.playerNightConfirmVote(message)
         if messageId == MESSAGE_PLAYER_DAY_CONFIRM_VOTE:
             return self.playerDayConfirmVote(message)
+        if messageId == MESSAGE_PLAYER_JUDGEMENT_CONFIRM_VOTE:
+            return self.playerJudgementConfirmVote(message)
         if messageId == MESSAGE_PLAYER_SEND_LAST_WORDS:
             return self.playerSendLastWords(message)
         self.log("Unexpected message: %d" % (messageId))

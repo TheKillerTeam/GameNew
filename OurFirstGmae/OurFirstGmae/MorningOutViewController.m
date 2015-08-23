@@ -8,7 +8,8 @@
 
 #import "MorningOutViewController.h"
 
-@interface MorningOutViewController ()<UIGestureRecognizerDelegate>
+@interface MorningOutViewController () <UIGestureRecognizerDelegate>
+
 @property (weak, nonatomic) IBOutlet UIImageView *morningOutImgView;
 @property (strong, nonatomic) IBOutlet UISwipeGestureRecognizer *swip;
 
@@ -32,15 +33,6 @@
     // Dispose of any resources that can be recreated.
 }
 
-
-- (IBAction)testBtn:(id)sender {
-  
-
-    
-    [self dismissViewControllerAnimated:YES completion:nil];
-    
-}
-
 - (IBAction)swipeUp:(id)sender {
     
     CABasicAnimation* shake = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
@@ -56,10 +48,8 @@
     
     [self.morningOutImgView.layer addAnimation:shake forKey:@"imageView"];
     
-    
-    
+
     [UIView animateWithDuration:2.0 delay:2.0 options:UIViewAnimationOptionCurveEaseIn animations:nil completion:nil];
-    
     
     
     [UIView beginAnimations:@"go" context:nil];
@@ -76,7 +66,6 @@
     _morningOutImgView.alpha=1;
     
     
-    
     [UIView beginAnimations: @"Fade Out" context:nil];
     
     
@@ -91,15 +80,5 @@
     [UIView commitAnimations];
     _swip.enabled=NO;
 }
-
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
 
 @end
