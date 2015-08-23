@@ -50,7 +50,7 @@
 #define JUDGE_GUILTY     0
 #define JUDGE_INNOCENT   1
 
-@interface ViewController () <NetworkControllerDelegate, UITableViewDelegate, UITableViewDataSource,NSStreamDelegate, UITextFieldDelegate> {
+@interface ViewController () <NetworkControllerDelegate, UITableViewDelegate, UITableViewDataSource,NSStreamDelegate, UITextFieldDelegate, MorningOutViewControllerDelegate> {
     
     UIView *inputBar;
     CGRect originframeChatBox;
@@ -237,7 +237,7 @@
     }];
 }
 
-- (void)callLoadingView{
+- (void)callLoadingView {
 
     loadingView = [self.storyboard instantiateViewControllerWithIdentifier:@"loadingView"];
     loadingView.view.backgroundColor = [UIColor blackColor];
@@ -248,20 +248,31 @@
 }
 
 
--(void)callMorningOutView{
+-(void)callMorningOutViewWithPlayerImage:(UIImage *)playerImage {
     
     morningOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"morningOutView"];
+    
+    morningOutView.playerImage = playerImage;
+    
+    if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId]) {
+        
+        morningOutView.autoSwipe = true;
+        
+    }else {
+        
+        morningOutView.autoSwipe = false;
+    }
+    
+    morningOutView.delegate = self;
+    
     morningOutView.view.backgroundColor = [UIColor clearColor];
     [morningOutView setTransitioningDelegate:_transitionController];
     morningOutView.modalPresentationStyle= UIModalPresentationCustom;
-    [self presentViewController:morningOutView animated:YES completion:^{
-        
-        [self performSelector:@selector(dismissMorningOutView) withObject:self afterDelay:5.0f];
-    }];
+    [self presentViewController:morningOutView animated:YES completion:nil];
 }
 
 
-- (void)callNightOutViewWithPlayerImage:(UIImage *)playerImage{
+- (void)callNightOutViewWithPlayerImage:(UIImage *)playerImage {
     
     nightOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"nightOutView"];
     
@@ -278,7 +289,7 @@
     
 }
 
-- (void)keyboardWillChangeFrame:(NSNotification*)notify{
+- (void)keyboardWillChangeFrame:(NSNotification*)notify {
 
     CGRect keyboardRect = [notify.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue];
     CGFloat durationTime = [notify.userInfo[UIKeyboardAnimationDurationUserInfoKey]floatValue];
@@ -604,55 +615,6 @@
     }];
 }
 
-- (void)dismissMorningOutView {
-    
-    [self dismissViewControllerAnimated:true completion:^{
-        
-        if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId]) {
-        
-            UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"你已經死了" message:@"在你斷氣之前,你還有最後一口氣能留下遺囑" preferredStyle:UIAlertControllerStyleAlert];
-        
-            UIAlertAction *done = [UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            
-                NSString *lastWords = [alert.textFields[0] text];
-            
-                if (lastWords.length == 0) {
-                
-                    [[NetworkController sharedInstance] sendLastWords:LAST_WORDS_EMPTY];
-                
-                }else {
-                
-                    [[NetworkController sharedInstance] sendLastWords:lastWords];
-                }
-            }];
-        
-            [alert addAction:done];
-        
-            [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
-            
-                textField.placeholder = @"leave your lastwords here";
-                textField.returnKeyType = UIReturnKeyDone;
-            }];
-        
-            [self performSelector:@selector(presentAlertViewController:) withObject:alert afterDelay:2.0f];
-            
-        }else {
-            
-            NSString *judgePlayerAlias = [NSString new];
-            
-            for (Player *p in self.match.players) {
-                
-                if ([p.playerId isEqualToString:judgePlayerId]) {
-                    
-                    judgePlayerAlias = p.alias;
-                }
-            }
-
-            [self showSystemMessage:[NSString stringWithFormat:@"請稍候%@留下遺囑...", judgePlayerAlias]];
-        }
-    }];
-}
-
 - (void)presentAlertViewController:(UIAlertController *)alert {
     
     [self presentViewController:alert animated:false completion:nil];
@@ -904,6 +866,41 @@
     return true;
 }
 
+#pragma mark - MorningOutViewControllerDelegate
+
+- (void)swiped {
+    
+    if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId]) {
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"你已經死了" message:@"在你斷氣之前,你還有最後一口氣能留下遺囑" preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction *done = [UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            
+            NSString *lastWords = [alert.textFields[0] text];
+            
+            if (lastWords.length == 0) {
+                
+                [[NetworkController sharedInstance] sendLastWords:LAST_WORDS_EMPTY];
+                
+            }else {
+                
+                [[NetworkController sharedInstance] sendLastWords:lastWords];
+            }
+        }];
+        
+        [alert addAction:done];
+        
+        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+            
+            textField.placeholder = @"leave your lastwords here";
+            textField.returnKeyType = UIReturnKeyDone;
+        }];
+        
+        [self performSelector:@selector(presentAlertViewController:) withObject:alert afterDelay:2.0f];
+        
+    }
+}
+
 #pragma mark - cirleThePlayerImage
 
 -(void)initImageView{
@@ -944,6 +941,15 @@
         cell.playerPhoto.image = p.playerImage;
         cell.playerName.text = p.alias;
         cell.vote.text = [NSString stringWithFormat:@"%d",[[voteData objectAtIndex:indexPath.row] intValue]];
+        
+        if (p.playerState == PLAYER_STATE_ALIVE) {
+            
+            cell.playerName.textColor = [UIColor blackColor];
+        
+        }else {
+            
+            cell.playerName.textColor = [UIColor grayColor];
+        }
         
         if (selfShouldVote) {
             
@@ -1018,7 +1024,7 @@
         
         UIFont * font = [UIFont systemFontOfSize:14.0f];
         NSString *text = [[chatData objectAtIndex:indexPath.row] objectAtIndex:1];
-        CGFloat height = [text boundingRectWithSize:CGSizeMake(CGRectGetWidth([UIScreen mainScreen].bounds)-75, 10000) options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading) attributes:@{NSFontAttributeName: font} context:nil].size.height;
+        CGFloat height = [text boundingRectWithSize:CGSizeMake(CGRectGetWidth([UIScreen mainScreen].bounds)-80, 10000) options:(NSStringDrawingUsesLineFragmentOrigin|NSStringDrawingUsesFontLeading) attributes:@{NSFontAttributeName: font} context:nil].size.height;
         
         return height + 30.0f;
         
@@ -1530,7 +1536,7 @@
                     
                     if ([p.playerId isEqualToString:playerId]) {
                         
-                        [self performSelector:@selector(callMorningOutView) withObject:self afterDelay:1.0f];
+                        [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
                         
                         break;
                     }
@@ -1539,19 +1545,20 @@
             }else {
                 
                 [judgementResults addObject:[NSString stringWithFormat:@"依據審判的結果,我們處死了%@", judgePlayerAlias]];
-                
+                [judgementResults addObject:[NSString stringWithFormat:@"請稍候%@留下遺囑", judgePlayerAlias]];
+
                 for (Player *p in self.match.players) {
                     
                     if ([p.playerId isEqualToString:playerId]) {
                         
-                        [self performSelector:@selector(callMorningOutView) withObject:self afterDelay:1.0f];
+                        [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
                     }
                 }
             }
             
             for (Player *p in self.match.players) {
                 
-                if ([p.playerId isEqualToString:playerId]) {
+                if ([p.playerId isEqualToString:judgePlayerId]) {
                     
                     p.playerState = PLAYER_STATE_DEAD;
                     break;
@@ -1559,7 +1566,6 @@
             }
         }
         [[NetworkController sharedInstance] setGameState:GameStateShowJudgementResults];
-        
     }
 }
 
@@ -1636,6 +1642,9 @@
                         [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_CIVILIAN_STRING]];
                     }
                 }
+                [self.playerListTableView reloadData];
+                [self showPlayerList];
+                
                 break;
             }
         }
@@ -1659,7 +1668,7 @@
             
         if ([lastWords isEqualToString:LAST_WORDS_EMPTY]) {
                 
-            [self showSystemMessage:[NSString stringWithFormat:@"%@沒有留下任何遺囑", judgePlayerAlias]];
+            [self showSystemMessage:[NSString stringWithFormat:@"%@輕輕地走了,什麼話都沒留下", judgePlayerAlias]];
                     
         }else {
             
@@ -1678,6 +1687,8 @@
                 [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"%@的身份是%@", judgePlayerAlias, PLAYER_TEAM_CIVILIAN_STRING] afterDelay:1.5f ];
             }
         }
+        [self.playerListTableView reloadData];
+        [self showPlayerList];
         
         //check for gameOver
         //TODO:gameOver check

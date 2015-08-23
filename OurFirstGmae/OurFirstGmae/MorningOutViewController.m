@@ -21,11 +21,22 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    self.morningOutImgView.image = self.playerImage;
+    
     UIView *view =[[UIView alloc]initWithFrame:self.view.frame];
     view.backgroundColor=[UIColor blackColor];
     view.alpha=0.5;
     [self.view insertSubview:view belowSubview:_morningOutImgView];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
     
+    if (self.autoSwipe == true) {
+        
+        _swip.enabled=NO;
+        [self performSelector:@selector(swipeUp:) withObject:nil afterDelay:2.0f];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -79,6 +90,15 @@
     
     [UIView commitAnimations];
     _swip.enabled=NO;
+    
+    [self performSelector:@selector(dismissSelf) withObject:nil afterDelay:3.0f];
 }
 
+- (void)dismissSelf {
+
+    [self dismissViewControllerAnimated:true completion:^{
+        
+        [self.delegate swiped];
+    }];
+}
 @end

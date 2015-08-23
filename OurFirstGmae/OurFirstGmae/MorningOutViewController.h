@@ -8,6 +8,16 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol MorningOutViewControllerDelegate <NSObject>
+
+- (void)swiped;
+
+@end
+
 @interface MorningOutViewController : UIViewController
+
+@property (nonatomic, strong) UIImage *playerImage;
+@property (nonatomic, assign) BOOL autoSwipe;
+@property (assign) id <MorningOutViewControllerDelegate> delegate;
 
 @end
