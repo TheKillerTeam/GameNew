@@ -28,6 +28,7 @@ typedef enum {
     
     ChatToAll = 0,
     ChatToTeam = 1,
+    ChatToDead = 2,
     
 } ChatType;
 

@@ -229,4 +229,16 @@
     
 }
 
+- (void)judgePlayer:(NSString *)playerId {
+    
+}
+
+- (void)updateJudgeFor:(int)judgeFor fromJudgedFor:(int)judgedFor withPlayerId:(NSString *)playerId {
+    
+}
+
+- (void)playerHasLastWords:(NSString *)lastWords withPlayerId:(NSString *)playerId {
+    
+}
+
 @end

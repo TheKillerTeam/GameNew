@@ -7,7 +7,7 @@
 //
 
 //TODO: @結束遊戲 @結束後再重新開始 @邀請好友 @縮小App不會斷線 @追蹤是否有網路連線
-//@編輯外觀時由之前的結果開始編輯 @編輯外觀新增返回按鈕 @外觀存檔
+//@編輯外觀時由之前的結果開始編輯 @外觀存檔
 
 #import "MenuViewController.h"
 #import "NetworkController.h"
@@ -224,6 +224,11 @@
             self.gameStateLabel.text = @"DayVote";
             break;
             
+        case GameStateShowDayResults:
+            
+            self.gameStateLabel.text = @"ShowDayResults";
+            break;
+            
         case GameStateJudgementDiscussion:
             
             self.gameStateLabel.text = @"JudgementDiscussion";
@@ -234,11 +239,28 @@
             self.gameStateLabel.text = @"JudgementVote";
             break;
             
+        case GameStateShowJudgementResults:
+            
+            self.gameStateLabel.text = @"ShowJudgementResults";
+            break;
+            
         case GameStateGameOver:
             
             self.gameStateLabel.text = @"GameOver";
             break;
     }
+}
+
+- (void)judgePlayer:(NSString *)playerId {
+    
+}
+
+- (void)updateJudgeFor:(int)judgeFor fromJudgedFor:(int)judgedFor withPlayerId:(NSString *)playerId {
+    
+}
+
+- (void)playerHasLastWords:(NSString *)lastWords withPlayerId:(NSString *)playerId {
+    
 }
 
 #pragma mark - playerInfoViewControllerDelegate

@@ -36,6 +36,10 @@
         
         _swip.enabled=NO;
         [self performSelector:@selector(swipeUp:) withObject:nil afterDelay:2.0f];
+        
+    }else {
+        
+        [self performSelector:@selector(swipeUp:) withObject:nil afterDelay:10.0f];
     }
 }
 

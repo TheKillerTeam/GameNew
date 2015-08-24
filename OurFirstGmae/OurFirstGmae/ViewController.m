@@ -64,6 +64,7 @@
     int selfVoteFor;
     int selfJudgeFor;
     int selfTeam;
+    int selfState;
     BOOL selfShouldUpdateVote;
     BOOL selfShouldSendVote;
     BOOL selfShouldVote;
@@ -125,7 +126,7 @@
     ////////chatBoxTableView
     chatData = [NSMutableArray new];
     
-     self.chatBoxTableView.backgroundColor=[UIColor colorWithWhite:1 alpha:0.5];
+    self.chatBoxTableView.backgroundColor=[UIColor colorWithWhite:1 alpha:0.5];
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
    
@@ -153,7 +154,6 @@
     //vote
     voteData = [NSMutableArray new];
 
-    
     NSNumber *numZero = [NSNumber numberWithInt:0];
     for (int i=0; i<self.match.players.count; i++) {
         
@@ -172,6 +172,7 @@
         if ([p.playerId isEqualToString:[GKLocalPlayer localPlayer].playerID]) {
             
             selfTeam = p.playerTeam;
+            selfState = p.playerState;
             break;
         }
     }
@@ -247,7 +248,6 @@
     
 }
 
-
 -(void)callMorningOutViewWithPlayerImage:(UIImage *)playerImage {
     
     morningOutView = [self.storyboard instantiateViewControllerWithIdentifier:@"morningOutView"];
@@ -270,7 +270,6 @@
     morningOutView.modalPresentationStyle= UIModalPresentationCustom;
     [self presentViewController:morningOutView animated:YES completion:nil];
 }
-
 
 - (void)callNightOutViewWithPlayerImage:(UIImage *)playerImage {
     
@@ -371,43 +370,46 @@
     
     [[NetworkController sharedInstance] sendNightConfirmVote];
     
-    if (selfTeam == PLAYER_TEAM_MAFIA) {
-        
-        if (selfVoteFor != 99) {
+    if (selfState == PLAYER_STATE_ALIVE) {
+
+        if (selfTeam == PLAYER_TEAM_MAFIA) {
             
-            Player *playerChosen = [self.match.players objectAtIndex:selfVoteFor];
-            [self showSystemMessage:[NSString stringWithFormat:@"你決定投票殺死%@", playerChosen.alias]];
-            
-        }else {
-            
-            [self showSystemMessage:@"你決定投票今晚不殺人"];
-        }
-        
-    }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
-        
-        for (int i=0; i<voteData.count; i++) {
-            
-            if ([[voteData objectAtIndex:i] isEqualToNumber:[NSNumber numberWithInt:1]]) {
+            if (selfVoteFor != 99) {
                 
-                Player *playerChosen = [self.match.players objectAtIndex:i];
-                [self showSystemMessage:[NSString stringWithFormat:@"你決定今晚調查%@的身份", playerChosen.alias]];
-                if (playerChosen.playerTeam == PLAYER_TEAM_MAFIA) {
-                    
-                    [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_MAFIA_STRING]];
-                    
-                }else if (playerChosen.playerTeam == PLAYER_TEAM_SHERIFF) {
-                    
-                    [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_SHERIFF_STRING]];
-                    
-                }else if (playerChosen.playerTeam == PLAYER_TEAM_CIVILIAN) {
-                    
-                    [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_CIVILIAN_STRING]];
-                }
+                Player *playerChosen = [self.match.players objectAtIndex:selfVoteFor];
+                [self showSystemMessage:[NSString stringWithFormat:@"你決定投票殺死%@", playerChosen.alias]];
                 
-                return;
+            }else {
+                
+                [self showSystemMessage:@"你決定投票今晚不殺人"];
             }
+            
+        }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
+            
+            for (int i=0; i<voteData.count; i++) {
+                
+                if ([[voteData objectAtIndex:i] isEqualToNumber:[NSNumber numberWithInt:1]]) {
+                    
+                    Player *playerChosen = [self.match.players objectAtIndex:i];
+                    [self showSystemMessage:[NSString stringWithFormat:@"你決定今晚調查%@的身份", playerChosen.alias]];
+                    if (playerChosen.playerTeam == PLAYER_TEAM_MAFIA) {
+                        
+                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_MAFIA_STRING]];
+                        
+                    }else if (playerChosen.playerTeam == PLAYER_TEAM_SHERIFF) {
+                        
+                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_SHERIFF_STRING]];
+                        
+                    }else if (playerChosen.playerTeam == PLAYER_TEAM_CIVILIAN) {
+                        
+                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_CIVILIAN_STRING]];
+                    }
+                    
+                    return;
+                }
+            }
+            [self showSystemMessage:@"你今晚沒有調查任何人"];
         }
-        [self showSystemMessage:@"你今晚沒有調查任何人"];
     }
 }
 
@@ -428,7 +430,7 @@
 
 - (void)processJudgementResult {
     
-    TODO:[[NetworkController sharedInstance] sendJudgementConfirmVote];
+    [[NetworkController sharedInstance] sendJudgementConfirmVote];
     
     NSString *judgePlayerAlias = [NSString new];
     
@@ -1400,21 +1402,29 @@
         [NetworkController sharedInstance].gameState == GameStateNightVote) {
         
         //allowNightVote
-        if (selfTeam == PLAYER_TEAM_MAFIA) {
-            
-            selfShouldVote = true;
-            selfShouldSeeVote = true;
-            
-            //show playerList
-            [self showPlayerList];
-            
-        }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
-            
-            selfShouldVote = true;
-            selfShouldSeeVote = true;
-            
-            //show playerList
-            [self showPlayerList];
+        if (selfState == PLAYER_STATE_ALIVE) {
+
+            if (selfTeam == PLAYER_TEAM_MAFIA) {
+                
+                selfShouldVote = true;
+                selfShouldSeeVote = true;
+                
+                //show playerList
+                [self showPlayerList];
+                
+            }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
+                
+                selfShouldVote = true;
+                selfShouldSeeVote = true;
+                
+                //show playerList
+                [self showPlayerList];
+                
+            }else {
+                
+                selfShouldVote = false;
+                selfShouldSeeVote = false;
+            }
             
         }else {
             
@@ -1425,8 +1435,17 @@
     }else if ([NetworkController sharedInstance].gameState == GameStateDayDiscussion ||
               [NetworkController sharedInstance].gameState == GameStateDayVote) {
         
-        selfShouldVote = true;
-        selfShouldSeeVote = true;
+        //allowDayVote
+        if (selfState == PLAYER_STATE_ALIVE) {
+            
+            selfShouldVote = true;
+            selfShouldSeeVote = true;
+            
+        }else {
+            
+            selfShouldVote = false;
+            selfShouldSeeVote = true;
+        }
         
         //show playerList
         [self showPlayerList];
@@ -1434,8 +1453,25 @@
     }else if ([NetworkController sharedInstance].gameState == GameStateJudgementDiscussion ||
               [NetworkController sharedInstance].gameState == GameStateJudgementVote) {
         
-        selfShouldVote = true;
-        selfShouldSeeVote = true;
+        //allowJudgementVote
+        if (selfState == PLAYER_STATE_ALIVE) {
+
+            if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId]) {
+                
+                selfShouldVote = false;
+                selfShouldSeeVote = true;
+                
+            }else {
+                
+                selfShouldVote = true;
+                selfShouldSeeVote = true;
+            }
+            
+        }else {
+            
+            selfShouldVote = false;
+            selfShouldSeeVote = true;
+        }
     }
     [self.playerListTableView reloadData];
     
@@ -1457,9 +1493,12 @@
         
             [nightResultsForAll addObject:@"作晚月黑風高,但是所有人都平安的度過了"];
 
-            if (selfTeam == PLAYER_TEAM_MAFIA) {
+            if (selfState == PLAYER_STATE_ALIVE) {
             
-                [nightResults addObject:@"殺手今晚沒有殺人"];
+                if (selfTeam == PLAYER_TEAM_MAFIA) {
+
+                    [nightResults addObject:@"殺手今晚沒有殺人"];
+                }
             }
         }else {
     
@@ -1480,14 +1519,17 @@
                 }
             }
         
-            if (selfTeam == PLAYER_TEAM_MAFIA) {
-        
-                for (Player *p in self.match.players) {
+            if (selfState == PLAYER_STATE_ALIVE) {
+
+                if (selfTeam == PLAYER_TEAM_MAFIA) {
             
-                    if ([p.playerId isEqualToString:playerId]) {
+                    for (Player *p in self.match.players) {
                 
-                        [nightResults addObject:[NSString stringWithFormat:@"殺手今晚前去殺掉了%@", p.alias]];
-                        break;
+                        if ([p.playerId isEqualToString:playerId]) {
+                    
+                            [nightResults addObject:[NSString stringWithFormat:@"殺手今晚前去殺掉了%@", p.alias]];
+                            break;
+                        }
                     }
                 }
             }
@@ -1693,7 +1735,6 @@
         //check for gameOver
         //TODO:gameOver check
         [self performSelector:@selector(switchToGameStateNightStart) withObject:self afterDelay:3.0f];
-        
     }
 }
 
@@ -1760,36 +1801,59 @@
             
             [[NetworkController sharedInstance] sendStartDiscussion];
     
-            if (selfTeam == PLAYER_TEAM_MAFIA) {
+            if (selfState == PLAYER_STATE_ALIVE) {
                 
-                [self showSystemMessage:@"殺手可以開始討論及選擇對象"];
+                if (selfTeam == PLAYER_TEAM_MAFIA) {
+                    
+                    [self showSystemMessage:@"殺手可以開始討論及選擇對象"];
+                    
+                }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
+                    
+                    [self showSystemMessage:@"警察可以開始選擇對象"];
+                    
+                }else if (selfTeam == PLAYER_TEAM_CIVILIAN) {
+                    
+                    [self showSystemMessage:@"你不安的在家中等待天明"];
+                }
                 
-            }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
+            }else {
                 
-                [self showSystemMessage:@"警察可以開始選擇對象"];
-                
-            }else if (selfTeam == PLAYER_TEAM_CIVILIAN) {
-                
-                [self showSystemMessage:@"你不安的在家中等待天明"];
+                [self showSystemMessage:@"請稍候玩家執行能力"];
             }
 
-            //allowTeamChat
-            if (selfTeam == PLAYER_TEAM_MAFIA) {
+            //allowTeamChat & deadChat
+            if (selfState == PLAYER_STATE_ALIVE) {
+
+                if (selfTeam == PLAYER_TEAM_MAFIA) {
+                    
+                    selfChatType = ChatToTeam;
+                    self.chatTextField.enabled = true;
+                }
                 
-                selfChatType = ChatToTeam;
+            }else {
+                
+                selfChatType = ChatToDead;
                 self.chatTextField.enabled = true;
             }
             
             //allow Receive/Send Vote
-            if (selfTeam == PLAYER_TEAM_MAFIA) {
-                
-                selfShouldUpdateVote = true;
-                selfShouldSendVote = true;
-                
-            }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
-                
-                selfShouldUpdateVote = false;
-                selfShouldSendVote = false;
+            if (selfState == PLAYER_STATE_ALIVE) {
+
+                if (selfTeam == PLAYER_TEAM_MAFIA) {
+                    
+                    selfShouldUpdateVote = true;
+                    selfShouldSendVote = true;
+                    
+                }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
+                    
+                    selfShouldUpdateVote = false;
+                    selfShouldSendVote = false;
+                    
+                }else {
+                    
+                    selfShouldUpdateVote = false;
+                    selfShouldSendVote = false;
+                }
                 
             }else {
                 
@@ -1809,13 +1873,20 @@
             self.gameStateLabel.text = @"NightVote";
             
             //showSystemMessage
-            if (selfTeam == PLAYER_TEAM_MAFIA) {
+            if (selfState == PLAYER_STATE_ALIVE) {
                 
-                [self showSystemMessage:@"殺手請確認選擇"];
+                if (selfTeam == PLAYER_TEAM_MAFIA) {
+                    
+                    [self showSystemMessage:@"殺手請確認選擇"];
+                    
+                }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
+                    
+                    [self showSystemMessage:@"警察請確認選擇"];
+                }
                 
-            }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
+            }else {
                 
-                [self showSystemMessage:@"警察請確認選擇"];
+                [self showSystemMessage:@"請稍後玩家確認選擇"];
             }
             
             //allow confirm
@@ -1903,13 +1974,29 @@
             
             [self showSystemMessage:@"所有人可以開始討論及選擇對象"];
             
-            //allowChatToAll
-            selfChatType = ChatToAll;
-            self.chatTextField.enabled = true;
+            //allowChatToAll & chatToDead
+            if (selfState == PLAYER_STATE_ALIVE) {
+
+                selfChatType = ChatToAll;
+                self.chatTextField.enabled = true;
+                
+            }else {
+                
+                selfChatType = ChatToDead;
+                self.chatTextField.enabled = true;
+            }
             
             //allow Receive/Send Vote
-            selfShouldUpdateVote = true;
-            selfShouldSendVote = true;
+            if (selfState == PLAYER_STATE_ALIVE) {
+
+                selfShouldUpdateVote = true;
+                selfShouldSendVote = true;
+                
+            }else {
+                
+                selfShouldUpdateVote = true;
+                selfShouldSendVote = false;
+            }
             
             //resetVote
             [self resetVote];
@@ -1972,9 +2059,17 @@
             
             [self showSystemMessage:@"審判開始,所有人可以開始質詢及投票"];
        
-            //allowChatToAll
-            selfChatType = ChatToAll;
-            self.chatTextField.enabled = true;
+            //allowChatToAll & chatToDead
+            if (selfState == PLAYER_STATE_ALIVE) {
+
+                selfChatType = ChatToAll;
+                self.chatTextField.enabled = true;
+                
+            }else {
+                
+                selfChatType = ChatToDead;
+                self.chatTextField.enabled = true;
+            }
             
             //disable Vote
             selfShouldUpdateVote = false;
@@ -1986,17 +2081,41 @@
             //hide playerList
             [self hidePlayerList];
             
-            //allow judgement vote
-            self.judgementVoteView.hidden = false;
-            self.guiltyButton.userInteractionEnabled = true;
-            self.innocentButton.userInteractionEnabled = true;
-            
             //allow Receive/Send Vote
-            selfShouldUpdateVote = true;
-            selfShouldSendVote = true;
+            if (selfState == PLAYER_STATE_ALIVE) {
 
+                selfShouldUpdateVote = true;
+                selfShouldSendVote = true;
+                
+            }else {
+                
+                selfShouldUpdateVote = true;
+                selfShouldSendVote = false;
+            }
+            
             //resetVote
             [self resetVote];
+            
+            //allow judgement vote
+            self.judgementVoteView.hidden = false;
+            if (selfState == PLAYER_STATE_ALIVE) {
+                
+                if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId]) {
+                    
+                    self.guiltyButton.userInteractionEnabled = false;
+                    self.innocentButton.userInteractionEnabled = false;
+                    
+                }else {
+                    
+                    self.guiltyButton.userInteractionEnabled = true;
+                    self.innocentButton.userInteractionEnabled = true;
+                }
+                
+            }else {
+                
+                self.guiltyButton.userInteractionEnabled = false;
+                self.innocentButton.userInteractionEnabled = false;
+            }
 
             break;
             
