@@ -19,9 +19,10 @@
     UIImagePickerController *ImagePicker;
     CGRect originalFrame ;
     
+    
 }
-@property (weak, nonatomic) IBOutlet UIImageView *playPhoto;
-@property (weak, nonatomic) IBOutlet cropView *crop;
+
+@property (strong, nonatomic) IBOutlet cropView *crop;
 @property (weak, nonatomic) IBOutlet UILabel *debugLabel;
 @property (strong,nonatomic) UIImageView *scan;
 @end
@@ -31,25 +32,43 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-//  
-//    _crop.layer.borderWidth=1.0;
-//    _crop.layer.borderColor=[UIColor redColor].CGColor;
-    
-    [_crop step];
-    
+
     [NetworkController sharedInstance].delegate = self;
     [self networkStateChanged:[NetworkController sharedInstance].networkState];
-       NSLog(@"selfframe %@",NSStringFromCGRect(self.view.frame));
+  
     
+    self.crop = [[cropView alloc]initWithFrame:CGRectMake(0, 119, self.view.frame.size.width,self.view.frame.size.height-120)];
+    [self.view addSubview:_crop];
     
-    self.scan =[[UIImageView alloc]initWithFrame:CGRectMake(-10000,0 , 10000, 100)];
-    UIImage *image= [UIImage imageNamed:@"Rectangle 1.png"];
+    self.scan =[[UIImageView alloc]initWithFrame:CGRectMake(-10000,0 , 10000, 120)];
+    UIImage *image= [UIImage imageNamed:@"scan2.png"];
     [_scan setImage:image];
     originalFrame=_scan.frame;
     [self.view insertSubview:_scan atIndex:0];
-   
+    
+    UIImageView *fillView1 = [[UIImageView alloc]initWithFrame:CGRectMake(10, 15,  50, 30)];
+    fillView1.image =[UIImage imageNamed:@"scan1.png"];
+    fillView1.alpha=0.5;
+    UIImageView *fillView2 = [[UIImageView alloc]initWithFrame:CGRectMake(110, 15,  50, 30)];
+    fillView2.image =[UIImage imageNamed:@"scan1.png"];
+    fillView2.alpha=0.5;
+    UIImageView *fillView3 = [[UIImageView alloc]initWithFrame:CGRectMake(210, 15,  50, 30)];
+    fillView3.image =[UIImage imageNamed:@"scan1.png"];
+    fillView3.alpha=0.5;
+    UIImageView *fillView4 = [[UIImageView alloc]initWithFrame:CGRectMake(290, 15,  50, 30)];
+    fillView4.image =[UIImage imageNamed:@"scan1.png"];
+    fillView4.alpha=0.5;
+    [self.view insertSubview:fillView1 atIndex:1];
+    [self.view insertSubview:fillView2 atIndex:2];
+    [self.view insertSubview:fillView3 atIndex:3];
+    [self.view insertSubview:fillView4 atIndex:4];
+  
+    [self slide];
 
+    
+    
 }
+
 
 -(void)slide{
   
@@ -70,8 +89,7 @@
     }];
     
     
-    
-    [UIView commitAnimations];
+
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -107,10 +125,10 @@
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info {
     
     UIImage *chosenImage = info[UIImagePickerControllerOriginalImage];
-//    self.playPhoto.image = chosenImage;
     _crop.image = chosenImage;
-    
+
     [picker dismissViewControllerAnimated:YES completion:NULL];
+    
 }
 
 - (IBAction)album:(id)sender {
@@ -122,15 +140,14 @@
     ImagePicker.sourceType = sourceType;
 
     ImagePicker.delegate=self;
-    [_crop step];
    
      [self presentViewController:ImagePicker animated:YES completion:NULL];
 }
 
 - (IBAction)nextButton:(id)sender {
     
-    UIGraphicsBeginImageContext(_crop.cover.bounds.size);
-    [_crop.cover.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIGraphicsBeginImageContext(_crop.sentView.bounds.size);
+    [_crop.sentView.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *myImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     

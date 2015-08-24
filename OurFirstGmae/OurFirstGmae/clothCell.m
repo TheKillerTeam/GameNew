@@ -20,9 +20,11 @@
     imageViewFrame.origin.x =0;
     imageViewFrame.origin.y =0;
     imageViewFrame.size.width=self.contentView.frame.size.width;
-    imageViewFrame.size.height=self.contentView.frame.size.height;
+    imageViewFrame.size.height=self.contentView.frame.size.height+1;
     // assign the new frame
     self.imageView.frame = imageViewFrame;
+    self.imageView.backgroundColor=[UIColor blackColor];
+    
 }
 
 - (void)awakeFromNib {

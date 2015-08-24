@@ -8,25 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
-
+#import "clothCell.h"
 //typedef void(^PassImage)(UIImage *image);
 
 
 
 @interface cropView : UIView<UITableViewDataSource,UITableViewDelegate>
-{
-//    UIImageView *mask;
-    UIImageView *imageView;
-    UITableView *clothFrame;
-    NSArray *uniformArray ;
-    NSArray *sentUniform;
-    NSArray *hairArray;
-    UIImageView *mask;
 
-}
-@property(nonatomic,retain)IBOutlet UIImage*image;
-@property(retain,nonatomic)UIImageView *clothImage;
-@property(retain,nonatomic)UIImageView *cover;
-//@property(strong,nonatomic)PassImage block;
--(void)step;
+@property(nonatomic,strong)IBOutlet UIImage*image;
+@property(nonatomic,strong)IBOutlet UIImageView*sentView;
+
+
 @end
