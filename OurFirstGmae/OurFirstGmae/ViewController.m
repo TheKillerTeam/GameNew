@@ -122,6 +122,9 @@
     
     // Do any additional setup after loading the view, typically from a nib.
     
+    //stop auto lock
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    
     ////////chatBoxTableView
     chatData = [NSMutableArray new];
     
@@ -992,14 +995,21 @@
         if (selfShouldSeeVote == true &&
             p.playerState == PLAYER_STATE_ALIVE) {
             
-            //晚上殺手不能殺自己人
+            //晚上
             if ([NetworkController sharedInstance].gameState == GameStateNightDiscussion ||
                 [NetworkController sharedInstance].gameState == GameStateNightVote) {
                 
+                //殺手不能殺自己人
                 if (selfTeam == PLAYER_TEAM_MAFIA && p.playerTeam == PLAYER_TEAM_MAFIA) {
                     
                     cell.vote.hidden = true;
                     
+                //警察不能調查自己
+                }else if (selfTeam == PLAYER_TEAM_SHERIFF &&
+                          [p.playerId isEqualToString:[GKLocalPlayer localPlayer].playerID] ) {
+                    
+                    cell.vote.hidden = true;
+
                 }else {
 
                     cell.vote.hidden = false;
@@ -1618,7 +1628,7 @@
                 
                 for (Player *p in self.match.players) {
                     
-                    if ([p.playerId isEqualToString:playerId]) {
+                    if ([p.playerId isEqualToString:judgePlayerId]) {
                         
                         [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
                         
@@ -1633,7 +1643,7 @@
 
                 for (Player *p in self.match.players) {
                     
-                    if ([p.playerId isEqualToString:playerId]) {
+                    if ([p.playerId isEqualToString:judgePlayerId]) {
                         
                         if (selfState == PLAYER_STATE_ALIVE) {
 

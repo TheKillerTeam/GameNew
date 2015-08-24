@@ -33,6 +33,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 
+    //stop auto lock
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    
     [NetworkController sharedInstance].delegate = self;
     [self networkStateChanged:[NetworkController sharedInstance].networkState];
   

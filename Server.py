@@ -44,9 +44,9 @@ PLAYER_TEAM_MAFIA = 2
 TEAM_LIST = []
 TEAM_LIST.append([0,0,0])#0
 TEAM_LIST.append([0,0,1])#1
-TEAM_LIST.append([0,0,2])#2
+TEAM_LIST.append([0,1,1])#2
 TEAM_LIST.append([1,1,1])#3
-TEAM_LIST.append([1,1,2])#4
+TEAM_LIST.append([2,1,1])#4
 TEAM_LIST.append([3,1,1])#5
 TEAM_LIST.append([4,1,1])#6
 TEAM_LIST.append([5,1,1])#7

@@ -42,6 +42,9 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+    //stop auto lock
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    
     playerCounts = 2;
     
     //TODO:if theres a saved playerImage, load it instead of using default
