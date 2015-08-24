@@ -6,8 +6,6 @@
 //  Copyright (c) 2015年 CAI CHENG-HONG. All rights reserved.
 //
 
-//TODO:check all conditions with dead player
-
 #import <UIKit/UIKit.h>
 #import "ViewController.h"
 #import "playerCell.h"
@@ -958,17 +956,58 @@
         
         if (selfShouldVote) {
             
-            cell.userInteractionEnabled = true;
+            //若 顯示的是活人 & 顯示的不是自己 才能開放選取
+            if (p.playerState == PLAYER_STATE_ALIVE &&
+                ![p.playerId isEqualToString:[GKLocalPlayer localPlayer].playerID]) {
+                
+                //晚上殺手不能殺自己人
+                if ([NetworkController sharedInstance].gameState == GameStateNightDiscussion ||
+                    [NetworkController sharedInstance].gameState == GameStateNightVote) {
+                    
+                    if (selfTeam == PLAYER_TEAM_MAFIA && p.playerTeam == PLAYER_TEAM_MAFIA) {
+
+                        cell.userInteractionEnabled = false;
+                        
+                    }else {
+                    
+                        cell.userInteractionEnabled = true;
+                    }
+                    
+                }else {
+                    
+                    cell.userInteractionEnabled = true;
+                }
+                
+            }else {
+                
+                cell.userInteractionEnabled = false;
+            }
             
         }else {
             
             cell.userInteractionEnabled = false;
         }
         
-        if (selfShouldSeeVote == true) {
+        //若 selfShouldSeeVote & 顯示的是活人
+        if (selfShouldSeeVote == true &&
+            p.playerState == PLAYER_STATE_ALIVE) {
             
-            cell.vote.hidden = false;
-            
+            //晚上殺手不能殺自己人
+            if ([NetworkController sharedInstance].gameState == GameStateNightDiscussion ||
+                [NetworkController sharedInstance].gameState == GameStateNightVote) {
+                
+                if (selfTeam == PLAYER_TEAM_MAFIA && p.playerTeam == PLAYER_TEAM_MAFIA) {
+                    
+                    cell.vote.hidden = true;
+                    
+                }else {
+
+                    cell.vote.hidden = false;
+                }
+            }else {
+                
+                cell.vote.hidden = false;
+            }
         }else {
             
             cell.vote.hidden = true;
@@ -1064,9 +1103,6 @@
         [now timeIntervalSinceDate:lastVoteTime] > VOTE_MINIMUM_TIME_INTERVAL) {
 
         lastVoteTime = now;
-        
-        //TODO:check if vote for self or not
-        //TODO:check if Mafia vote to kill teammate or not
         
         //for other players
         if (selfShouldSendVote == true) {
@@ -1164,7 +1200,7 @@
         }
         
         [self.playerListTableView reloadData];
-
+        
         return nil;
         
     }else {
