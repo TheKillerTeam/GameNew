@@ -113,6 +113,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *dayCountLabel;
 @property (weak, nonatomic) IBOutlet UIButton *guiltyButton;
 @property (weak, nonatomic) IBOutlet UIButton *innocentButton;
+@property (weak, nonatomic) IBOutlet UILabel *playerStateLabel;
 
 @end
 
@@ -186,6 +187,8 @@
     
     lastVoteTime = [NSDate date];
     judgePlayerId = [NSString new];
+    
+    self.playerStateLabel.text = [NSString stringWithFormat:@"Alive"];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -925,7 +928,7 @@
     circleView *circle =[[circleView alloc]initWithFrame:CGRectMake(0, 0, self.thePlayerView.frame.size.width, self.thePlayerView.frame.size.height)];
     circle.backgroundColor=[UIColor clearColor];
     circle.ImgArray  = playerDragImageViewArray;
-    [self.thePlayerView addSubview:circle];
+    [self.thePlayerView insertSubview:circle atIndex:1];
     [circle loadView];
 }
 
@@ -1539,6 +1542,14 @@
                 if ([p.playerId isEqualToString:playerId]) {
             
                     p.playerState = PLAYER_STATE_DEAD;
+                    
+                    if ([[GKLocalPlayer localPlayer].playerID isEqualToString:p.playerId]) {
+                        
+                        selfState = PLAYER_STATE_DEAD;
+                        
+                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
+                    }
+                    
                     break;
                 }
             }
@@ -1603,6 +1614,14 @@
                 if ([p.playerId isEqualToString:judgePlayerId]) {
                     
                     p.playerState = PLAYER_STATE_DEAD;
+                    
+                    if ([[GKLocalPlayer localPlayer].playerID isEqualToString:p.playerId]) {
+                        
+                        selfState = PLAYER_STATE_DEAD;
+                        
+                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
+                    }
+                    
                     break;
                 }
             }
