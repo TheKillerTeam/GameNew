@@ -1487,9 +1487,6 @@
     if ([NetworkController sharedInstance].gameState == GameStateNightDiscussion ||
         [NetworkController sharedInstance].gameState == GameStateNightVote) {
     
-        nightResults = [NSMutableArray new];
-        nightResultsForAll = [NSMutableArray new];
-    
         if ([playerId isEqualToString:@"noOne"]) {
         
             waitForLastWords = false;
@@ -1569,8 +1566,6 @@
             }
         }
         
-        judgementResults = [NSMutableArray new];
-        
         if ([playerId isEqualToString:@"noOne"]) {
             
             waitForLastWords = false;
@@ -1604,7 +1599,10 @@
                     
                     if ([p.playerId isEqualToString:playerId]) {
                         
-                        [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
+                        if (selfState == PLAYER_STATE_ALIVE) {
+
+                            [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
+                        }
                     }
                 }
             }
@@ -1935,6 +1933,8 @@
                     interval += 1.5f;
                 }
             }
+            //clear nightResults
+            nightResults = [NSMutableArray new];
             
             if (waitForLastWords == false) {
                 
@@ -1978,6 +1978,8 @@
                     interval += 1.5f;
                 }
             }
+            //clear nightResultsForAll
+            nightResultsForAll = [NSMutableArray new];
             
             //check for gameOver
             //TODO:gameOver check
@@ -2058,6 +2060,8 @@
                     interval += 1.5f;
                 }
             }
+            //clear dayResults
+            judgementResults = [NSMutableArray new];
             
             if (noOneToJudge == false) {
 

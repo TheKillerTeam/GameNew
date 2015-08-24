@@ -44,7 +44,7 @@ PLAYER_TEAM_MAFIA = 2
 TEAM_LIST = []
 TEAM_LIST.append([0,0,0])#0
 TEAM_LIST.append([0,0,1])#1
-TEAM_LIST.append([1,0,1])#2
+TEAM_LIST.append([0,1,1])#2
 TEAM_LIST.append([1,1,1])#3
 TEAM_LIST.append([2,1,1])#4
 TEAM_LIST.append([3,1,1])#5
@@ -378,8 +378,8 @@ class GameFactory(Factory):
                 for existingPlayer in self.players:
                     if existingPlayer.beingJudged == 1:
                         existingPlayer.playerState = PLAYER_STATE_DEAD
-                        existingPlayer.protocol.sendPlayerDied(existingPlayer.playerId)
                         existingPlayer.beingJudged = 0
+                    existingPlayer.protocol.sendPlayerDied(existingPlayer.playerId)
             else:
                 for existingPlayer in self.players:
                     if existingPlayer.beingJudged == 1:

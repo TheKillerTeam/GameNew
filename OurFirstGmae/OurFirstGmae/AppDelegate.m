@@ -19,6 +19,9 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    //stop auto lock
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    
     //登入gamecenter
     [[NetworkController sharedInstance] authenticateLocalUser];
     
