@@ -917,6 +917,7 @@
     for (Player *player in self.match.players) {
         
         tempDragImageView = [[dragImageView alloc]initWithFrame:CGRectMake(0, 0, 100, 100)];
+        tempDragImageView.contentMode = UIViewContentModeScaleAspectFit;
         tempDragImageView.backgroundColor=[UIColor clearColor];
         tempDragImageView.image = player.playerImage;
         

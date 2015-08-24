@@ -135,7 +135,7 @@ class GameMatch:
             cancelShutdown = True
             for player in self.players:
                 if player.protocol == None:
-                    cancelShutdown  =False
+                    cancelShutdown = False
             if (time() > self.shutdownTime):
                 print "Time elapsed, shutting down match"
                 self.quit()
@@ -213,6 +213,7 @@ class GameFactory(Factory):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.playerImage = playerImage
+                break
        
     def playerSendChat(self, protocol, chat, chatType, playerId):
         if chatType == CHAT_TO_ALL:
@@ -226,7 +227,8 @@ class GameFactory(Factory):
                         if player.playerTeam == existingPlayer.playerTeam:
                             if player.playerId != playerId:
                                 if player.playerState == PLAYER_STATE_ALIVE:
-                                    player.protocol.sendUpdateChat(chat,playerId) 
+                                    player.protocol.sendUpdateChat(chat,playerId)
+                    break
         if chatType == CHAT_TO_DEAD:
             for existingPlayer in self.players:
                 if existingPlayer.playerState == PLAYER_STATE_DEAD:
@@ -245,6 +247,7 @@ class GameFactory(Factory):
                     if votedFor != 99:
                         self.players[existingPlayer.voteFor].voteCount = self.players[existingPlayer.voteFor].voteCount - 1
                     existingPlayer.voteFor = voteFor
+                break
         for existingPlayer in self.players:
             if existingPlayer.playerId != playerId:
                 existingPlayer.protocol.sendUpdateVote(voteFor, votedFor, playerId)
@@ -257,6 +260,7 @@ class GameFactory(Factory):
                     existingPlayer.judgeFor = 99
                 else:
                     existingPlayer.judgeFor = judgeFor
+                break
         for existingPlayer in self.players:
             if existingPlayer.playerId != playerId:
                 existingPlayer.protocol.sendUpdateJudge(judgeFor, judgedFor, playerId)
@@ -279,6 +283,7 @@ class GameFactory(Factory):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.reseted = RESETED
+                break
         allReseted = True
         for existingPlayer in self.players:
             if existingPlayer.reseted == UNRESETED:
@@ -291,6 +296,7 @@ class GameFactory(Factory):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.confirmVote = CONFIRMED
+                break
         allConfirmed = True;
         for existingPlayer in self.players:
             if existingPlayer.playerState == PLAYER_STATE_ALIVE:
@@ -319,6 +325,7 @@ class GameFactory(Factory):
                         noOneDied = False
                         for player in self.players:
                             player.protocol.sendPlayerDied(existingPlayer.playerId)
+                    break
             if noOneDied == True:
                 for existingPlayer in self.players:
                     existingPlayer.protocol.sendPlayerDied("noOne")
@@ -327,6 +334,7 @@ class GameFactory(Factory):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.confirmVote = CONFIRMED
+                break
         allConfirmed = True;
         for existingPlayer in self.players:
             if existingPlayer.playerState == PLAYER_STATE_ALIVE:
@@ -350,6 +358,7 @@ class GameFactory(Factory):
                         noOneToJudge = False
                         for player in self.players:
                             player.protocol.sendJudgePlayer(existingPlayer.playerId)
+                    break
             if noOneToJudge == True:
                 for existingPlayer in self.players:
                     existingPlayer.protocol.sendJudgePlayer("noOne")
@@ -358,6 +367,7 @@ class GameFactory(Factory):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.confirmVote = CONFIRMED
+                break
         allConfirmed = True;
         for existingPlayer in self.players:
             if existingPlayer.playerState == PLAYER_STATE_ALIVE:
