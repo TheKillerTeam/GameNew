@@ -12,5 +12,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *playerPhoto;
 @property (weak, nonatomic) IBOutlet UILabel *playerName;
 @property (weak, nonatomic) IBOutlet UILabel *vote;
+@property (weak, nonatomic) IBOutlet UIImageView *playerTeamImageView;
 
 @end

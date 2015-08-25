@@ -8,6 +8,7 @@
 
 #import "circleView.h"
 #import "dragImageView.h"
+
 @implementation circleView
 
 /*
@@ -20,26 +21,28 @@
 
 -(id)initWithFrame:(CGRect)frame{
     self=[super initWithFrame:frame];
+    
     if(self){
         
         center =CGPointMake(frame.size.width/2,frame.size.height/2);
-        
     }
-    
     return self;
 }
+
 -(void)loadView{
+    
     if(_ImgArray.count>0){
-    [self showImage];
-    [self addGesture];
+        
+        [self showImage];
+        [self addGesture];
+        
     }else{
+        
         return;
     }
-    
-    
 }
--(void)showImage{
 
+-(void)showImage{
     
     CGFloat fRadina;
     avg_radina = 2*M_PI/_ImgArray.count;
@@ -55,13 +58,7 @@
         dragImg.animation_radian = [self getAnimationRadianByRadian:avg_radina*i];
         dragImg.current_animation_radian =[self getAnimationRadianByRadian:avg_radina*i];
         [self addSubview:dragImg];
-        
     }
-    
-    
-    
-    
-    
 }
 
 - (CGPoint)getPointByRadian:(CGFloat)radian centreOfCircle:(CGPoint)circle_point radiusOfCircle:(CGFloat)circle_radius
@@ -83,6 +80,7 @@
     
     return an_r;
 }
+
 - (CGFloat)getRadinaByRadian:(CGFloat)radian
 {
     if(radian > 2 * M_PI)//floorf表示不大于该数的最大整数
@@ -93,7 +91,6 @@
     
     return radian;
 }
-
 
 - (void)addGesture{
     UIPanGestureRecognizer *panGesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleSinglePan:)];
@@ -186,7 +183,7 @@
         if (iDest >= _ImgArray.count) {
             iDest = iDest%_ImgArray.count;
         }
-        [self animateWithDuration:0.25f * (temp_value/avg_radina)  animateDelay:0.0f changeIndex:i toIndex:iDest circleArray:_ImgArray clockwise:isClockwise];
+        [self animateWithDuration:1.0f * (temp_value/avg_radina)  animateDelay:0.0f changeIndex:i toIndex:iDest circleArray:_ImgArray clockwise:isClockwise];
     }
 }
 
@@ -231,7 +228,6 @@
     change_cell.current_radian           = to_cell.radian;
 }
 
-#pragma mark -
 #pragma mark - animation delegate
 
 - (void)animationDidStart:(CAAnimation *)anim
@@ -256,10 +252,5 @@
         change_cell.center    = to_cell.view_point;
     }
 }
-
-
-
-
-
 
 @end

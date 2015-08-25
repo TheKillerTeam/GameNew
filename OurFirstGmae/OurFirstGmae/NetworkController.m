@@ -12,7 +12,7 @@
 #import "Match.h"
 #import "Player.h"
 
-#define SERVER_IP @"220.134.136.189"
+#define SERVER_IP @"192.168.196.168"
 #define PLAYER_IMAGE_DEFAULT @"news2.jpg"
 
 typedef enum {
@@ -38,10 +38,9 @@ typedef enum {
     MessageJudgePlayer                  = 18,       //from Server
     MessagePlayerSendLastWords          = 19,   //to Server
     MessagePlayerHasLastWords           = 20,       //from Server
+    MessageGameOver                     = 21,       //from Server
     
 } MessageType;
-
-
 
 @interface NetworkController () <NSStreamDelegate, GKMatchmakerViewControllerDelegate> {
     
@@ -387,6 +386,11 @@ static NetworkController *sharedController = nil;
         NSString *lastWords = [reader readString];
         NSString *playerId = [reader readString];
         [self.delegate playerHasLastWords:lastWords withPlayerId:playerId];
+        
+    }else if (msgType == MessageGameOver) {
+        
+        int whoWins = [reader readByte];
+        [self.delegate gameOver:whoWins];
     }
 }
 

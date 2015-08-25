@@ -24,8 +24,12 @@
 #import "MorningOutViewController.h"
 
 #define INPUT_BAR_HEIGHT 60
-#define SYSTEM_ID @"SYSTEM"
-#define SYSTEM_IMAGE @"Batman.png"
+#define SYSTEM_ID @"系統"
+#define SYSTEM_IMAGE @"Nobi Nobita.png"
+
+#define PLAYER_TEAM_CIVILIAN_IMAGE  @"Doraemon.png"
+#define PLAYER_TEAM_SHERIFF_IMAGE   @"Batman.png"
+#define PLAYER_TEAM_MAFIA_IMAGE     @"Mario.png"
 
 #define BACKGROUND_IMAGE_DAY @"play7.jpg"
 #define BACKGROUND_IMAGE_NIGHT @"play6.jpg"
@@ -47,6 +51,10 @@
 
 #define JUDGE_GUILTY     0
 #define JUDGE_INNOCENT   1
+
+#define NOT_OVER_YET    0
+#define MAFIA_WIN       1
+#define CIVILIAN_WIN    2
 
 @interface ViewController () <NetworkControllerDelegate, UITableViewDelegate, UITableViewDataSource,NSStreamDelegate, UITextFieldDelegate, MorningOutViewControllerDelegate> {
     
@@ -91,6 +99,8 @@
     int dayCount;
     
     NSString *judgePlayerId;
+    
+    int gameOverResult;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *chatBoxTableView;
@@ -190,6 +200,7 @@
     judgePlayerId = [NSString new];
     
     self.playerStateLabel.text = [NSString stringWithFormat:@"Alive"];
+    gameOverResult = NOT_OVER_YET;
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -637,6 +648,11 @@
     [[NetworkController sharedInstance] setGameState:GameStateNightStart];
 }
 
+- (void)switchToGameStateGameOver {
+    
+    [[NetworkController sharedInstance] setGameState:GameStateGameOver];
+}
+
 - (void)resetVote {
     
     //for self
@@ -859,6 +875,11 @@
     }
 }
 
+- (void)enableChatTextField {
+    
+    self.chatTextField.enabled = true;
+}
+
 #pragma mark - UITextFieldDelegate Methods
 
 - (BOOL) textFieldShouldReturn:(UITextField *)textField {
@@ -1023,7 +1044,36 @@
             
             cell.vote.hidden = true;
         }
+        
+        if (p.playerTeam == PLAYER_TEAM_CIVILIAN) {
+            
+            cell.playerTeamImageView.image = [UIImage imageNamed:PLAYER_TEAM_CIVILIAN_IMAGE];
+            
+        }else if (p.playerTeam == PLAYER_TEAM_MAFIA) {
+            
+            cell.playerTeamImageView.image = [UIImage imageNamed:PLAYER_TEAM_MAFIA_IMAGE];
+            
+        }else if (p.playerTeam == PLAYER_TEAM_SHERIFF) {
+            
+            cell.playerTeamImageView.image = [UIImage imageNamed:PLAYER_TEAM_SHERIFF_IMAGE];
+            
+        }
+        
+        if (p.playerState == PLAYER_STATE_DEAD) {
+            
+            cell.playerTeamImageView.hidden = false;
+            
+        }else {
+            
+            cell.playerTeamImageView.hidden = true;
+        }
 
+        if (gameOverResult != NOT_OVER_YET) {
+            
+            cell.vote.hidden = true;
+
+            cell.playerTeamImageView.hidden = false;
+        }
         return cell;
         
     }else if (tableView == self.chatBoxTableView) {
@@ -1729,6 +1779,19 @@
                 if ([lastWords isEqualToString:LAST_WORDS_EMPTY]) {
                 
                     [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身旁沒有留下任何遺囑", p.alias]];
+                    
+                    if (p.playerTeam == PLAYER_TEAM_MAFIA) {
+                        
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_MAFIA_STRING]];
+                        
+                    }else if (p.playerTeam == PLAYER_TEAM_SHERIFF) {
+                        
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_SHERIFF_STRING]];
+                        
+                    }else if (p.playerTeam == PLAYER_TEAM_CIVILIAN) {
+                        
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_CIVILIAN_STRING]];
+                    }
                 
                 }else {
                 
@@ -1797,8 +1860,37 @@
         [self showPlayerList];
         
         //check for gameOver
-        //TODO:gameOver check
-        [self performSelector:@selector(switchToGameStateNightStart) withObject:self afterDelay:3.0f];
+        if (gameOverResult == NOT_OVER_YET) {
+            
+            [self performSelector:@selector(switchToGameStateNightStart) withObject:self afterDelay:3.0f];
+            
+        }else if (gameOverResult == MAFIA_WIN) {
+            
+            [self performSelector:@selector(switchToGameStateGameOver) withObject:self afterDelay:3.0f];
+
+        }else if (gameOverResult == CIVILIAN_WIN) {
+            
+            [self performSelector:@selector(switchToGameStateGameOver) withObject:self afterDelay:3.0f];
+        }
+    }
+}
+
+- (void)gameOver:(int)whoWins {
+    
+    if (whoWins == NOT_OVER_YET) {
+        
+        NSLog(@"NOT_OVER_YET");
+        gameOverResult = NOT_OVER_YET;
+        
+    }else if (whoWins == MAFIA_WIN) {
+        
+        NSLog(@"MAFIA_WIN");
+        gameOverResult = MAFIA_WIN;
+        
+    }else if (whoWins == CIVILIAN_WIN) {
+     
+        NSLog(@"CIVILIAN_WIN");
+        gameOverResult = CIVILIAN_WIN;
     }
 }
 
@@ -2029,8 +2121,18 @@
             nightResultsForAll = [NSMutableArray new];
             
             //check for gameOver
-            //TODO:gameOver check
-            [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:interval];
+            if (gameOverResult == NOT_OVER_YET) {
+                
+                [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:interval];
+                
+            }else if (gameOverResult == MAFIA_WIN) {
+                
+                [self performSelector:@selector(switchToGameStateGameOver) withObject:self afterDelay:interval];
+                
+            }else if (gameOverResult == CIVILIAN_WIN) {
+                
+                [self performSelector:@selector(switchToGameStateGameOver) withObject:self afterDelay:interval];
+            }
             
             break;
             
@@ -2108,7 +2210,7 @@
                 }
             }
             //clear dayResults
-            judgementResults = [NSMutableArray new];
+            dayResults = [NSMutableArray new];
             
             if (noOneToJudge == false) {
 
@@ -2223,6 +2325,8 @@
                     interval += 1.5f;
                 }
             }
+            //clear judgementResults
+            judgementResults = [NSMutableArray new];
             
             if (waitForLastWords == false) {
                 
@@ -2234,6 +2338,41 @@
         case GameStateGameOver:
             
             self.gameStateLabel.text = @"GameOver";
+            
+            //gameOverAnimation
+            if (gameOverResult == MAFIA_WIN) {
+                
+                //TODO:[self showGameOverAnimationWithWhoWins:MAFIA_WIN];
+
+            }else if (gameOverResult == CIVILIAN_WIN) {
+                
+                //TODO:[self showGameOverAnimationWithWhoWins:CIVILIAN_WIN];
+            }
+            
+            //showSystemMessage
+            if (gameOverResult == MAFIA_WIN) {
+                
+                [self showSystemMessage:@"遊戲結束,殺手方獲勝"];
+                
+            }else if (gameOverResult == CIVILIAN_WIN) {
+                
+                [self showSystemMessage:@"遊戲結束,英雄方獲勝"];
+            }
+            [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"玩家們可以留下來互相交流,遊戲將在第一位玩家離開後5秒結束"] afterDelay:1.5f];
+
+            //hide judgementVoteView
+            self.judgementVoteView.hidden = true;
+            
+            //allowAllChat
+            selfChatType = ChatToAll;
+            [self performSelector:@selector(enableChatTextField) withObject:nil afterDelay:1.5f];
+
+            //show all playerTeam
+            [self.playerListTableView reloadData];
+            
+            //show showPlayerList
+            [self showPlayerList];
+
             break;
     }
 }

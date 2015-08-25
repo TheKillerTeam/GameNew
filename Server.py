@@ -26,6 +26,7 @@ MESSAGE_PLAYER_DIED = 17
 MESSAGE_JUDGE_PLAYER = 18
 MESSAGE_PLAYER_SEND_LAST_WORDS = 19
 MESSAGE_PLAYER_HAS_LAST_WORDS = 20
+MESSAGE_GAME_OVER = 21
 
 MATCH_STATE_ACTIVE = 0
 MATCH_STATE_GAME_OVER = 1
@@ -70,6 +71,10 @@ CONFIRMED = 1
 
 JUDGE_GUILTY = 0
 JUDGE_INNOCENT = 1
+
+NOT_OVER_YET = 0
+MAFIA_WIN = 1
+CIVILIAN_WIN = 2
 
 class MessageReader:
 
@@ -329,7 +334,26 @@ class GameFactory(Factory):
             if noOneDied == True:
                 for existingPlayer in self.players:
                     existingPlayer.protocol.sendPlayerDied("noOne")
-                    
+                    existingPlayer.protocol.sendGameOver(NOT_OVER_YET)
+            else:
+                alivePlayerCount = 0
+                aliveMafiaCount = 0
+                for existingPlayer in self.players:
+                    if existingPlayer.playerState == PLAYER_STATE_ALIVE:
+                        alivePlayerCount += 1
+                        if existingPlayer.playerTeam == PLAYER_TEAM_MAFIA:
+                            aliveMafiaCount += 1
+                if aliveMafiaCount == 0:
+                    for existingPlayer in self.players:
+                        existingPlayer.protocol.sendGameOver(CIVILIAN_WIN)                    
+                else:
+                    if aliveMafiaCount *2 >= alivePlayerCount:
+                        for existingPlayer in self.players:
+                            existingPlayer.protocol.sendGameOver(MAFIA_WIN) 
+                    else:
+                        for existingPlayer in self.players:
+                            existingPlayer.protocol.sendGameOver(NOT_OVER_YET)
+                            
     def playerDayConfirmVote(self, protocol, playerId):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
@@ -384,17 +408,38 @@ class GameFactory(Factory):
             for existingPlayer in self.players:
                 if existingPlayer.judgeFor == JUDGE_GUILTY:
                     guiltyVoteCount += 1
+            noOneDied = True
             if guiltyVoteCount *2 >= alivePlayerCount:
+                noOneDied = False
                 for existingPlayer in self.players:
                     if existingPlayer.beingJudged == 1:
                         existingPlayer.playerState = PLAYER_STATE_DEAD
                         existingPlayer.beingJudged = 0
                     existingPlayer.protocol.sendPlayerDied(existingPlayer.playerId)
-            else:
+            if noOneDied == True:
                 for existingPlayer in self.players:
                     if existingPlayer.beingJudged == 1:
                         existingPlayer.beingJudged = 0                    
                     existingPlayer.protocol.sendPlayerDied("noOne")
+                    existingPlayer.protocol.sendGameOver(NOT_OVER_YET)
+            else:
+                alivePlayerCount = 0
+                aliveMafiaCount = 0
+                for existingPlayer in self.players:
+                    if existingPlayer.playerState == PLAYER_STATE_ALIVE:
+                        alivePlayerCount += 1
+                        if existingPlayer.playerTeam == PLAYER_TEAM_MAFIA:
+                            aliveMafiaCount += 1
+                if aliveMafiaCount == 0:
+                    for existingPlayer in self.players:
+                        existingPlayer.protocol.sendGameOver(CIVILIAN_WIN)                    
+                else:
+                    if aliveMafiaCount *2 >= alivePlayerCount:
+                        for existingPlayer in self.players:
+                            existingPlayer.protocol.sendGameOver(MAFIA_WIN) 
+                    else:
+                        for existingPlayer in self.players:
+                            existingPlayer.protocol.sendGameOver(NOT_OVER_YET)             
         
     def playerSendLastWords(self, protocol, lastWords, playerId):
         for existingPlayer in self.players:
@@ -585,6 +630,13 @@ class GameProtocol(Protocol):
         message.writeString(lastWords)
         message.writeString(playerId)
         self.log("Sent MESSAGE_PLAYER_HAS_LAST_WORDS %s" % (playerId))
+        self.sendMessage(message)
+        
+    def sendGameOver(self, whoWins):
+        message = MessageWriter()
+        message.writeByte(MESSAGE_GAME_OVER)
+        message.writeByte(whoWins)
+        self.log("Sent MESSAGE_GAME_OVER %d" % (whoWins))
         self.sendMessage(message)
         
     def processMessage(self, message):

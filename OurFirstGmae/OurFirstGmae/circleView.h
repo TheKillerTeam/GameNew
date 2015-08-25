@@ -16,8 +16,9 @@
     NSInteger step;
     CGPoint center;
 }
+
 @property(weak,nonatomic)NSMutableArray *ImgArray;
 
+- (void)loadView;
 
--(void)loadView;
 @end

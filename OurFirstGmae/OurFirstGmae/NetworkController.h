@@ -64,6 +64,7 @@ typedef enum {
 - (void)playerDied:(NSString *)playerId;
 - (void)judgePlayer:(NSString *)playerId;
 - (void)playerHasLastWords:(NSString *)lastWords withPlayerId:(NSString *)playerId;
+- (void)gameOver:(int)whoWins;
 
 - (void)gameStateChanged:(GameState)gameState;
 
