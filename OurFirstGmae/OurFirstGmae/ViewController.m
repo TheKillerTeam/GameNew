@@ -27,8 +27,8 @@
 #define SYSTEM_ID @"SYSTEM"
 #define SYSTEM_IMAGE @"Batman.png"
 
-#define BACKGROUND_IMAGE_DAY @"play7.jpg"
-#define BACKGROUND_IMAGE_NIGHT @"play6.jpg"
+#define BACKGROUND_IMAGE_DAY @"morningBackground.png"
+#define BACKGROUND_IMAGE_NIGHT @"nightBackground.png"
 
 #define PLAYER_TEAM_CIVILIAN    0
 #define PLAYER_TEAM_SHERIFF     1
@@ -87,7 +87,6 @@
     
     BOOL waitForLastWords;
     BOOL noOneToJudge;
-    
     int dayCount;
     
     NSString *judgePlayerId;
@@ -198,7 +197,6 @@
     morningOutView =[MorningOutViewController new];
     nightOutView = [outView new];
     loadingView =[LoadingViewController new];
-    
     //hide playerList
     [self hidePlayerList];
     
