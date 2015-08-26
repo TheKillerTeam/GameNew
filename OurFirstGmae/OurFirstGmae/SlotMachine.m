@@ -15,9 +15,9 @@
 #define PLAYER_TEAM_SHERIFF_STRING  @"警察"
 #define PLAYER_TEAM_MAFIA_STRING    @"殺手"
 
-#define PLAYER_TEAM_CIVILIAN_IMAGE  @"Doraemon.png"
-#define PLAYER_TEAM_SHERIFF_IMAGE   @"Batman.png"
-#define PLAYER_TEAM_MAFIA_IMAGE     @"Mario.png"
+#define PLAYER_TEAM_CIVILIAN_IMAGE  @"cubeCivilian.png"
+#define PLAYER_TEAM_SHERIFF_IMAGE   @"cubeSheriff.png"
+#define PLAYER_TEAM_MAFIA_IMAGE     @"cubeMafia.png"
 
 @interface SlotMachine () {
     
