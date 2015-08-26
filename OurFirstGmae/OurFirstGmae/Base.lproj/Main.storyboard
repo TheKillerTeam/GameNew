@@ -119,6 +119,17 @@
                                 <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bgB-d7-Fgg">
+                                <rect key="frame" x="0.0" y="162" width="120" height="36"/>
+                                <color key="backgroundColor" white="0.9248321411" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" id="fWg-gi-0o2"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <state key="normal" title="國國國國國國">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="5vS-yA-BXb">
                                 <rect key="frame" x="16" y="622" width="30" height="30"/>
                                 <state key="normal" title="＋">
@@ -314,6 +325,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="IDb-2d-ITH" secondAttribute="trailing" constant="-15" id="4gn-w5-yXS"/>
                             <constraint firstItem="PqZ-XR-DkQ" firstAttribute="top" secondItem="lcc-Yi-eTC" secondAttribute="bottom" constant="8" id="5ID-Bj-2Ds"/>
                             <constraint firstItem="smQ-nu-RCR" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="7tT-p7-z99"/>
+                            <constraint firstItem="bgB-d7-Fgg" firstAttribute="top" secondItem="QZI-Og-LpS" secondAttribute="bottom" constant="8" id="8Tr-WY-QQc"/>
                             <constraint firstAttribute="trailingMargin" secondItem="smQ-nu-RCR" secondAttribute="trailing" constant="-16" id="BIB-hX-JfX"/>
                             <constraint firstItem="znh-9e-Fo4" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" id="CRj-T9-Ndg"/>
                             <constraint firstItem="QZI-Og-LpS" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="CqD-ED-ikf"/>
@@ -341,6 +353,7 @@
                             <constraint firstAttribute="centerX" secondItem="xth-fH-AZj" secondAttribute="centerX" id="tZ0-5h-beN"/>
                             <constraint firstItem="smQ-nu-RCR" firstAttribute="leading" secondItem="lcc-Yi-eTC" secondAttribute="leading" id="uzN-X2-So9"/>
                             <constraint firstItem="PqZ-XR-DkQ" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="vnN-Qr-AtY"/>
+                            <constraint firstItem="bgB-d7-Fgg" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-16" id="xMx-Fh-Rzg"/>
                             <constraint firstItem="lcc-Yi-eTC" firstAttribute="top" secondItem="y3c-jy-aDJ" secondAttribute="bottom" constant="8" id="xgP-7i-wRe"/>
                             <constraint firstItem="IDb-2d-ITH" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="-17" id="xy6-5C-j01"/>
                         </constraints>
@@ -377,6 +390,7 @@
                         <outlet property="innocentButton" destination="gtT-JI-LMh" id="eHd-7G-IsO"/>
                         <outlet property="innocentCountLabel" destination="UtV-9v-emE" id="TmB-aX-0U4"/>
                         <outlet property="judgementVoteView" destination="xth-fH-AZj" id="IWr-9j-l6N"/>
+                        <outlet property="playerAliasButton" destination="bgB-d7-Fgg" id="Q0f-Iw-Gbv"/>
                         <outlet property="playerListTableView" destination="vl1-dQ-qKD" id="qaR-wh-a0O"/>
                         <outlet property="playerStateLabel" destination="QZI-Og-LpS" id="q3n-lk-Kbj"/>
                         <outlet property="playerTeamLabel" destination="Lrz-gx-5ya" id="tVQ-LW-q4S"/>

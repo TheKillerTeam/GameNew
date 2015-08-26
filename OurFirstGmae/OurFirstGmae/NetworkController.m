@@ -12,7 +12,7 @@
 #import "Match.h"
 #import "Player.h"
 
-#define SERVER_IP @"192.168.196.168"
+#define SERVER_IP @"192.168.196.133"
 #define PLAYER_IMAGE_DEFAULT @"news2.jpg"
 
 typedef enum {
@@ -22,23 +22,24 @@ typedef enum {
     MessageStartMatch                   = 2,    //to Server
     MessageMatchStarted                 = 3,        //from Server
     MessagePlayerImageUpdated           = 4,    //to Server
-    MessagePlayerSendChat               = 5,    //to Server
-    MessageUpdateChat                   = 6,        //from Server
-    MessagePlayerVoteFor                = 7,    //to Server
-    MessagePlayerJudgeFor               = 8,    //to Server
-    MessageUpdateVote                   = 9,        //from Server
-    MessageUpdateJudge                  = 10,       //from Server
-    MessageStartDiscussion              = 11,   //to Server
-    MessageResetVote                    = 12,   //to Server
-    MessageAllowVote                    = 13,       //from Server
-    MessagePlayerNightConfirmVote       = 14,   //to Server
-    MessagePlayerDayConfirmVote         = 15,   //to Server
-    MessagePlayerJudgementConfirmVote   = 16,   //to Server
-    MessagePlayerDied                   = 17,       //from Server
-    MessageJudgePlayer                  = 18,       //from Server
-    MessagePlayerSendLastWords          = 19,   //to Server
-    MessagePlayerHasLastWords           = 20,       //from Server
-    MessageGameOver                     = 21,       //from Server
+    MessagePlayerAliasUpdated           = 5,    //to Server
+    MessagePlayerSendChat               = 6,    //to Server
+    MessageUpdateChat                   = 7,        //from Server
+    MessagePlayerVoteFor                = 8,    //to Server
+    MessagePlayerJudgeFor               = 9,    //to Server
+    MessageUpdateVote                   = 10,        //from Server
+    MessageUpdateJudge                  = 11,       //from Server
+    MessageStartDiscussion              = 12,   //to Server
+    MessageResetVote                    = 13,   //to Server
+    MessageAllowVote                    = 14,       //from Server
+    MessagePlayerNightConfirmVote       = 15,   //to Server
+    MessagePlayerDayConfirmVote         = 16,   //to Server
+    MessagePlayerJudgementConfirmVote   = 17,   //to Server
+    MessagePlayerDied                   = 18,       //from Server
+    MessageJudgePlayer                  = 19,       //from Server
+    MessagePlayerSendLastWords          = 20,   //to Server
+    MessagePlayerHasLastWords           = 21,       //from Server
+    MessageGameOver                     = 22,       //from Server
     
 } MessageType;
 
@@ -204,6 +205,19 @@ static NetworkController *sharedController = nil;
     NSData *imageData = UIImagePNGRepresentation(image);
     NSString *base64string = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
     [writer writeString:base64string];
+    
+    [writer writeString:[GKLocalPlayer localPlayer].playerID];
+    
+    [self sendData:writer.data];
+}
+
+- (void)sendUpdatePlayerAlias:(NSString *)playerAlias {
+    
+    MessageWriter * writer = [MessageWriter new];
+    
+    [writer writeByte:MessagePlayerAliasUpdated];
+    
+    [writer writeString:playerAlias];
     
     [writer writeString:[GKLocalPlayer localPlayer].playerID];
     

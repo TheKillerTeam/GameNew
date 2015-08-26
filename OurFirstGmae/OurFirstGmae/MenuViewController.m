@@ -6,8 +6,7 @@
 //  Copyright (c) 2015年 CAI CHENG-HONG. All rights reserved.
 //
 
-//TODO: @結束遊戲 @結束後再重新開始 @邀請好友 @縮小App不會斷線 @追蹤是否有網路連線
-//@編輯外觀時由之前的結果開始編輯 @外觀存檔
+//TODO: @邀請好友 @縮小App不會斷線
 
 #import "MenuViewController.h"
 #import "NetworkController.h"
@@ -20,16 +19,20 @@
 #define MIN_PLAYER_COUNTS 2
 #define MAX_PLAYER_COUNTS 16
 
+#define PLAYER_ALIAS_FONT_SIZE @20.0f
+
 @interface MenuViewController () <NetworkControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, playerInfoViewControllerDelegate> {
     
     Match *_match;
     int playerCounts;
     UIImage *playerImage;
+    NSString *playerAlias;
+    
+    UIAlertAction *secureTextAlertAction;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *debugLabel;
-@property (weak, nonatomic) IBOutlet UILabel *player1Label;
-@property (weak, nonatomic) IBOutlet UILabel *player2Label;
+@property (weak, nonatomic) IBOutlet UIButton *playerAliasButton;
 @property (weak, nonatomic) IBOutlet UIPickerView *playerCountsPickerView;
 @property (weak, nonatomic) IBOutlet UIImageView *playerImageImageView;
 @property (weak, nonatomic) IBOutlet UILabel *gameStateLabel;
@@ -51,6 +54,8 @@
     playerImage = [UIImage imageNamed:PLAYER_IMAGE_DEFAULT];
     _playerImageImageView.backgroundColor=[UIColor clearColor];
     self.playerImageImageView.image = playerImage;
+    
+    playerAlias = @"玩家暱稱";
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -69,8 +74,8 @@
     
     if (![GKLocalPlayer localPlayer].isAuthenticated) {
         
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Game center login required" message:@"please login game center to continue" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"請登入 Game Center" message:@"登入後方能開始遊戲" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"確定" style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:ok];
         UIViewController *rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
         [rootVC presentViewController:alert animated:YES completion:nil];
@@ -91,6 +96,70 @@
     [self presentViewController:vc animated:true completion:nil];
 }
 
+- (IBAction)playerAliasButtonPressed:(id)sender {
+    
+    if (![GKLocalPlayer localPlayer].isAuthenticated) {
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"請登入 Game Center" message:@"登入後方能更改暱稱" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"確定" style:UIAlertActionStyleDefault handler:nil];
+        [alert addAction:ok];
+        UIViewController *rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+        [rootVC presentViewController:alert animated:YES completion:nil];
+        
+    }else {
+        
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"更改你的暱稱" message:@"請輸入你想讓其他玩家看見的的暱稱" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction *done = [UIAlertAction actionWithTitle:@"完成" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        
+            playerAlias = [alert.textFields[0] text];
+            [self.playerAliasButton setTitle:playerAlias forState:UIControlStateNormal];
+            [[NetworkController sharedInstance]sendUpdatePlayerAlias:playerAlias];
+        }];
+        
+        UIAlertAction *cancel = [UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleDefault handler:nil];
+
+        [alert addAction:done];
+        done.enabled = false;
+        secureTextAlertAction = done;
+        [alert addAction:cancel];
+        
+        [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+            
+            textField.placeholder = @"暱稱長度不能大於6個中文字長度";
+            
+            [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleTextFieldTextDidChangeNotification:) name:UITextFieldTextDidChangeNotification object:textField];
+            
+            textField.returnKeyType = UIReturnKeyDone;
+        }];
+        UIViewController *rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+        [rootVC presentViewController:alert animated:YES completion:nil];
+    }
+}
+
+- (void)handleTextFieldTextDidChangeNotification:(NSNotification *)notification {
+
+    NSString *text = [notification.object text];
+    
+    NSNumber *n = PLAYER_ALIAS_FONT_SIZE;
+    
+    CGFloat fontSize = [n floatValue];
+    CGRect r = [text boundingRectWithSize:CGSizeMake(10000, 0)
+                                  options:NSStringDrawingUsesLineFragmentOrigin
+                               attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:fontSize]}
+                                  context:nil];
+
+    if (text.length != 0 && r.size.width <= 120) {
+        
+        secureTextAlertAction.enabled = true;
+        
+    }else {
+    
+        secureTextAlertAction.enabled = false;
+    }
+    
+    NSLog(@"%f", r.size.width);
+}
+
 #pragma mark - NetworkControllerDelegate
 
 - (void)networkStateChanged:(NetworkState)networkState {
@@ -100,6 +169,9 @@
         case NetworkStateNotAvailable:
             
             self.debugLabel.text = @"Not Available";
+            
+            [self.playerAliasButton setTitle:playerAlias forState:UIControlStateNormal];
+
             break;
             
         case NetworkStatePendingAuthentication:
@@ -110,6 +182,10 @@
         case NetworkStateAuthenticated:
             
             self.debugLabel.text = @"Authenticated";
+            
+            playerAlias = [GKLocalPlayer localPlayer].alias;
+            [self.playerAliasButton setTitle:playerAlias forState:UIControlStateNormal];
+            
             break;
             
         case NetworkStateConnectingToServer:
@@ -130,7 +206,10 @@
         case NetworkStateReceivedMatchStatus:
             
             self.debugLabel.text = @"Received Match Status,\nReady to Look for a Match";
+            
             [[NetworkController sharedInstance]sendUpdatePlayerImage:playerImage];
+            [[NetworkController sharedInstance]sendUpdatePlayerAlias:playerAlias];
+            
             break;
             
         case NetworkStatePendingMatch:
@@ -263,6 +342,11 @@
 }
 
 - (void)playerHasLastWords:(NSString *)lastWords withPlayerId:(NSString *)playerId {
+    
+}
+
+- (void)gameOver:(int)whoWins {
+    
     
 }
 

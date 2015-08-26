@@ -85,6 +85,7 @@ typedef enum {
 - (void)findMatchWithMinPlayers:(int)minPlayers maxPlayers:(int)maxPlayers
                  viewController:(UIViewController *)viewController;
 - (void)sendUpdatePlayerImage:(UIImage *)image;
+- (void)sendUpdatePlayerAlias:(NSString *)playerAlias;
 - (void)sendChat:(NSString *)chat withChatType:(ChatType)chatType;
 - (void)sendVoteFor:(int)playerIndex;
 - (void)sendJudgeFor:(int)judge;

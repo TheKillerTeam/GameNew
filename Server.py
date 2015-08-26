@@ -10,23 +10,24 @@ MESSAGE_NOT_IN_MATCH = 1
 MESSAGE_START_MATCH = 2
 MESSAGE_MATCH_STARTED = 3
 MESSAGE_PLAYER_IMAGE_UPDATED = 4
-MESSAGE_PLAYER_SEND_CHAT = 5
-MESSAGE_UPDATE_CHAT = 6
-MESSAGE_PLAYER_VOTE_FOR = 7
-MESSAGE_PLAYER_JUDGE_FOR = 8
-MESSAGE_UPDATE_VOTE = 9
-MESSAGE_UPDATE_JUDGE = 10
-MESSAGE_START_DISCUSSION = 11
-MESSAGE_RESET_VOTE = 12
-MESSAGE_ALLOW_VOTE = 13
-MESSAGE_PLAYER_NIGHT_CONFIRM_VOTE = 14
-MESSAGE_PLAYER_DAY_CONFIRM_VOTE = 15
-MESSAGE_PLAYER_JUDGEMENT_CONFIRM_VOTE = 16
-MESSAGE_PLAYER_DIED = 17
-MESSAGE_JUDGE_PLAYER = 18
-MESSAGE_PLAYER_SEND_LAST_WORDS = 19
-MESSAGE_PLAYER_HAS_LAST_WORDS = 20
-MESSAGE_GAME_OVER = 21
+MESSAGE_PLAYER_ALIAS_UPDATED = 5
+MESSAGE_PLAYER_SEND_CHAT = 6
+MESSAGE_UPDATE_CHAT = 7
+MESSAGE_PLAYER_VOTE_FOR = 8
+MESSAGE_PLAYER_JUDGE_FOR = 9
+MESSAGE_UPDATE_VOTE = 10
+MESSAGE_UPDATE_JUDGE = 11
+MESSAGE_START_DISCUSSION = 12
+MESSAGE_RESET_VOTE = 13
+MESSAGE_ALLOW_VOTE = 14
+MESSAGE_PLAYER_NIGHT_CONFIRM_VOTE = 15
+MESSAGE_PLAYER_DAY_CONFIRM_VOTE = 16
+MESSAGE_PLAYER_JUDGEMENT_CONFIRM_VOTE = 17
+MESSAGE_PLAYER_DIED = 18
+MESSAGE_JUDGE_PLAYER = 19
+MESSAGE_PLAYER_SEND_LAST_WORDS = 20
+MESSAGE_PLAYER_HAS_LAST_WORDS = 21
+MESSAGE_GAME_OVER = 22
 
 MATCH_STATE_ACTIVE = 0
 MATCH_STATE_GAME_OVER = 1
@@ -147,9 +148,10 @@ class GameMatch:
         else:
             for player in self.players:
                 if player.protocol == None:
-                    print "Player %s disconnected, scheduling shutdown" % (player.alias)
-                    self.pendingShutdown = True
-                    self.shutdownTime = time() + SECS_FOR_SHUTDOWN
+                    if player.playerState == PLAYER_STATE_ALIVE:
+                        print "Player %s disconnected, scheduling shutdown" % (player.alias)
+                        self.pendingShutdown = True
+                        self.shutdownTime = time() + SECS_FOR_SHUTDOWN
 
     def quit(self):
         self.timer.stop()
@@ -218,6 +220,12 @@ class GameFactory(Factory):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.playerImage = playerImage
+                break
+            
+    def playerAliasUpdated(self, protocol, playerAlias, playerId):
+        for existingPlayer in self.players:
+            if existingPlayer.playerId == playerId:
+                existingPlayer.alias = playerAlias
                 break
        
     def playerSendChat(self, protocol, chat, chatType, playerId):
@@ -528,6 +536,12 @@ class GameProtocol(Protocol):
         self.log("Recv MESSAGE_PLAYER_IMAGE_UPDATED %s" % (playerId))
         self.factory.playerImageUpdated(self, playerImage, playerId)
         
+    def playerAliasUpdated(self, message):
+        playerAlias = message.readString()
+        playerId = message.readString()
+        self.log("Recv MESSAGE_PLAYER_ALIAS_UPDATED %s %s" % (playerAlias, playerId))
+        self.factory.playerAliasUpdated(self, playerAlias, playerId)
+        
     def playerSendChat(self, message):
         chat = message.readString()
         chatType = message.readByte()
@@ -647,6 +661,8 @@ class GameProtocol(Protocol):
             return self.startMatch(message)
         if messageId == MESSAGE_PLAYER_IMAGE_UPDATED:
             return self.playerImageUpdated(message)
+        if messageId == MESSAGE_PLAYER_ALIAS_UPDATED:
+            return self.playerAliasUpdated(message)
         if messageId == MESSAGE_PLAYER_SEND_CHAT:
             return self.playerSendChat(message)
         if messageId == MESSAGE_PLAYER_VOTE_FOR:

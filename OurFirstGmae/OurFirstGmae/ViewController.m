@@ -122,6 +122,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *guiltyButton;
 @property (weak, nonatomic) IBOutlet UIButton *innocentButton;
 @property (weak, nonatomic) IBOutlet UILabel *playerStateLabel;
+@property (weak, nonatomic) IBOutlet UIButton *playerAliasButton;
 
 @end
 
@@ -185,6 +186,8 @@
             
             selfTeam = p.playerTeam;
             selfState = p.playerState;
+            [self.playerAliasButton setTitle:p.alias forState:UIControlStateNormal];
+
             break;
         }
     }
@@ -596,8 +599,22 @@
             break;
     }
     
+    //show systemMessage
+    if (selfTeam == PLAYER_TEAM_MAFIA) {
+
+        [self showSystemMessage:[NSString stringWithFormat:@"你的身份是%@", PLAYER_TEAM_MAFIA_STRING]];
+        
+    }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
+        
+        [self showSystemMessage:[NSString stringWithFormat:@"你的身份是%@", PLAYER_TEAM_SHERIFF_STRING]];
+
+    }else if (selfTeam == PLAYER_TEAM_CIVILIAN) {
+        
+        [self showSystemMessage:[NSString stringWithFormat:@"你的身份是%@", PLAYER_TEAM_CIVILIAN_STRING]];
+    }
+
     //changeGameState
-    [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:1.0f];
+    [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:1.5f];
 }
 
 - (void)dismissNightOutView {
