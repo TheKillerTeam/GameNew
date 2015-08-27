@@ -34,13 +34,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
  
-    self.playBtn.hidden=YES;
-    self.outfitBtn.hidden=YES;
-    self.pickView.hidden=YES;
- 
-
     [self forSuperManAnimation];
-    [self forGameNameAnimation];
+    
     gameName = [UIImageView new];
     gameName.image=[UIImage imageNamed:@"gameName.png"];
     [self.view addSubview:gameName];
@@ -58,6 +53,7 @@
             self.playBtn.hidden=NO;
             self.outfitBtn.hidden=NO;
             self.pickView.hidden=NO;
+            self.soldierBtn.hidden = NO;
             
             
             
@@ -141,6 +137,7 @@
     self.pickView.alpha = 1.0;
     self.playerInfoBackgroundImageView.alpha = 1.0;
     self.closetBackgroundImageView.alpha = 1.0;
+    self.receiveeImageView.alpha = 1.0;
     
     [UIView commitAnimations];
 }

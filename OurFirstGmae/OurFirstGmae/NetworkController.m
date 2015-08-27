@@ -12,7 +12,7 @@
 #import "Match.h"
 #import "Player.h"
 
-#define SERVER_IP @"192.168.196.133"
+#define SERVER_IP @"220.134.136.189"
 #define PLAYER_IMAGE_DEFAULT @"news2.jpg"
 
 typedef enum {
@@ -39,7 +39,8 @@ typedef enum {
     MessageJudgePlayer                  = 19,       //from Server
     MessagePlayerSendLastWords          = 20,   //to Server
     MessagePlayerHasLastWords           = 21,       //from Server
-    MessageGameOver                     = 22,       //from Server
+    MessagePlayerDisconnected           = 22,       //from Server
+    MessageGameOver                     = 23,       //from Server
     
 } MessageType;
 
@@ -401,6 +402,12 @@ static NetworkController *sharedController = nil;
         NSString *playerId = [reader readString];
         [self.delegate playerHasLastWords:lastWords withPlayerId:playerId];
         
+    }else if (msgType == MessagePlayerDisconnected) {
+        
+        int willShutDown = [reader readByte];
+        NSString *playerId = [reader readString];
+        [self.delegate playerDisconnected:playerId willShutDown:willShutDown];
+        
     }else if (msgType == MessageGameOver) {
         
         int whoWins = [reader readByte];
@@ -436,7 +443,7 @@ static NetworkController *sharedController = nil;
 
 - (void)disconnect {
     
-    [self setNetworkState:NetworkStateAuthenticated];
+    [self setNetworkState:NetworkStateConnectingToServer];
     
     if (_inputStream != nil) {
         

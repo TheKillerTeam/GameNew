@@ -15,11 +15,12 @@
 #import "playerInfoViewController.h"
 #import "ViewController.h"
 
-#define PLAYER_IMAGE_DEFAULT @"news2.jpg"
+#define PLAYER_IMAGE_DEFAULT @"Doraemon.png"
 #define MIN_PLAYER_COUNTS 2
 #define MAX_PLAYER_COUNTS 16
 
-#define PLAYER_ALIAS_FONT_SIZE @20.0f
+#define PLAYER_ALIAS_FONT_SIZE 18.0f
+#define PLAYER_ALIAS_MAXIMUM_COUNT 6
 
 @interface MenuViewController () <NetworkControllerDelegate, UIPickerViewDataSource, UIPickerViewDelegate, playerInfoViewControllerDelegate> {
     
@@ -74,7 +75,7 @@
     
     if (![GKLocalPlayer localPlayer].isAuthenticated) {
         
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"請登入 Game Center" message:@"登入後方能開始遊戲" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"請登入Game Center" message:@"登入後方能開始遊戲" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *ok = [UIAlertAction actionWithTitle:@"確定" style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:ok];
         UIViewController *rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
@@ -100,7 +101,7 @@
     
     if (![GKLocalPlayer localPlayer].isAuthenticated) {
         
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"請登入 Game Center" message:@"登入後方能更改暱稱" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"請登入Game Center" message:@"登入後方能更改暱稱" preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction *ok = [UIAlertAction actionWithTitle:@"確定" style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:ok];
         UIViewController *rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
@@ -125,7 +126,7 @@
         
         [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
             
-            textField.placeholder = @"暱稱長度不能大於6個中文字長度";
+            textField.placeholder = [NSString stringWithFormat:@"暱稱長度不能大於%d個中文字長度", PLAYER_ALIAS_MAXIMUM_COUNT];
             
             [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleTextFieldTextDidChangeNotification:) name:UITextFieldTextDidChangeNotification object:textField];
             
@@ -140,7 +141,7 @@
 
     NSString *text = [notification.object text];
     
-    NSNumber *n = PLAYER_ALIAS_FONT_SIZE;
+    NSNumber *n = [NSNumber numberWithFloat:PLAYER_ALIAS_FONT_SIZE];
     
     CGFloat fontSize = [n floatValue];
     CGRect r = [text boundingRectWithSize:CGSizeMake(10000, 0)
@@ -148,7 +149,7 @@
                                attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:fontSize]}
                                   context:nil];
 
-    if (text.length != 0 && r.size.width <= 120) {
+    if (text.length != 0 && r.size.width <= PLAYER_ALIAS_FONT_SIZE*PLAYER_ALIAS_MAXIMUM_COUNT) {
         
         secureTextAlertAction.enabled = true;
         

@@ -27,7 +27,8 @@ MESSAGE_PLAYER_DIED = 18
 MESSAGE_JUDGE_PLAYER = 19
 MESSAGE_PLAYER_SEND_LAST_WORDS = 20
 MESSAGE_PLAYER_HAS_LAST_WORDS = 21
-MESSAGE_GAME_OVER = 22
+MESSAGE_PLAYER_DISCONNECTED = 22
+MESSAGE_GAME_OVER = 23
 
 MATCH_STATE_ACTIVE = 0
 MATCH_STATE_GAME_OVER = 1
@@ -63,6 +64,7 @@ TEAM_LIST.append([7,4,4])#15
 TEAM_LIST.append([8,4,4])#16
 
 SECS_FOR_SHUTDOWN = 5
+SECS_FOR_GAMEOVER_SHUTDOWN = 70
 
 UNRESETED = 0
 RESETED = 1
@@ -76,6 +78,9 @@ JUDGE_INNOCENT = 1
 NOT_OVER_YET = 0
 MAFIA_WIN = 1
 CIVILIAN_WIN = 2
+
+NOT_SHUTTING_DOWN = 0
+SHUTTING_DOWN = 1
 
 class MessageReader:
 
@@ -124,7 +129,7 @@ class GameMatch:
         self.pendingShutdown = False
         self.shutdownTime = 0
         self.timer = LoopingCall(self.update)
-        self.timer.start(5)
+        self.timer.start(3)
 
     def __repr__(self):
         return "%d %s" % (self.state, str(self.players))
@@ -137,23 +142,46 @@ class GameMatch:
 
     def update(self):
         print "Match update: %s" % (str(self))
-        if (self.pendingShutdown):
-            cancelShutdown = True
-            for player in self.players:
-                if player.protocol == None:
-                    cancelShutdown = False
-            if (time() > self.shutdownTime):
-                print "Time elapsed, shutting down match"
-                self.quit()
-        else:
-            for player in self.players:
-                if player.protocol == None:
+        if (self.state == MATCH_STATE_GAME_OVER):
+            if (self.pendingShutdown == False):
+                self.pendingShutdown = True
+                self.shutdownTime = time() + SECS_FOR_GAMEOVER_SHUTDOWN
+        playerDisconnected = []
+        for player in self.players:
+            if player.protocol == None:
+                playerDisconnected.append(player)
+                if self.state == MATCH_STATE_ACTIVE:
                     if player.playerState == PLAYER_STATE_ALIVE:
-                        print "Player %s disconnected, scheduling shutdown" % (player.alias)
-                        self.pendingShutdown = True
-                        self.shutdownTime = time() + SECS_FOR_SHUTDOWN
-
+                        print "Player %s disconnected, shutdown after %d" % (player.alias, SECS_FOR_SHUTDOWN)
+                        if (self.pendingShutdown == False):
+                            self.pendingShutdown = True
+                            self.shutdownTime = time() + SECS_FOR_SHUTDOWN
+                        for p in self.players:
+                            if (p.protocol):
+                                p.protocol.sendPlayerDisconnected(player.playerId, SHUTTING_DOWN)                        
+                    else:
+                        print "Player %s disconnected" % (player.alias)
+                        for p in self.players:
+                            if (p.protocol):
+                                p.protocol.sendPlayerDisconnected(player.playerId, NOT_SHUTTING_DOWN)
+                else:
+                    print "Player %s disconnected" % (player.alias)
+                    for p in self.players:
+                        if (p.protocol):
+                            p.protocol.sendPlayerDisconnected(player.playerId, NOT_SHUTTING_DOWN)
+        if (len(playerDisconnected) != 0):
+            for player in playerDisconnected:
+                self.players.remove(player)
+            playerDisconnected = []
+        if (self.pendingShutdown):
+            print "Shutdown countdown: %d" % (self.shutdownTime - time())
+            if (time() > self.shutdownTime):
+                self.quit()
+        if (len(self.players) == 0):
+            self.quit()
+            
     def quit(self):
+        print "Match shut down "
         self.timer.stop()
         for matchPlayer in self.players:
             matchPlayer.match = None
@@ -206,10 +234,7 @@ class GameFactory(Factory):
                 existingPlayer.continueMatch = continueMatch
                 existingPlayer.protocol = protocol
                 protocol.player = existingPlayer
-                if (existingPlayer.match):
-                    print "TODO: Already in match case update match,state,team,vote"
-                else:
-                    existingPlayer.protocol.sendNotInMatch()
+                existingPlayer.protocol.sendNotInMatch()
                 return
         newPlayer = GamePlayer(protocol, playerImage, playerId, alias)
         protocol.player = newPlayer
@@ -353,11 +378,13 @@ class GameFactory(Factory):
                             aliveMafiaCount += 1
                 if aliveMafiaCount == 0:
                     for existingPlayer in self.players:
-                        existingPlayer.protocol.sendGameOver(CIVILIAN_WIN)                    
+                        existingPlayer.protocol.sendGameOver(CIVILIAN_WIN)
+                        existingPlayer.match.state = MATCH_STATE_GAME_OVER
                 else:
                     if aliveMafiaCount *2 >= alivePlayerCount:
                         for existingPlayer in self.players:
-                            existingPlayer.protocol.sendGameOver(MAFIA_WIN) 
+                            existingPlayer.protocol.sendGameOver(MAFIA_WIN)
+                            existingPlayer.match.state = MATCH_STATE_GAME_OVER
                     else:
                         for existingPlayer in self.players:
                             existingPlayer.protocol.sendGameOver(NOT_OVER_YET)
@@ -440,11 +467,13 @@ class GameFactory(Factory):
                             aliveMafiaCount += 1
                 if aliveMafiaCount == 0:
                     for existingPlayer in self.players:
-                        existingPlayer.protocol.sendGameOver(CIVILIAN_WIN)                    
+                        existingPlayer.protocol.sendGameOver(CIVILIAN_WIN)
+                        existingPlayer.match.state = MATCH_STATE_GAME_OVER
                 else:
                     if aliveMafiaCount *2 >= alivePlayerCount:
                         for existingPlayer in self.players:
-                            existingPlayer.protocol.sendGameOver(MAFIA_WIN) 
+                            existingPlayer.protocol.sendGameOver(MAFIA_WIN)
+                            existingPlayer.match.state = MATCH_STATE_GAME_OVER
                     else:
                         for existingPlayer in self.players:
                             existingPlayer.protocol.sendGameOver(NOT_OVER_YET)             
@@ -457,8 +486,6 @@ class GameFactory(Factory):
         matchPlayers = []
         for existingPlayer in self.players:
             if existingPlayer.playerId in playerIds:
-                if existingPlayer.match != None:
-                    return
                 matchPlayers.append(existingPlayer)
         match = GameMatch(matchPlayers)
         teamList = []
@@ -651,6 +678,14 @@ class GameProtocol(Protocol):
         message.writeByte(MESSAGE_GAME_OVER)
         message.writeByte(whoWins)
         self.log("Sent MESSAGE_GAME_OVER %d" % (whoWins))
+        self.sendMessage(message)
+        
+    def sendPlayerDisconnected(self, playerId, willShutDown):
+        message = MessageWriter()
+        message.writeByte(MESSAGE_PLAYER_DISCONNECTED)
+        message.writeByte(willShutDown)
+        message.writeString(playerId)
+        self.log("Sent MESSAGE_PLAYER_DISCONNECTED %s %d" % (playerId, willShutDown))
         self.sendMessage(message)
         
     def processMessage(self, message):

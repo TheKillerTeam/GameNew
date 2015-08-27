@@ -27,9 +27,9 @@
 #define SYSTEM_ID @"系統"
 #define SYSTEM_IMAGE @"Nobi Nobita.png"
 
-#define PLAYER_TEAM_CIVILIAN_IMAGE  @"Doraemon.png"
-#define PLAYER_TEAM_SHERIFF_IMAGE   @"Batman.png"
-#define PLAYER_TEAM_MAFIA_IMAGE     @"Mario.png"
+#define PLAYER_TEAM_CIVILIAN_IMAGE  @"cubeCivilian.png"
+#define PLAYER_TEAM_SHERIFF_IMAGE   @"cubeSheriff.png"
+#define PLAYER_TEAM_MAFIA_IMAGE     @"cubeMafia.png"
 
 #define BACKGROUND_IMAGE_DAY @"morningBackground.png"
 #define BACKGROUND_IMAGE_NIGHT @"nightBackground.png"
@@ -55,6 +55,9 @@
 #define NOT_OVER_YET    0
 #define MAFIA_WIN       1
 #define CIVILIAN_WIN    2
+
+#define NOT_SHUTTING_DOWN   0
+#define SHUTTING_DOWN       1
 
 @interface ViewController () <NetworkControllerDelegate, UITableViewDelegate, UITableViewDataSource,NSStreamDelegate, UITextFieldDelegate, MorningOutViewControllerDelegate> {
     
@@ -895,6 +898,19 @@
     self.chatTextField.enabled = true;
 }
 
+- (void)showBackToMenuAlertWithTitle:(NSString *)titleString {
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:titleString message:@"將回到Menu" preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction *ok = [UIAlertAction actionWithTitle:@"確定" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        
+        [[NetworkController sharedInstance] setGameState:GameStateNotInGame];
+        rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+        [rootVC dismissViewControllerAnimated:true completion:nil];
+    }];
+    [alert addAction:ok];
+    [self presentViewController:alert animated:true completion:nil];
+}
+
 #pragma mark - UITextFieldDelegate Methods
 
 - (BOOL) textFieldShouldReturn:(UITextField *)textField {
@@ -1294,6 +1310,8 @@
         case NetworkStateNotAvailable:
             
             self.debugLabel.text = @"Not Available";
+            
+            [self showBackToMenuAlertWithTitle:@"未登入Game Center"];
             break;
             
         case NetworkStatePendingAuthentication:
@@ -1309,6 +1327,8 @@
         case NetworkStateConnectingToServer:
             
             self.debugLabel.text = @"Connecting to Server";
+            
+            [self showBackToMenuAlertWithTitle:@"與伺服器連線中斷"];
             break;
             
         case NetworkStateConnected:
@@ -1324,9 +1344,8 @@
         case NetworkStateReceivedMatchStatus:
             
             self.debugLabel.text = @"Received Match Status,\nReady to Look for a Match";
-            [[NetworkController sharedInstance] setGameState:GameStateNotInGame];
-            rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
-            [rootVC dismissViewControllerAnimated:true completion:nil];
+            
+            [self showBackToMenuAlertWithTitle:@"遊戲結束"];
             break;
             
         case NetworkStatePendingMatch:
@@ -1890,6 +1909,31 @@
     }
 }
 
+- (void)playerDisconnected:(NSString *)playerId willShutDown:(int)willShutDown {
+    
+    if (willShutDown == NOT_SHUTTING_DOWN) {
+    
+        NSString *systemMessgae = @"離開了遊戲";
+        NSArray *tmpChatArray = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%@", playerId],systemMessgae, nil];
+        [chatData addObject:tmpChatArray];
+        
+        [self.chatBoxTableView reloadData];
+        //scroll to bottom
+        NSIndexPath* chatip = [NSIndexPath indexPathForRow:chatData.count-1 inSection:0];
+        [self.chatBoxTableView scrollToRowAtIndexPath:chatip atScrollPosition:UITableViewScrollPositionBottom animated:true];
+        
+    }else if (willShutDown == SHUTTING_DOWN) {
+        
+        for (Player *p in self.match.players) {
+            
+            if ([p.playerId isEqualToString:playerId]) {
+                
+                [self showBackToMenuAlertWithTitle:[NSString stringWithFormat:@"很遺憾, %@離開了遊戲", p.alias]];
+            }
+        }
+    }
+}
+
 - (void)gameOver:(int)whoWins {
     
     if (whoWins == NOT_OVER_YET) {
@@ -2373,7 +2417,7 @@
                 
                 [self showSystemMessage:@"遊戲結束,英雄方獲勝"];
             }
-            [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"玩家們可以留下來互相交流,遊戲將在第一位玩家離開後5秒結束"] afterDelay:1.5f];
+            [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"玩家們可以留下來互相交流,遊戲將在一分鐘後結束"] afterDelay:1.5f];
 
             //hide judgementVoteView
             self.judgementVoteView.hidden = true;
