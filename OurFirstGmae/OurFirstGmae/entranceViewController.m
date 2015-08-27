@@ -141,6 +141,7 @@
     self.pickView.alpha = 1.0;
     self.playerInfoBackgroundImageView.alpha = 1.0;
     self.closetBackgroundImageView.alpha = 1.0;
+    self.receiveeImageView.alpha = 1.0 ;
     
     [UIView commitAnimations];
 }
