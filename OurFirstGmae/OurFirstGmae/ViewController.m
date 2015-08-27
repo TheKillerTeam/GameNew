@@ -109,7 +109,8 @@
 @property (weak, nonatomic) IBOutlet UITableView *playerListTableView;
 @property (weak, nonatomic) IBOutlet UITextField *chatTextField;
 @property (weak, nonatomic) IBOutlet UIButton *sendBtn;
-@property (weak, nonatomic) IBOutlet UIButton *extraBtn;
+@property (weak, nonatomic) IBOutlet UIButton *showCondition;
+
 @property (weak, nonatomic) IBOutlet UIView *thePlayerView;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImg;
 @property (weak, nonatomic) IBOutlet UILabel *debugLabel;
@@ -150,7 +151,7 @@
     
     [inputBar addSubview:self.chatTextField];
     [inputBar addSubview:self.sendBtn];
-    [inputBar addSubview:self.extraBtn];
+    [inputBar addSubview:self.showCondition];
     inputBar.backgroundColor=[UIColor grayColor];
     [self.view addSubview:inputBar];
     
@@ -482,21 +483,36 @@
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:self.playerListTableView cache:YES];
     [self.playerListTableView setTranslatesAutoresizingMaskIntoConstraints:YES];
-
+     [self.confirmVoteButton setTranslatesAutoresizingMaskIntoConstraints:YES];
     CGRect frame = self.playerListTableView.frame;
+    CGRect frameForBtn = self.confirmVoteButton.frame;
     
     if(frame.origin.y<0) {
 
-        frame.origin.y =20;
+        
+        if(frameForBtn.origin.x>283)
+        {
+            frameForBtn.origin.x=283;
+            self.confirmVoteButton.hidden =false;
+        }
+        
+        frame.origin.y =103;
         self.playerListTableView.hidden = false;
         
     }else {
+        if(frameForBtn.origin.x <= 283){
+            frameForBtn.origin.x +=frameForBtn.size.width+20;
+        }
         
         frame.origin.y -=frame.size.height+20;
         [self performSelector:@selector(setHiddenPlayerList) withObject:self afterDelay:0.3f];
     }
     
     self.playerListTableView.frame =frame;
+
+  
+    
+    self.confirmVoteButton.frame=frameForBtn;
     
     [UIView commitAnimations];
 }
@@ -508,16 +524,24 @@
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:self.playerListTableView cache:YES];
     [self.playerListTableView setTranslatesAutoresizingMaskIntoConstraints:YES];
+    [self.confirmVoteButton setTranslatesAutoresizingMaskIntoConstraints:YES];
     
     CGRect frame = self.playerListTableView.frame;
+    CGRect frameForBtn= self.confirmVoteButton.frame;
     
     if(frame.origin.y>=0) {
+        
+        if(frameForBtn.origin.x <= 283){
+            frameForBtn.origin.x +=frameForBtn.size.width+20;
+        }
         
         frame.origin.y -=frame.size.height+20;
         [self performSelector:@selector(setHiddenPlayerList) withObject:self afterDelay:0.3f];
     }
+ 
     
     self.playerListTableView.frame =frame;
+    self.confirmVoteButton.frame =frameForBtn;
     
     [UIView commitAnimations];
 }
