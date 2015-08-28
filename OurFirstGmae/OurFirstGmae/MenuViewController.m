@@ -6,7 +6,7 @@
 //  Copyright (c) 2015年 CAI CHENG-HONG. All rights reserved.
 //
 
-//TODO: @邀請好友 @縮小App不會斷線
+//TODO: @邀請好友
 
 #import "MenuViewController.h"
 #import "NetworkController.h"
@@ -15,7 +15,8 @@
 #import "playerInfoViewController.h"
 #import "ViewController.h"
 
-#define PLAYER_IMAGE_DEFAULT @"Doraemon.png"
+#define PLAYER_IMAGE_DEFAULT @"NPCPlayer.png"
+
 #define MIN_PLAYER_COUNTS 2
 #define MAX_PLAYER_COUNTS 16
 
@@ -30,13 +31,24 @@
     NSString *playerAlias;
     
     UIAlertAction *secureTextAlertAction;
+    
+    UIImageView *gameNameImageView;
 }
 
-@property (weak, nonatomic) IBOutlet UILabel *debugLabel;
+@property (weak, nonatomic) IBOutlet UIButton *networkStateButton;
+//@property (weak, nonatomic) IBOutlet UILabel *debugLabel;
 @property (weak, nonatomic) IBOutlet UIButton *playerAliasButton;
 @property (weak, nonatomic) IBOutlet UIPickerView *playerCountsPickerView;
 @property (weak, nonatomic) IBOutlet UIImageView *playerImageImageView;
-@property (weak, nonatomic) IBOutlet UILabel *gameStateLabel;
+
+@property (weak, nonatomic) IBOutlet UIImageView *superManImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *redBtnImageView;
+@property (weak, nonatomic) IBOutlet UIButton *playBtn;
+@property (weak, nonatomic) IBOutlet UIButton *outfitBtn;
+@property (weak, nonatomic) IBOutlet UIButton *soldierBtn;
+@property (weak, nonatomic) IBOutlet UIImageView *closetBackgroundImageView;
+@property (weak, nonatomic) IBOutlet UIImageView *playerInfoBackgroundImageView;
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicatorView;
 
 @end
 
@@ -49,7 +61,7 @@
     //stop auto lock
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     
-    playerCounts = 2;
+    playerCounts = MIN_PLAYER_COUNTS;
     
     //TODO:if theres a saved playerImage, load it instead of using default
     playerImage = [UIImage imageNamed:PLAYER_IMAGE_DEFAULT];
@@ -57,6 +69,12 @@
     self.playerImageImageView.image = playerImage;
     
     playerAlias = @"玩家暱稱";
+    
+    [self forSuperManAnimation];
+    
+    gameNameImageView = [UIImageView new];
+    gameNameImageView.image=[UIImage imageNamed:@"gameName.png"];
+    [self.view addSubview:gameNameImageView];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -66,6 +84,104 @@
     [self gameStateChanged:[NetworkController sharedInstance].gameState];
 }
 
+- (void)forSuperManAnimation{
+    
+    CGPoint targetPoint = CGPointMake(300, 260);
+    
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathMoveToPoint(path, NULL, 0, 260);
+    CGPathAddLineToPoint(path, NULL, 0, 260);
+    CGPathAddLineToPoint(path, NULL, 100, 250);
+    CGPathAddLineToPoint(path, NULL, 150, 260);
+    CGPathAddLineToPoint(path, NULL, 200, 250);
+    CGPathAddLineToPoint(path, NULL, 250, 260);
+    CGPathAddLineToPoint(path, NULL, 300, 255);
+    
+    CAKeyframeAnimation *animation = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    [animation setValue:@"moving" forKey:@"animationMoving"];
+    [animation setDuration:3];
+    [animation setPath:path];
+    animation.delegate=self;
+    [animation setAutoreverses:NO];
+    
+    animation.fillMode = kCAFillModeForwards;
+    [self.superManImageView.layer addAnimation:animation forKey:nil];
+    [self.superManImageView setTranslatesAutoresizingMaskIntoConstraints:YES];
+    self.superManImageView.center = targetPoint;
+}
+
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag{
+    
+    if([[anim valueForKey:@"animationMoving"]isEqualToString:@"moving"]){
+        
+        if(flag){
+            
+            self.superManImageView.image =[UIImage imageNamed:@"superMan2.png"];
+            self.redBtnImageView.image=[UIImage imageNamed:@"superManButton1.png"];
+            
+            self.playBtn.hidden = NO;
+            self.outfitBtn.hidden = NO;
+            self.soldierBtn.hidden = NO;
+            self.playerCountsPickerView.hidden = NO;
+            self.playerAliasButton.hidden = NO;
+            
+            [self forGameNameAnimation];
+            [self forBtnAnimation];
+        }
+    }
+    if ([[anim valueForKey:@"animationMoving2"]isEqualToString:@"moving2"]){
+     
+        if(flag){
+            //登入gamecenter
+            [[NetworkController sharedInstance] authenticateLocalUser];
+        }
+    }
+}
+
+- (void)forBtnAnimation{
+    
+    [UIView beginAnimations: @"Fade Out" context:nil];
+    
+    [UIView setAnimationDelay:1];
+    
+    [UIView setAnimationDuration:2];
+    
+    self.playBtn.alpha = 1.0;
+    self.outfitBtn.alpha = 1.0;
+    self.soldierBtn.alpha = 1.0;
+    self.playerCountsPickerView.alpha = 1.0;
+    self.playerInfoBackgroundImageView.alpha = 1.0;
+    self.closetBackgroundImageView.alpha = 1.0;
+    self.playerImageImageView.alpha = 1.0;
+    self.playerAliasButton.alpha = 1.0;
+    self.networkStateButton.alpha = 1.0;
+    
+    [UIView commitAnimations];
+}
+
+- (void)forGameNameAnimation{
+    
+    CGRect targetFrame = CGRectMake(43, 0, 290, 250);
+    
+    CGMutablePathRef path1 = CGPathCreateMutable();
+    CGPathMoveToPoint(path1, NULL, self.view.frame.size.width/2, -300);
+    CGPathAddLineToPoint(path1, NULL, self.view.frame.size.width/2, targetFrame.size.height/2 +10);
+    CGPathAddLineToPoint(path1, NULL, self.view.frame.size.width/2, targetFrame.size.height/2);
+    
+    CAKeyframeAnimation *animation1 = [CAKeyframeAnimation animationWithKeyPath:@"position"];
+    
+    [animation1 setValue:@"moving2" forKey:@"animationMoving2"];
+    [animation1 setDuration:3];
+    [animation1 setPath:path1];
+    
+    animation1.fillMode = kCAFillModeForwards;
+    animation1.delegate=self;
+    [gameNameImageView.layer addAnimation:animation1 forKey:nil];
+    [gameNameImageView setTranslatesAutoresizingMaskIntoConstraints:YES];
+    
+    gameNameImageView.frame = targetFrame;
+}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
@@ -73,18 +189,7 @@
 
 - (IBAction)playButtonPressed:(id)sender {
     
-    if (![GKLocalPlayer localPlayer].isAuthenticated) {
-        
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"請登入Game Center" message:@"登入後方能開始遊戲" preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction *ok = [UIAlertAction actionWithTitle:@"確定" style:UIAlertActionStyleDefault handler:nil];
-        [alert addAction:ok];
-        UIViewController *rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
-        [rootVC presentViewController:alert animated:YES completion:nil];
-        
-    }else if ([NetworkController sharedInstance].networkState == NetworkStateReceivedMatchStatus) {
-
-        [[NetworkController sharedInstance] findMatchWithMinPlayers:playerCounts maxPlayers:playerCounts viewController:self];
-    }
+    [[NetworkController sharedInstance] findMatchWithMinPlayers:playerCounts maxPlayers:playerCounts viewController:self];
 }
 
 - (IBAction)editCharacterButtonPressed:(id)sender {
@@ -165,11 +270,31 @@
 
 - (void)networkStateChanged:(NetworkState)networkState {
     
+    if (networkState == NetworkStateReceivedMatchStatus) {
+        
+        self.playBtn.enabled = true;
+        
+    }else {
+        
+        self.playBtn.enabled = false;
+    }
+    
+    if (networkState == NetworkStateNotAvailable ||
+        networkState == NetworkStateReceivedMatchStatus) {
+        
+        self.activityIndicatorView.hidden = true;
+        
+    }else {
+        
+        self.activityIndicatorView.hidden = false;
+    }
+    
     switch(networkState) {
             
         case NetworkStateNotAvailable:
             
-            self.debugLabel.text = @"Not Available";
+//            self.debugLabel.text = @"Not Available";
+            [self.networkStateButton setTitle:@"未登入Game Center" forState:UIControlStateNormal];
             
             [self.playerAliasButton setTitle:playerAlias forState:UIControlStateNormal];
 
@@ -177,12 +302,16 @@
             
         case NetworkStatePendingAuthentication:
             
-            self.debugLabel.text = @"Pending Authentication";
+//            self.debugLabel.text = @"Pending Authentication";
+            [self.networkStateButton setTitle:@"登入Game Center中" forState:UIControlStateNormal];
+
             break;
             
         case NetworkStateAuthenticated:
             
-            self.debugLabel.text = @"Authenticated";
+//            self.debugLabel.text = @"Authenticated";
+            [self.networkStateButton setTitle:@"已登入Game Center" forState:UIControlStateNormal];
+
             
             playerAlias = [GKLocalPlayer localPlayer].alias;
             [self.playerAliasButton setTitle:playerAlias forState:UIControlStateNormal];
@@ -191,22 +320,29 @@
             
         case NetworkStateConnectingToServer:
             
-            self.debugLabel.text = @"Connecting to Server";
+//            self.debugLabel.text = @"Connecting to Server";
+            [self.networkStateButton setTitle:@"與伺服器連線中" forState:UIControlStateNormal];
+
             break;
             
         case NetworkStateConnected:
             
-            self.debugLabel.text = @"Connected";
+//            self.debugLabel.text = @"Connected";
+            [self.networkStateButton setTitle:@"已與伺服器連線" forState:UIControlStateNormal];
+
             break;
             
         case NetworkStatePendingMatchStatus:
             
-            self.debugLabel.text = @"Pending Match Status";
+//            self.debugLabel.text = @"Pending Match Status";
+            [self.networkStateButton setTitle:@"準備遊戲資訊中" forState:UIControlStateNormal];
+
             break;
             
         case NetworkStateReceivedMatchStatus:
             
-            self.debugLabel.text = @"Received Match Status,\nReady to Look for a Match";
+//            self.debugLabel.text = @"Received Match Status,\nReady to Look for a Match";
+            [self.networkStateButton setTitle:@"準備完成,請開始遊戲" forState:UIControlStateNormal];
             
             [[NetworkController sharedInstance]sendUpdatePlayerImage:playerImage];
             [[NetworkController sharedInstance]sendUpdatePlayerAlias:playerAlias];
@@ -215,17 +351,20 @@
             
         case NetworkStatePendingMatch:
             
-            self.debugLabel.text = @"Pending Match";
+//            self.debugLabel.text = @"Pending Match";
+            [self.networkStateButton setTitle:@"準備開始遊戲" forState:UIControlStateNormal];
             break;
             
         case NetworkStatePendingMatchStart:
             
-            self.debugLabel.text = @"Pending Start";
+//            self.debugLabel.text = @"Pending Start";
+            [self.networkStateButton setTitle:@"準備開始遊戲" forState:UIControlStateNormal];
             break;
             
         case NetworkStateMatchActive:
             
-            self.debugLabel.text = @"Match Active";
+//            self.debugLabel.text = @"Match Active";
+            [self.networkStateButton setTitle:@"遊戲已開始" forState:UIControlStateNormal];
             break;
     }
 }
@@ -260,78 +399,6 @@
 
 - (void)gameStateChanged:(GameState)gameState {
     
-    switch(gameState) {
-            
-        case GameStateNotInGame:
-            
-            self.gameStateLabel.text = @"NotInGame";
-            break;
-            
-        case GameStateGameStart:
-            
-            self.gameStateLabel.text = @"GameStart";
-            break;
-            
-        case GameStateNightStart:
-            
-            self.gameStateLabel.text = @"NightStart";
-            break;
-            
-        case GameStateNightDiscussion:
-            
-            self.gameStateLabel.text = @"NightDiscussion";
-            break;
-            
-        case GameStateNightVote:
-            
-            self.gameStateLabel.text = @"NightVote";
-            break;
-            
-        case GameStateShowNightResults:
-            
-            self.gameStateLabel.text = @"ShowNightResults";
-            break;
-            
-        case GameStateDayStart:
-            
-            self.gameStateLabel.text = @"DayStart";
-            break;
-            
-        case GameStateDayDiscussion:
-            
-            self.gameStateLabel.text = @"DayDiscussion";
-            break;
-            
-        case GameStateDayVote:
-            
-            self.gameStateLabel.text = @"DayVote";
-            break;
-            
-        case GameStateShowDayResults:
-            
-            self.gameStateLabel.text = @"ShowDayResults";
-            break;
-            
-        case GameStateJudgementDiscussion:
-            
-            self.gameStateLabel.text = @"JudgementDiscussion";
-            break;
-            
-        case GameStateJudgementVote:
-            
-            self.gameStateLabel.text = @"JudgementVote";
-            break;
-            
-        case GameStateShowJudgementResults:
-            
-            self.gameStateLabel.text = @"ShowJudgementResults";
-            break;
-            
-        case GameStateGameOver:
-            
-            self.gameStateLabel.text = @"GameOver";
-            break;
-    }
 }
 
 - (void)judgePlayer:(NSString *)playerId {
@@ -343,6 +410,10 @@
 }
 
 - (void)playerHasLastWords:(NSString *)lastWords withPlayerId:(NSString *)playerId {
+    
+}
+
+- (void)playerDisconnected:(NSString *)playerId willShutDown:(int)willShutDown {
     
 }
 
@@ -372,16 +443,20 @@
     return MAX_PLAYER_COUNTS - MIN_PLAYER_COUNTS +1;
 }
 
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component {
-    
-    return [NSString stringWithFormat:@"%ld", MIN_PLAYER_COUNTS +row];
-}
-
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
     playerCounts = (int)(MIN_PLAYER_COUNTS +row);
 }
 
+- (NSAttributedString *)pickerView:(UIPickerView *)pickerView attributedTitleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    NSString *title = [NSString stringWithFormat:@"%ld", MIN_PLAYER_COUNTS +row];
+    
+    NSAttributedString *attString = [[NSAttributedString alloc] initWithString:title attributes:@{NSForegroundColorAttributeName:[UIColor colorWithRed:0.6 green:0.6 blue:0.6 alpha:1]}];
+    
+    return attString;
+    
+}
 
 /*
 #pragma mark - Navigation

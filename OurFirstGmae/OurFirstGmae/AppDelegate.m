@@ -22,9 +22,6 @@
     //stop auto lock
     [UIApplication sharedApplication].idleTimerDisabled = YES;
     
-    //登入gamecenter
-    [[NetworkController sharedInstance] authenticateLocalUser];
-    
     return YES;
 }
 
