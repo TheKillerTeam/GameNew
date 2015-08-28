@@ -67,9 +67,12 @@
 		099C96841B8E2A32008862C6 /* mainCoverPeace.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96831B8E2A32008862C6 /* mainCoverPeace.png */; };
 		099C96861B8E2AAA008862C6 /* mainCoverFire.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96851B8E2AAA008862C6 /* mainCoverFire.png */; };
 		099C96881B8E2B43008862C6 /* mainCoverEyes.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96871B8E2B43008862C6 /* mainCoverEyes.png */; };
-		099C968C1B8E2E16008862C6 /* nightBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C968B1B8E2E16008862C6 /* nightBackground.png */; };
 		099C96921B8E3118008862C6 /* morningBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96911B8E3118008862C6 /* morningBackground.png */; };
 		099C96941B8EC0ED008862C6 /* NPCPlayer.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96931B8EC0ED008862C6 /* NPCPlayer.png */; };
+		099C96961B8ED3AE008862C6 /* fist.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96951B8ED3AE008862C6 /* fist.png */; };
+		099C96CD1B8EF522008862C6 /* mainYesBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96CB1B8EF522008862C6 /* mainYesBtn.png */; };
+		099C96CE1B8EF522008862C6 /* mainNoBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96CC1B8EF522008862C6 /* mainNoBtn.png */; };
+		099C96D21B8EFBFD008862C6 /* mainJudgeBoard.png in Resources */ = {isa = PBXBuildFile; fileRef = 099C96D11B8EFBFD008862C6 /* mainJudgeBoard.png */; };
 		09A4382E1B61288000B08E1A /* play7.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09A4382D1B61288000B08E1A /* play7.jpg */; };
 		09A438341B61507A00B08E1A /* playerCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A438331B61507A00B08E1A /* playerCell.m */; };
 		09A64A0D1B6A7C950073C0F9 /* clothCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A64A0C1B6A7C950073C0F9 /* clothCell.m */; };
@@ -91,6 +94,7 @@
 		09BC83B31B85BEA700FED100 /* playerInfoButton4.png in Resources */ = {isa = PBXBuildFile; fileRef = 09BC83B21B85BEA700FED100 /* playerInfoButton4.png */; };
 		09BC83B61B85BF4A00FED100 /* PlayerInfoButon.png in Resources */ = {isa = PBXBuildFile; fileRef = 09BC83B41B85BF4A00FED100 /* PlayerInfoButon.png */; };
 		09BC83B71B85BF4A00FED100 /* playerInfoButton2.png in Resources */ = {isa = PBXBuildFile; fileRef = 09BC83B51B85BF4A00FED100 /* playerInfoButton2.png */; };
+		09BE1D961B8F67010007EA33 /* nightBackground.png in Resources */ = {isa = PBXBuildFile; fileRef = 09BE1D951B8F67010007EA33 /* nightBackground.png */; };
 		09C38E0F1B79F6CD0087ED5B /* MorningOutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C38E0E1B79F6CD0087ED5B /* MorningOutViewController.m */; };
 		09C3B3861B67D5AA00518DBE /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09C3B3851B67D5AA00518DBE /* QuartzCore.framework */; };
 		09C3B3891B67E7DA00518DBE /* cropView.m in Sources */ = {isa = PBXBuildFile; fileRef = 09C3B3881B67E7DA00518DBE /* cropView.m */; };
@@ -199,9 +203,12 @@
 		099C96831B8E2A32008862C6 /* mainCoverPeace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mainCoverPeace.png; sourceTree = "<group>"; };
 		099C96851B8E2AAA008862C6 /* mainCoverFire.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mainCoverFire.png; sourceTree = "<group>"; };
 		099C96871B8E2B43008862C6 /* mainCoverEyes.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mainCoverEyes.png; sourceTree = "<group>"; };
-		099C968B1B8E2E16008862C6 /* nightBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nightBackground.png; sourceTree = "<group>"; };
 		099C96911B8E3118008862C6 /* morningBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = morningBackground.png; sourceTree = "<group>"; };
 		099C96931B8EC0ED008862C6 /* NPCPlayer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NPCPlayer.png; sourceTree = "<group>"; };
+		099C96951B8ED3AE008862C6 /* fist.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = fist.png; sourceTree = "<group>"; };
+		099C96CB1B8EF522008862C6 /* mainYesBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mainYesBtn.png; sourceTree = "<group>"; };
+		099C96CC1B8EF522008862C6 /* mainNoBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mainNoBtn.png; sourceTree = "<group>"; };
+		099C96D11B8EFBFD008862C6 /* mainJudgeBoard.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mainJudgeBoard.png; sourceTree = "<group>"; };
 		09A4382D1B61288000B08E1A /* play7.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = play7.jpg; sourceTree = "<group>"; };
 		09A438321B61507A00B08E1A /* playerCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playerCell.h; sourceTree = "<group>"; };
 		09A438331B61507A00B08E1A /* playerCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = playerCell.m; sourceTree = "<group>"; };
@@ -237,6 +244,7 @@
 		09BC83B21B85BEA700FED100 /* playerInfoButton4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playerInfoButton4.png; sourceTree = "<group>"; };
 		09BC83B41B85BF4A00FED100 /* PlayerInfoButon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PlayerInfoButon.png; sourceTree = "<group>"; };
 		09BC83B51B85BF4A00FED100 /* playerInfoButton2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = playerInfoButton2.png; sourceTree = "<group>"; };
+		09BE1D951B8F67010007EA33 /* nightBackground.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nightBackground.png; sourceTree = "<group>"; };
 		09C38E0D1B79F6CD0087ED5B /* MorningOutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MorningOutViewController.h; sourceTree = "<group>"; };
 		09C38E0E1B79F6CD0087ED5B /* MorningOutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MorningOutViewController.m; sourceTree = "<group>"; };
 		09C3B3851B67D5AA00518DBE /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
@@ -406,6 +414,10 @@
 		09B02BA81B6B7F53002D8FBF /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				099C96D11B8EFBFD008862C6 /* mainJudgeBoard.png */,
+				099C96CB1B8EF522008862C6 /* mainYesBtn.png */,
+				099C96CC1B8EF522008862C6 /* mainNoBtn.png */,
+				099C96951B8ED3AE008862C6 /* fist.png */,
 				099C96931B8EC0ED008862C6 /* NPCPlayer.png */,
 				099C96871B8E2B43008862C6 /* mainCoverEyes.png */,
 				099C96831B8E2A32008862C6 /* mainCoverPeace.png */,
@@ -423,7 +435,7 @@
 				099C96731B8DE720008862C6 /* mainListBtn.png */,
 				09D8840E1B8D90F800E6E88E /* mainRow2.png */,
 				099C96911B8E3118008862C6 /* morningBackground.png */,
-				099C968B1B8E2E16008862C6 /* nightBackground.png */,
+				09BE1D951B8F67010007EA33 /* nightBackground.png */,
 				09D883FF1B8CA04800E6E88E /* cubeSheriff.png */,
 				09D884001B8CA04800E6E88E /* cubeMafia.png */,
 				09D884011B8CA04800E6E88E /* cubeCivilian.png */,
@@ -696,7 +708,10 @@
 				099C96921B8E3118008862C6 /* morningBackground.png in Resources */,
 				09ECB79F1B8C4675000F8E53 /* gameName.png in Resources */,
 				09B33CB61B5919EB00C9008A /* Main.storyboard in Resources */,
+				099C96CE1B8EF522008862C6 /* mainNoBtn.png in Resources */,
 				096FC4471B8861A10001446D /* clothe1.png in Resources */,
+				09BE1D961B8F67010007EA33 /* nightBackground.png in Resources */,
+				099C96CD1B8EF522008862C6 /* mainYesBtn.png in Resources */,
 				099C96801B8E2841008862C6 /* mainConditionAll.png in Resources */,
 				09907E4D1B8AD29D00FE2DF4 /* superManButton2.png in Resources */,
 				09D884301B8DBF7F00E6E88E /* mainName.png in Resources */,
@@ -714,6 +729,7 @@
 				096FC4791B88D0430001446D /* clothe3.png in Resources */,
 				0721E9BE1B693D0100A0764E /* Eric.storyboard in Resources */,
 				099C96861B8E2AAA008862C6 /* mainCoverFire.png in Resources */,
+				099C96961B8ED3AE008862C6 /* fist.png in Resources */,
 				09907E4C1B8AD29D00FE2DF4 /* superManButton1.png in Resources */,
 				096FC4551B8867000001446D /* hair3.png in Resources */,
 				099C96761B8DF410008862C6 /* mainConfirmBtn.png in Resources */,
@@ -732,6 +748,7 @@
 				09D884321B8DC49E00E6E88E /* mainOutOrLive.png in Resources */,
 				09907E531B8AEA3200FE2DF4 /* enterButtonOutfit.png in Resources */,
 				09D884261B8DB0B600E6E88E /* mainRow1.png in Resources */,
+				099C96D21B8EFBFD008862C6 /* mainJudgeBoard.png in Resources */,
 				09DE689C1B73D19900CA4B3D /* Nobi Nobita@2x.png in Resources */,
 				09D884021B8CA04800E6E88E /* cubeSheriff.png in Resources */,
 				096FC4491B8862250001446D /* clothe2.png in Resources */,
@@ -755,7 +772,6 @@
 				09D884161B8D90F800E6E88E /* mainRow2.png in Resources */,
 				096FC4851B88D94D0001446D /* forPlayer4.png in Resources */,
 				099C96841B8E2A32008862C6 /* mainCoverPeace.png in Resources */,
-				099C968C1B8E2E16008862C6 /* nightBackground.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
