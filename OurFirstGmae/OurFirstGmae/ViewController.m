@@ -46,8 +46,6 @@
 #define PLAYER_TEAM_EYES_IMAGE   @"mainCoverEyes.png"
 #define PLAYER_TEAM_FIRE_IMAGE     @"mainCoverFire.png"
 
-
-
 #define PLAYER_STATE_ALIVE  0
 #define PLAYER_STATE_DEAD   1
 
@@ -64,6 +62,11 @@
 
 #define NOT_SHUTTING_DOWN   0
 #define SHUTTING_DOWN       1
+
+#define CHAT_TO_ALL     @"mainConditionAll.png"
+#define CHAT_TO_TEAM    @"mainConditionTeam.png"
+#define CHAT_TO_DEAD    @"mainConditionOut.png"
+#define CHAT_TO_NON     @"mainConditionNon.png"
 
 @interface ViewController () <NetworkControllerDelegate, UITableViewDelegate, UITableViewDataSource,NSStreamDelegate, UITextFieldDelegate, MorningOutViewControllerDelegate> {
     
@@ -110,44 +113,26 @@
     
     int gameOverResult;
 }
+
 @property (weak, nonatomic) IBOutlet UIButton *playerStateBtn;
 @property (weak, nonatomic) IBOutlet UIButton *playerAliasBtn;
 @property (weak, nonatomic) IBOutlet UIButton *gameStateBtn;
 @property (weak, nonatomic) IBOutlet UIButton *dayCountBtn;
 @property (weak, nonatomic) IBOutlet UIImageView *playerTeamBtn;
-
-
 @property (weak, nonatomic) IBOutlet UITableView *chatBoxTableView;
 @property (weak, nonatomic) IBOutlet UITableView *playerListTableView;
 @property (weak, nonatomic) IBOutlet UITextField *chatTextField;
 @property (weak, nonatomic) IBOutlet UIButton *sendBtn;
 @property (weak, nonatomic) IBOutlet UIButton *showCondition;
-
 @property (weak, nonatomic) IBOutlet UIView *thePlayerView;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImg;
-@property (weak, nonatomic) IBOutlet UILabel *debugLabel;
-@property (weak, nonatomic) IBOutlet UILabel *gameStateLabel;
 @property (nonatomic, strong) TransitionDelegate *transitionController;
-@property (weak, nonatomic) IBOutlet UILabel *playerTeamLabel;
 @property (weak, nonatomic) IBOutlet UIButton *confirmVoteButton;
 @property (weak, nonatomic) IBOutlet UIView *judgementVoteView;
 @property (weak, nonatomic) IBOutlet UILabel *guityCountLabel;
 @property (weak, nonatomic) IBOutlet UILabel *innocentCountLabel;
-@property (weak, nonatomic) IBOutlet UILabel *dayCountLabel;
 @property (weak, nonatomic) IBOutlet UIButton *guiltyButton;
 @property (weak, nonatomic) IBOutlet UIButton *innocentButton;
-@property (weak, nonatomic) IBOutlet UILabel *playerStateLabel;
-@property (weak, nonatomic) IBOutlet UIButton *playerAliasButton;
-
-
-
-
-
-
-
-
-
-
 
 @end
 
@@ -240,8 +225,11 @@
     morningOutView =[MorningOutViewController new];
     nightOutView = [outView new];
     loadingView =[LoadingViewController new];
+    
     //hide playerList
     [self hidePlayerList];
+    //hide confirmButton
+    [self hideConfirmBtn];
     
     //network
     [NetworkController sharedInstance].delegate = self;
@@ -325,7 +313,7 @@
     
     [self presentViewController:nightOutView animated:YES completion:^{
         
-        [self performSelector:@selector(dismissNightOutView) withObject:self afterDelay:5.0f];
+        [self performSelector:@selector(dismissNightOutView) withObject:self afterDelay:7.0f];
     }];
     
 }
@@ -522,18 +510,24 @@
         self.playerListTableView.hidden = false;
         
     }else {
+        
         if(frameForBtn.origin.x <= 283){
-            frameForBtn.origin.x +=frameForBtn.size.width+20;
+            
+            if ([NetworkController sharedInstance].gameState == GameStateJudgementDiscussion ||
+                [NetworkController sharedInstance].gameState == GameStateJudgementVote) {
+                
+            }else {
+                
+                frameForBtn.origin.x +=frameForBtn.size.width+20;
+            }
         }
         
-        frame.origin.y -=frame.size.height+100;
+        frame.origin.y -=frame.size.height+110;
         [self performSelector:@selector(setHiddenPlayerList) withObject:self afterDelay:0.3f];
     }
     
     self.playerListTableView.frame =frame;
 
-  
-    
     self.confirmVoteButton.frame=frameForBtn;
     
     [UIView commitAnimations];
@@ -546,24 +540,16 @@
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:self.playerListTableView cache:YES];
     [self.playerListTableView setTranslatesAutoresizingMaskIntoConstraints:YES];
-    [self.confirmVoteButton setTranslatesAutoresizingMaskIntoConstraints:YES];
     
     CGRect frame = self.playerListTableView.frame;
-    CGRect frameForBtn= self.confirmVoteButton.frame;
     
     if(frame.origin.y>=0) {
         
-        if(frameForBtn.origin.x <= 283){
-            frameForBtn.origin.x +=frameForBtn.size.width+20;
-        }
-        
-        frame.origin.y -=frame.size.height+100;
+        frame.origin.y -=frame.size.height+110;
         [self performSelector:@selector(setHiddenPlayerList) withObject:self afterDelay:0.3f];
     }
  
-    
     self.playerListTableView.frame =frame;
-    self.confirmVoteButton.frame =frameForBtn;
     
     [UIView commitAnimations];
 }
@@ -593,7 +579,9 @@
     
     [UIView commitAnimations];
 }
--(void)showConfirmBtn{
+
+- (void)hideConfirmBtn{
+    
     [UIView beginAnimations:@"animation1" context:nil];
     [UIView setAnimationDuration:0.3];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
@@ -601,19 +589,38 @@
     
     CGRect frameForBtn= self.confirmVoteButton.frame;
     
-        
-        if(frameForBtn.origin.x>283)
-        {
-            frameForBtn.origin.x=283;
-            self.confirmVoteButton.hidden =false;
-        }
-        
+    if(frameForBtn.origin.x<=283)
+    {
+        frameForBtn.origin.x +=frameForBtn.size.width+20;
+        [self performSelector:@selector(setHiddenConfirmButton) withObject:self afterDelay:0.3f];
+    }
+    
+    self.confirmVoteButton.frame = frameForBtn;
+    [UIView commitAnimations];
+}
 
-        self.confirmVoteButton.frame = frameForBtn;
-        [UIView commitAnimations];
+- (void)setHiddenConfirmButton {
     
+    self.confirmVoteButton.hidden = true;
+}
+
+-(void)showConfirmBtn{
+    
+    [UIView beginAnimations:@"animation1" context:nil];
+    [UIView setAnimationDuration:0.3];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+    [self.confirmVoteButton setTranslatesAutoresizingMaskIntoConstraints:YES];
+    
+    CGRect frameForBtn= self.confirmVoteButton.frame;
         
-    
+    if(frameForBtn.origin.x>283)
+    {
+        frameForBtn.origin.x=283;
+        self.confirmVoteButton.hidden =false;
+    }
+
+    self.confirmVoteButton.frame = frameForBtn;
+    [UIView commitAnimations];
 }
 
 - (IBAction)sendButtonPressed:(id)sender {
@@ -650,18 +657,18 @@
     switch (selfTeam) {
             
         case PLAYER_TEAM_CIVILIAN:
+            
             self.playerTeamBtn.image =[UIImage imageNamed:PLAYER_TEAM_PEACE_IMAGE];
-//            self.playerTeamLabel.text = PLAYER_TEAM_CIVILIAN_STRING;
             break;
             
         case PLAYER_TEAM_SHERIFF:
+            
             self.playerTeamBtn.image =[UIImage imageNamed:PLAYER_TEAM_EYES_IMAGE];
-//            self.playerTeamLabel.text = PLAYER_TEAM_SHERIFF_STRING;
             break;
             
         case PLAYER_TEAM_MAFIA:
+            
             self.playerTeamBtn.image =[UIImage imageNamed:PLAYER_TEAM_FIRE_IMAGE];
-//            self.playerTeamLabel.text = PLAYER_TEAM_MAFIA_STRING;
             break;
             
         default:
@@ -938,7 +945,7 @@
 
             }else {
             
-                self.guityCountLabel.textColor = [UIColor blackColor];
+                self.guityCountLabel.textColor = [UIColor whiteColor];
             }
         }
         
@@ -955,7 +962,7 @@
             
             }else {
             
-                self.innocentCountLabel.textColor = [UIColor blackColor];
+                self.innocentCountLabel.textColor = [UIColor whiteColor];
             }
         }
     }
@@ -1378,58 +1385,45 @@
             
         case NetworkStateNotAvailable:
             
-            self.debugLabel.text = @"Not Available";
-            
             [self showBackToMenuAlertWithTitle:@"未登入Game Center"];
             break;
             
         case NetworkStatePendingAuthentication:
             
-            self.debugLabel.text = @"Pending Authentication";
             break;
             
         case NetworkStateAuthenticated:
             
-            self.debugLabel.text = @"Authenticated";
             break;
             
         case NetworkStateConnectingToServer:
-            
-            self.debugLabel.text = @"Connecting to Server";
             
             [self showBackToMenuAlertWithTitle:@"與伺服器連線中斷"];
             break;
             
         case NetworkStateConnected:
             
-            self.debugLabel.text = @"Connected";
             break;
             
         case NetworkStatePendingMatchStatus:
             
-            self.debugLabel.text = @"Pending Match Status";
             break;
             
         case NetworkStateReceivedMatchStatus:
-            
-            self.debugLabel.text = @"Received Match Status,\nReady to Look for a Match";
             
             [self showBackToMenuAlertWithTitle:@"遊戲結束"];
             break;
             
         case NetworkStatePendingMatch:
             
-            self.debugLabel.text = @"Pending Match";
             break;
             
         case NetworkStatePendingMatchStart:
             
-            self.debugLabel.text = @"Pending Start";
             break;
             
         case NetworkStateMatchActive:
             
-            self.debugLabel.text = @"Match Active";
             break;
     }
 }
@@ -1614,6 +1608,8 @@
                 
                 //show playerList
                 [self showPlayerList];
+                //show confirmButton
+                [self showConfirmBtn];
                 
             }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
                 
@@ -1622,6 +1618,7 @@
                 
                 //show playerList
                 [self showPlayerList];
+                [self showConfirmBtn];
                 
             }else {
                 
@@ -1652,6 +1649,8 @@
         
         //show playerList
         [self showPlayerList];
+        //show confirmButton
+        [self showConfirmBtn];
         
     }else if ([NetworkController sharedInstance].gameState == GameStateJudgementDiscussion ||
               [NetworkController sharedInstance].gameState == GameStateJudgementVote) {
@@ -1675,8 +1674,16 @@
             selfShouldVote = false;
             selfShouldSeeVote = true;
         }
+        
+        //allow judgement vote
+        self.judgementVoteView.hidden = false;
+        //show confirmButton
+        [self showConfirmBtn];
     }
     [self.playerListTableView reloadData];
+    
+//    //show confirmButton
+//    [self showConfirmBtn];
     
     //changeGameState
     [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:3];
@@ -1743,7 +1750,7 @@
                     if ([[GKLocalPlayer localPlayer].playerID isEqualToString:p.playerId]) {
                         
                         selfState = PLAYER_STATE_DEAD;
-                        [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateDisabled];
+                        [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateNormal];
 //                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
                     }
                     
@@ -2029,12 +2036,11 @@
             
         case GameStateNotInGame:
             [self.gameStateBtn setTitle:@"NotInGame" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"NotInGame";
+
             break;
             
         case GameStateGameStart:
             [self.gameStateBtn setTitle:@"GameStart" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"GameStart";
             
             //initialize dayCount;
             dayCount = 1;
@@ -2049,7 +2055,6 @@
             
             //update dayCountLabel
             [self.dayCountBtn setTitle:[NSString stringWithFormat:@"Day %d", dayCount] forState:UIControlStateNormal];
-//            self.dayCountLabel.text = [NSString stringWithFormat:@"Day %d", dayCount];
             
             //slotMachineAnimation
             [self callSlotMachineWithOutputIndex:selfTeam];
@@ -2058,7 +2063,6 @@
             
         case GameStateNightStart:
             [self.gameStateBtn setTitle:@"NightStart" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"NightStart";
             
             //nightBeginAnimation
             [self showNightBackgroundImage];
@@ -2068,7 +2072,6 @@
             
             //update dayCountLabel
               [self.dayCountBtn setTitle:[NSString stringWithFormat:@"Night %d", dayCount] forState:UIControlStateNormal];
-//            self.dayCountLabel.text = [NSString stringWithFormat:@"Night %d", dayCount];
             
             //disable Vote
             selfShouldUpdateVote = false;
@@ -2080,12 +2083,13 @@
             //hide judgementVoteView
             self.judgementVoteView.hidden = true;
             [self hidePlayerList];
+            //hide confirmButton
+            [self hideConfirmBtn];
             
             break;
             
         case GameStateNightDiscussion:
             [self.gameStateBtn setTitle:@"NightDiscussion" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"NightDiscussion";
             
             [[NetworkController sharedInstance] sendStartDiscussion];
     
@@ -2158,8 +2162,7 @@
             
         case GameStateNightVote:
             [self.gameStateBtn setTitle:@"NightVote" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"NightVote";
-//            
+
             //showSystemMessage
             if (selfState == PLAYER_STATE_ALIVE) {
                 
@@ -2181,13 +2184,16 @@
             if (selfShouldVote == true) {
                 
                 self.confirmVoteButton.enabled = true;
+                
+            }else {
+                
+               self.confirmVoteButton.enabled = false;
             }
             
             break;
             
         case GameStateShowNightResults:
             [self.gameStateBtn setTitle:@"ShowNightResults" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"ShowNightResults";
             
             //disable chat
             self.chatTextField.enabled = false;
@@ -2216,7 +2222,6 @@
             
         case GameStateDayStart:
             [self.gameStateBtn setTitle:@"DayStart" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"DayStart";
             
             //dayBeginAnimation
             [self showDayBackgroundImage];
@@ -2229,7 +2234,6 @@
             
             //update dayCountLabel
             [self.dayCountBtn setTitle:[NSString stringWithFormat:@"Day %d", dayCount] forState:UIControlStateNormal];
-//            self.dayCountLabel.text = [NSString stringWithFormat:@"Day %d", dayCount];
             
             //disable Vote
             selfShouldUpdateVote = false;
@@ -2271,7 +2275,6 @@
             
         case GameStateDayDiscussion:
             [self.gameStateBtn setTitle:@"DayDiscussion" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"DayDiscussion";
             
             [[NetworkController sharedInstance] sendStartDiscussion];
             
@@ -2310,7 +2313,6 @@
             
         case GameStateDayVote:
             [self.gameStateBtn setTitle:@"DayVote" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"DayVote";
             
             //showSystemMessage
             [self showSystemMessage:@"所有人請確認選擇"];
@@ -2319,13 +2321,15 @@
             if (selfShouldVote == true) {
                 
                 self.confirmVoteButton.enabled = true;
+            }else
+            {
+               self.confirmVoteButton.enabled = false;
             }
             
             break;
             
         case GameStateShowDayResults:
             [self.gameStateBtn setTitle:@"ShowDayResults" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"ShowDayResults";
             
             //disable chat
             self.chatTextField.enabled = false;
@@ -2358,7 +2362,6 @@
             
         case GameStateJudgementDiscussion:
             [self.gameStateBtn setTitle:@"JudgementDiscussion" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"JudgementDiscussion";
             
             [[NetworkController sharedInstance] sendStartDiscussion];
             
@@ -2385,7 +2388,7 @@
             
             //hide playerList
             [self hidePlayerList];
-            
+         
             //allow Receive/Send Vote
             if (selfState == PLAYER_STATE_ALIVE) {
 
@@ -2399,11 +2402,8 @@
             }
             
             //resetVote
-            [self resetVote];
             
-            //allow judgement vote
-            self.judgementVoteView.hidden = false;
-            [self showConfirmBtn];
+            [self resetVote];
             
             if (selfState == PLAYER_STATE_ALIVE) {
                 
@@ -2428,8 +2428,7 @@
             
         case GameStateJudgementVote:
              [self.gameStateBtn setTitle:@"JudgementVote" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"JudgementVote";
-//            
+
             //showSystemMessage
             [self showSystemMessage:@"所有人請確認投票"];
             
@@ -2437,13 +2436,15 @@
             if (selfShouldVote == true) {
                 
                 self.confirmVoteButton.enabled = true;
+            }else
+            {
+                self.confirmVoteButton.enabled = false;
             }
             
             break;
             
         case GameStateShowJudgementResults:
              [self.gameStateBtn setTitle:@"ShowJudgementResults" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"ShowJudgementResults";
             
             //disable chat
             self.chatTextField.enabled = false;
@@ -2472,7 +2473,6 @@
             
         case GameStateGameOver:
             [self.gameStateBtn setTitle:@"GameOver" forState:UIControlStateNormal];
-//            self.gameStateLabel.text = @"GameOver";
             
             //gameOverAnimation
             if (gameOverResult == MAFIA_WIN) {
@@ -2497,7 +2497,7 @@
 
             //hide judgementVoteView
             self.judgementVoteView.hidden = true;
-            [self hidePlayerList];
+            
             //allowAllChat
             selfChatType = ChatToAll;
             [self performSelector:@selector(enableChatTextField) withObject:nil afterDelay:1.5f];
@@ -2507,6 +2507,7 @@
             
             //show showPlayerList
             [self showPlayerList];
+            [self showConfirmBtn];
 
             break;
     }

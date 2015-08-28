@@ -36,12 +36,21 @@ static int k = 10;
     
     _outOfplayerImgView.image = self.playerImage;
     
-    delayTime1 =[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(addView) userInfo:nil repeats:YES];
-    
     UIView *view =[[UIView alloc]initWithFrame:self.view.frame];
     view.backgroundColor=[UIColor blackColor];
     view.alpha=0.5;
     [self.view insertSubview:view belowSubview:_outOfplayerImgView];
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
+    [self performSelector:@selector(showLaser) withObject:nil afterDelay:2.0f];
+}
+
+- (void)showLaser {
+    
+    delayTime1 =[NSTimer scheduledTimerWithTimeInterval:0.1 target:self selector:@selector(addView) userInfo:nil repeats:YES];
 }
 
 - (void)addView{

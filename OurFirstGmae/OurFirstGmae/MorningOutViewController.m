@@ -25,7 +25,7 @@
     
     UIView *view =[[UIView alloc]initWithFrame:self.view.frame];
     view.backgroundColor=[UIColor blackColor];
-    view.alpha=0.5;
+    view.alpha = 0.5;
     [self.view insertSubview:view belowSubview:_morningOutImgView];
 }
 

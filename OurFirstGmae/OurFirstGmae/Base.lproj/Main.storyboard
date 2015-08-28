@@ -177,12 +177,6 @@
                                             </mask>
                                         </variation>
                                     </imageView>
-                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="NetworkState" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lcc-Yi-eTC">
-                                        <rect key="frame" x="8" y="294.5" width="105" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
                                     <button opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="AZV-FS-vE9">
                                         <rect key="frame" x="111" y="8" width="158" height="40"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -204,74 +198,6 @@
                                                 <exclude reference="HeQ-lA-XYu"/>
                                                 <exclude reference="IFz-jU-Ub3"/>
                                                 <exclude reference="fwL-eN-b8R"/>
-                                            </mask>
-                                        </variation>
-                                    </button>
-                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="GameState" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PqZ-XR-DkQ">
-                                        <rect key="frame" x="101" y="277" width="86.5" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <color key="textColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="PlayerTeam" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Lrz-gx-5ya">
-                                        <rect key="frame" x="25" y="343" width="79.5" height="18"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <color key="textColor" red="0.4701742974" green="1" blue="0.264733037" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="DayCount" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="99w-1T-aEA">
-                                        <rect key="frame" x="34" y="186" width="90" height="36"/>
-                                        <color key="backgroundColor" red="0.65909090909090917" green="0.12752532702743524" blue="0.18609071351098974" alpha="1" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="36" id="PVu-li-XBO"/>
-                                            <constraint firstAttribute="width" constant="90" id="PlN-Dt-8Ex"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <color key="textColor" red="0.0" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                        <variation key="default">
-                                            <mask key="constraints">
-                                                <exclude reference="PVu-li-XBO"/>
-                                                <exclude reference="PlN-Dt-8Ex"/>
-                                            </mask>
-                                        </variation>
-                                    </label>
-                                    <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="PlayerState" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QZI-Og-LpS">
-                                        <rect key="frame" x="-16" y="377" width="188" height="18"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                        <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <button hidden="YES" opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NkC-zo-w5J">
-                                        <rect key="frame" x="8" y="124" width="160" height="36"/>
-                                        <color key="backgroundColor" red="0.65909090909090917" green="0.0" blue="0.20042794746203402" alpha="1" colorSpace="calibratedRGB"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="36" id="8BX-dN-Mgu"/>
-                                            <constraint firstAttribute="width" constant="160" id="FLM-4r-eEV"/>
-                                        </constraints>
-                                        <state key="normal" title="gameState">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <variation key="default">
-                                            <mask key="constraints">
-                                                <exclude reference="8BX-dN-Mgu"/>
-                                                <exclude reference="FLM-4r-eEV"/>
-                                            </mask>
-                                        </variation>
-                                    </button>
-                                    <button hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bgB-d7-Fgg">
-                                        <rect key="frame" x="4" y="250" width="120" height="36"/>
-                                        <color key="backgroundColor" white="0.9248321411" alpha="1" colorSpace="calibratedWhite"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="120" id="fWg-gi-0o2"/>
-                                        </constraints>
-                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <state key="normal" title="國國國國國國">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                        <variation key="default">
-                                            <mask key="constraints">
-                                                <exclude reference="fWg-gi-0o2"/>
                                             </mask>
                                         </variation>
                                     </button>
@@ -484,12 +410,10 @@
                                     <constraint firstAttribute="height" constant="421" id="GW0-x6-o6P"/>
                                     <constraint firstItem="Z7f-MC-Fl5" firstAttribute="top" secondItem="smQ-nu-RCR" secondAttribute="top" id="J4T-F0-vHi"/>
                                     <constraint firstItem="ICc-De-o8e" firstAttribute="leading" secondItem="AZV-FS-vE9" secondAttribute="trailing" constant="8" id="Jsz-m6-rKp"/>
-                                    <constraint firstItem="NkC-zo-w5J" firstAttribute="leading" secondItem="99w-1T-aEA" secondAttribute="trailing" constant="24" id="KXQ-vP-5Kd"/>
                                     <constraint firstItem="vl1-dQ-qKD" firstAttribute="top" secondItem="ICc-De-o8e" secondAttribute="bottom" id="KcC-C1-2oy"/>
                                     <constraint firstAttribute="trailing" secondItem="jbY-fX-qqu" secondAttribute="trailing" id="MWd-jC-CR7"/>
                                     <constraint firstItem="vl1-dQ-qKD" firstAttribute="top" secondItem="ICc-De-o8e" secondAttribute="bottom" constant="-3" id="NIJ-6g-Seh"/>
                                     <constraint firstItem="KN0-wA-UAb" firstAttribute="top" secondItem="Z7f-MC-Fl5" secondAttribute="bottom" id="Plh-va-Kuw"/>
-                                    <constraint firstItem="NkC-zo-w5J" firstAttribute="top" secondItem="smQ-nu-RCR" secondAttribute="top" constant="8" id="PoN-5E-2h7"/>
                                     <constraint firstItem="D5q-eW-R6Q" firstAttribute="top" secondItem="Z7f-MC-Fl5" secondAttribute="bottom" constant="8" id="QPZ-OY-8vf"/>
                                     <constraint firstItem="eav-Nw-fB4" firstAttribute="leading" secondItem="smQ-nu-RCR" secondAttribute="leading" constant="18" id="QXq-Dr-QgL"/>
                                     <constraint firstItem="eav-Nw-fB4" firstAttribute="leading" secondItem="smQ-nu-RCR" secondAttribute="leading" constant="8" id="QYn-fg-orU"/>
@@ -511,7 +435,6 @@
                                     <constraint firstAttribute="bottom" secondItem="t5a-ye-fsw" secondAttribute="bottom" constant="16.5" id="csK-lp-v9T"/>
                                     <constraint firstItem="37S-U2-11E" firstAttribute="leading" secondItem="smQ-nu-RCR" secondAttribute="leading" id="dWA-Rk-0Fp"/>
                                     <constraint firstAttribute="trailing" secondItem="mTK-S2-h1S" secondAttribute="trailing" constant="40" id="e0T-XD-Exa"/>
-                                    <constraint firstAttribute="trailing" secondItem="NkC-zo-w5J" secondAttribute="trailing" constant="36" id="eF5-aa-Y7N"/>
                                     <constraint firstItem="ICc-De-o8e" firstAttribute="top" secondItem="mTK-S2-h1S" secondAttribute="bottom" constant="5" id="eJY-7E-lTY"/>
                                     <constraint firstItem="ICc-De-o8e" firstAttribute="top" secondItem="mTK-S2-h1S" secondAttribute="bottom" constant="3" id="gCp-R1-b4j"/>
                                     <constraint firstAttribute="bottom" secondItem="t5a-ye-fsw" secondAttribute="bottom" constant="17.5" id="gso-ek-cmT"/>
@@ -523,15 +446,12 @@
                                     <constraint firstAttribute="trailing" secondItem="ICc-De-o8e" secondAttribute="trailing" constant="22" id="mPp-R0-2wG"/>
                                     <constraint firstAttribute="trailing" secondItem="KN0-wA-UAb" secondAttribute="trailing" constant="49" id="omY-dh-gQq"/>
                                     <constraint firstAttribute="width" constant="375" id="pux-kg-qAp"/>
-                                    <constraint firstItem="99w-1T-aEA" firstAttribute="top" secondItem="smQ-nu-RCR" secondAttribute="top" constant="8" id="pwR-fg-wvg"/>
                                     <constraint firstItem="D5q-eW-R6Q" firstAttribute="leading" secondItem="mTK-S2-h1S" secondAttribute="trailing" constant="8" id="rgV-qh-F4q"/>
                                     <constraint firstItem="mTK-S2-h1S" firstAttribute="top" secondItem="smQ-nu-RCR" secondAttribute="top" constant="3" id="sjQ-34-weM"/>
                                     <constraint firstAttribute="trailing" secondItem="vl1-dQ-qKD" secondAttribute="trailing" id="t9s-Qc-e8l"/>
-                                    <constraint firstItem="99w-1T-aEA" firstAttribute="leading" secondItem="smQ-nu-RCR" secondAttribute="leading" constant="65" id="tb0-Y9-dpE"/>
                                     <constraint firstItem="ICc-De-o8e" firstAttribute="top" secondItem="smQ-nu-RCR" secondAttribute="top" constant="8" id="vAJ-Mn-6x0"/>
                                     <constraint firstItem="eav-Nw-fB4" firstAttribute="leading" secondItem="smQ-nu-RCR" secondAttribute="leading" constant="3" id="vjK-hx-Jhx"/>
                                     <constraint firstAttribute="trailing" secondItem="t5a-ye-fsw" secondAttribute="trailing" id="xcW-y2-cBk"/>
-                                    <constraint firstItem="NkC-zo-w5J" firstAttribute="leading" secondItem="99w-1T-aEA" secondAttribute="trailing" constant="24" id="yjo-Ab-pcU"/>
                                     <constraint firstItem="37S-U2-11E" firstAttribute="leading" secondItem="smQ-nu-RCR" secondAttribute="leading" id="zCl-wx-g8Q"/>
                                 </constraints>
                                 <variation key="default">
@@ -549,12 +469,6 @@
                                         <exclude reference="X56-e8-tU9"/>
                                         <exclude reference="e0T-XD-Exa"/>
                                         <exclude reference="sjQ-34-weM"/>
-                                        <exclude reference="KXQ-vP-5Kd"/>
-                                        <exclude reference="PoN-5E-2h7"/>
-                                        <exclude reference="eF5-aa-Y7N"/>
-                                        <exclude reference="yjo-Ab-pcU"/>
-                                        <exclude reference="pwR-fg-wvg"/>
-                                        <exclude reference="tb0-Y9-dpE"/>
                                         <exclude reference="9yj-I4-hhj"/>
                                         <exclude reference="KcC-C1-2oy"/>
                                         <exclude reference="NIJ-6g-Seh"/>
@@ -786,22 +700,16 @@
                         <outlet property="chatTextField" destination="fiq-dG-2BP" id="7HF-dW-Yvo"/>
                         <outlet property="confirmVoteButton" destination="t5a-ye-fsw" id="sTD-YY-Dag"/>
                         <outlet property="dayCountBtn" destination="D5q-eW-R6Q" id="RCx-33-ITf"/>
-                        <outlet property="dayCountLabel" destination="99w-1T-aEA" id="Xet-s7-Zzu"/>
-                        <outlet property="debugLabel" destination="lcc-Yi-eTC" id="a1t-w0-xFF"/>
                         <outlet property="gameStateBtn" destination="mTK-S2-h1S" id="viP-rX-23G"/>
-                        <outlet property="gameStateLabel" destination="PqZ-XR-DkQ" id="nFS-Qz-zc2"/>
                         <outlet property="guiltyButton" destination="Cws-2K-mrE" id="JO8-Aa-y3U"/>
                         <outlet property="guityCountLabel" destination="KvU-7t-rIY" id="Ccy-8V-0HL"/>
                         <outlet property="innocentButton" destination="gtT-JI-LMh" id="eHd-7G-IsO"/>
                         <outlet property="innocentCountLabel" destination="UtV-9v-emE" id="TmB-aX-0U4"/>
                         <outlet property="judgementVoteView" destination="xth-fH-AZj" id="IWr-9j-l6N"/>
                         <outlet property="playerAliasBtn" destination="AZV-FS-vE9" id="L9j-DZ-RWJ"/>
-                        <outlet property="playerAliasButton" destination="bgB-d7-Fgg" id="Q0f-Iw-Gbv"/>
                         <outlet property="playerListTableView" destination="vl1-dQ-qKD" id="qaR-wh-a0O"/>
                         <outlet property="playerStateBtn" destination="ICc-De-o8e" id="I7h-Us-Cif"/>
-                        <outlet property="playerStateLabel" destination="QZI-Og-LpS" id="q3n-lk-Kbj"/>
                         <outlet property="playerTeamBtn" destination="eav-Nw-fB4" id="rqG-yM-tPF"/>
-                        <outlet property="playerTeamLabel" destination="Lrz-gx-5ya" id="tVQ-LW-q4S"/>
                         <outlet property="sendBtn" destination="GbH-GN-Wzs" id="JfF-Gq-cD3"/>
                         <outlet property="showCondition" destination="sGX-Vc-ymD" id="Ne0-mV-NOs"/>
                         <outlet property="thePlayerView" destination="smQ-nu-RCR" id="EHK-5Z-7zR"/>
