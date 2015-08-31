@@ -136,7 +136,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SnL-fM-I0k">
-                                <rect key="frame" x="16" y="297" width="130" height="60"/>
+                                <rect key="frame" x="16" y="297" width="140" height="60"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Play" image="enterButtonStart.png">
@@ -153,19 +153,19 @@
                                 <rect key="frame" x="0.0" y="240" width="70" height="70"/>
                             </imageView>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cNI-g5-rez">
-                                <rect key="frame" x="16" y="485" width="130" height="120"/>
+                                <rect key="frame" x="16" y="485" width="140" height="120"/>
                                 <subviews>
                                     <button hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XsF-oL-k6p">
-                                        <rect key="frame" x="0.0" y="0.0" width="130" height="120"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="140" height="120"/>
                                         <state key="normal" image="enterButtonSoldiers.png">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
                                     <view clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gtg-pl-CJR">
-                                        <rect key="frame" x="0.0" y="54" width="130" height="42"/>
+                                        <rect key="frame" x="0.0" y="54" width="140" height="42"/>
                                         <subviews>
                                             <pickerView hidden="YES" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Gw-VX-3Z5">
-                                                <rect key="frame" x="0.0" y="-60" width="120" height="162"/>
+                                                <rect key="frame" x="0.0" y="-60" width="130" height="162"/>
                                                 <connections>
                                                     <outlet property="dataSource" destination="xEB-HQ-a5K" id="AAj-v5-oRI"/>
                                                     <outlet property="delegate" destination="xEB-HQ-a5K" id="7Gw-zR-tLY"/>
@@ -176,9 +176,9 @@
                                 </subviews>
                             </view>
                             <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZQ-Ax-efX">
-                                <rect key="frame" x="16" y="357" width="130" height="60"/>
+                                <rect key="frame" x="16" y="357" width="140" height="60"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                <state key="normal" title="國國國國國國" backgroundImage="enterButtonStart.png">
+                                <state key="normal" title="國國國國國國" backgroundImage="enterNameBtn.png">
                                     <color key="titleColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -187,7 +187,7 @@
                                 </connections>
                             </button>
                             <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fCe-TK-suB">
-                                <rect key="frame" x="16" y="417" width="130" height="60"/>
+                                <rect key="frame" x="16" y="417" width="140" height="60"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <state key="normal" image="enterButtonOutfit.png">
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
@@ -214,7 +214,7 @@
                             <button opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vsQ-JA-nMx">
                                 <rect key="frame" x="159" y="545" width="200" height="60"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                                <state key="normal" title="與伺服器連線中" backgroundImage="enterButtonStart.png">
+                                <state key="normal" title="與伺服器連線中" backgroundImage="enterNameBtn.png">
                                     <color key="titleColor" white="0.59999999999999998" alpha="1" colorSpace="calibratedWhite"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -254,6 +254,7 @@
         <image name="enterButtonSoldiers.png" width="262" height="243"/>
         <image name="enterButtonStart.png" width="241" height="149"/>
         <image name="enterClosetBackground.png" width="212" height="206"/>
+        <image name="enterNameBtn.png" width="241" height="149"/>
         <image name="superMan1.png" width="1009" height="681"/>
         <image name="superManButton2.png" width="161" height="160"/>
     </resources>

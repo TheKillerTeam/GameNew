@@ -199,6 +199,8 @@
     
     vc.delegate = self;
     
+    vc.modalTransitionStyle = UIModalTransitionStyleCrossDissolve;
+        
     [self presentViewController:vc animated:true completion:nil];
 }
 
@@ -210,6 +212,7 @@
         UIAlertAction *ok = [UIAlertAction actionWithTitle:@"確定" style:UIAlertActionStyleDefault handler:nil];
         [alert addAction:ok];
         UIViewController *rootVC = [[[[UIApplication sharedApplication] delegate] window] rootViewController];
+        
         [rootVC presentViewController:alert animated:YES completion:nil];
         
     }else {
@@ -375,8 +378,8 @@
     ViewController *vc = [sb instantiateViewControllerWithIdentifier:@"mainView"];
     
     vc.match = match;
-    
     vc.playerImage = playerImage;
+    vc.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     
     [self presentViewController:vc animated:true completion:nil];
 }

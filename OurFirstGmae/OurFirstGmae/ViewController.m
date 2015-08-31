@@ -284,7 +284,8 @@
     
     morningOutView.playerImage = playerImage;
     
-    if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId]) {
+    if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId] ||
+        selfState == PLAYER_STATE_DEAD) {
         
         morningOutView.autoSwipe = true;
         
@@ -371,28 +372,38 @@
 
 - (IBAction)confirmVoteButtonPressed:(id)sender {
     
-    selfShouldVote = false;
-    [self.playerListTableView reloadData];
-    
-    self.guiltyButton.userInteractionEnabled = false;
-    self.innocentButton.userInteractionEnabled = false;
-    
-    if ([NetworkController sharedInstance].gameState == GameStateNightDiscussion ||
-        [NetworkController sharedInstance].gameState == GameStateNightVote) {
+    if (selfState == PLAYER_STATE_DEAD ||
+        [NetworkController sharedInstance].gameState == GameStateGameOver) {
         
-        [self processNightVoteResult];
+        //change confirmVoteButton into leaveGameButton
+        [self showBackToMenuAlertWithTitle:@"遊戲結束"];
+        [[NetworkController sharedInstance] reconnect];
+        
+    }else {
+        
+        selfShouldVote = false;
+        [self.playerListTableView reloadData];
+        
+        self.guiltyButton.userInteractionEnabled = false;
+        self.innocentButton.userInteractionEnabled = false;
+        
+        if ([NetworkController sharedInstance].gameState == GameStateNightDiscussion ||
+            [NetworkController sharedInstance].gameState == GameStateNightVote) {
+            
+            [self processNightVoteResult];
 
-    }else if ([NetworkController sharedInstance].gameState == GameStateDayDiscussion ||
-              [NetworkController sharedInstance].gameState == GameStateDayVote) {
-        
-        [self processDayVoteResult];
-        
-    }else if ([NetworkController sharedInstance].gameState == GameStateJudgementDiscussion ||
-              [NetworkController sharedInstance].gameState == GameStateJudgementVote) {
-        
-        [self processJudgementResult];
+        }else if ([NetworkController sharedInstance].gameState == GameStateDayDiscussion ||
+                  [NetworkController sharedInstance].gameState == GameStateDayVote) {
+            
+            [self processDayVoteResult];
+            
+        }else if ([NetworkController sharedInstance].gameState == GameStateJudgementDiscussion ||
+                  [NetworkController sharedInstance].gameState == GameStateJudgementVote) {
+            
+            [self processJudgementResult];
+        }
     }
-
+    
     self.confirmVoteButton.enabled = false;
 }
 
@@ -514,7 +525,9 @@
         if(frameForBtn.origin.x <= 283){
             
             if ([NetworkController sharedInstance].gameState == GameStateJudgementDiscussion ||
-                [NetworkController sharedInstance].gameState == GameStateJudgementVote) {
+                [NetworkController sharedInstance].gameState == GameStateJudgementVote ||
+                [NetworkController sharedInstance].gameState == GameStateGameOver ||
+                selfState == PLAYER_STATE_DEAD) {
                 
             }else {
                 
@@ -711,6 +724,7 @@
                 
                 [[NetworkController sharedInstance] sendLastWords:lastWords];
             }
+            self.confirmVoteButton.enabled = true;
         }];
         
         [alert addAction:done];
@@ -1019,6 +1033,7 @@
                 
                 [[NetworkController sharedInstance] sendLastWords:lastWords];
             }
+            self.confirmVoteButton.enabled = true;
         }];
         
         [alert addAction:done];
@@ -1750,6 +1765,8 @@
                     if ([[GKLocalPlayer localPlayer].playerID isEqualToString:p.playerId]) {
                         
                         selfState = PLAYER_STATE_DEAD;
+                        [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
+
                         [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateNormal];
 //                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
                     }
@@ -1809,6 +1826,10 @@
                         if (selfState == PLAYER_STATE_ALIVE) {
 
                             [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
+                            
+                        }else {
+                            
+                            [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
                         }
                     }
                 }
@@ -1823,9 +1844,10 @@
                     if ([[GKLocalPlayer localPlayer].playerID isEqualToString:p.playerId]) {
                         
                         selfState = PLAYER_STATE_DEAD;
-                        
+                        [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
+
 //                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
-                    [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateDisabled];
+                    [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateNormal];
                     }
                     
                     break;
@@ -2181,13 +2203,14 @@
             }
             
             //allow confirm
-            if (selfShouldVote == true) {
+            if (selfShouldVote == true ||
+                selfState == PLAYER_STATE_DEAD) {
                 
                 self.confirmVoteButton.enabled = true;
                 
             }else {
                 
-               self.confirmVoteButton.enabled = false;
+                self.confirmVoteButton.enabled = false;
             }
             
             break;
@@ -2318,11 +2341,13 @@
             [self showSystemMessage:@"所有人請確認選擇"];
             
             //allow confirm
-            if (selfShouldVote == true) {
+            if (selfShouldVote == true ||
+                selfState == PLAYER_STATE_DEAD) {
                 
                 self.confirmVoteButton.enabled = true;
-            }else
-            {
+                
+            }else {
+                
                self.confirmVoteButton.enabled = false;
             }
             
@@ -2433,7 +2458,8 @@
             [self showSystemMessage:@"所有人請確認投票"];
             
             //allow confirm
-            if (selfShouldVote == true) {
+            if (selfShouldVote == true ||
+                selfState == PLAYER_STATE_DEAD) {
                 
                 self.confirmVoteButton.enabled = true;
             }else
@@ -2507,6 +2533,10 @@
             
             //show showPlayerList
             [self showPlayerList];
+            
+            //show confirmButton
+            [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
+            self.confirmVoteButton.enabled = true;
             [self showConfirmBtn];
 
             break;

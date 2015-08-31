@@ -12,7 +12,7 @@
 #import "Match.h"
 #import "Player.h"
 
-#define SERVER_IP @"192.168.196.121"
+#define SERVER_IP @"192.168.196.82"
 #define PLAYER_IMAGE_DEFAULT @"news2.jpg"
 
 typedef enum {
@@ -160,7 +160,7 @@ static NetworkController *sharedController = nil;
     }
 }
 
-- (void)sendPlayerConnected:(BOOL)continueMatch {
+- (void)sendPlayerConnected {
     
     [self setNetworkState:NetworkStatePendingMatchStatus];
     
@@ -175,7 +175,6 @@ static NetworkController *sharedController = nil;
     
     [writer writeString:[GKLocalPlayer localPlayer].playerID];
     [writer writeString:[GKLocalPlayer localPlayer].alias];
-    [writer writeByte:continueMatch];
     
     [self sendData:writer.data];
 }
@@ -267,7 +266,8 @@ static NetworkController *sharedController = nil;
     MessageWriter * writer = [MessageWriter new];
     
     [writer writeByte:MessageStartDiscussion];
-    [writer writeByte:0];
+    
+    [writer writeString:[GKLocalPlayer localPlayer].playerID];
     
     [self sendData:writer.data];
 }
@@ -516,7 +516,7 @@ static NetworkController *sharedController = nil;
                 
                 [self setNetworkState:NetworkStateConnected];
                 //Send message to server
-                [self sendPlayerConnected:true];
+                [self sendPlayerConnected];
             }
             
         case NSStreamEventHasBytesAvailable:
@@ -614,7 +614,7 @@ static NetworkController *sharedController = nil;
                 
                 [self setNetworkState:NetworkStateConnected];
                 //Send message to server
-                [self sendPlayerConnected:true];
+                [self sendPlayerConnected];
             }
             break;
             
@@ -765,25 +765,35 @@ static NetworkController *sharedController = nil;
 }
 
 // Players have been found for a server-hosted game, the game should start
-- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindPlayers:(NSArray *)playerIDs {
+- (void)matchmakerViewController:(GKMatchmakerViewController *)viewController didFindHostedPlayers:(NSArray *)players {
     
     NSLog(@"didFindPlayers");
+
+    NSMutableArray *tmpPlayerIDs = [NSMutableArray new];
     
     //把自己的playerID也加進 playerIDs
-    NSMutableArray *tmpPlayerIDs = [NSMutableArray arrayWithArray:playerIDs];
-    [tmpPlayerIDs insertObject:[GKLocalPlayer localPlayer].playerID atIndex:0];
-    playerIDs = [NSArray arrayWithArray:tmpPlayerIDs];
+    [tmpPlayerIDs addObject:[GKLocalPlayer localPlayer].playerID];
+    
+    for (GKPlayer *player in players) {
+
+        [tmpPlayerIDs addObject:player.playerID];
+    }
+    
+    NSArray *playerIDs = [NSArray arrayWithArray:tmpPlayerIDs];
     
     for (NSString *playerID in playerIDs) {
         
         NSLog(@"%@", playerID);
     }
-    if (_networkState == NetworkStatePendingMatch) {
-        
+    
+//    if (_networkState == NetworkStatePendingMatch) {
+    if (true) {
+
         [self dismissMatchmaker];
         //Send message to server to start match, with given player Ids
         [self sendStartMatch:playerIDs];
     }
+
 }
 
 // An invited player has accepted a hosted invite.  Apps should connect through the hosting server and then update the player's connected state (using setConnected:forHostedPlayer:)
