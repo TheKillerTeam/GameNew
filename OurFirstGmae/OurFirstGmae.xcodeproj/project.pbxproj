@@ -478,7 +478,6 @@
 				09B3453A1B9065F100E65CE5 /* mainCoverDefault.png */,
 				099C96871B8E2B43008862C6 /* mainCoverEyes.png */,
 				099C96831B8E2A32008862C6 /* mainCoverPeace.png */,
-				099C96851B8E2AAA008862C6 /* mainCoverFire.png */,
 				099C96751B8DF410008862C6 /* mainConfirmBtn.png */,
 				09D8842F1B8DBF7F00E6E88E /* mainName.png */,
 				09D884311B8DC49E00E6E88E /* mainOutOrLive.png */,
@@ -579,6 +578,7 @@
 				0735BBB81B6EB4D8000CFD5A /* MenuViewController.h */,
 				0735BBB91B6EB4D8000CFD5A /* MenuViewController.m */,
 				09B33CB71B5919EB00C9008A /* Images.xcassets */,
+				099C96851B8E2AAA008862C6 /* mainCoverFire.png */,
 				09C38E0C1B79F5680087ED5B /* OutView-Morning */,
 				0970E8341B788A610016B168 /* Outview-Night */,
 				0901A1911B78738900AAEDCF /* LoadingView */,
@@ -1011,7 +1011,6 @@
 		09B33CCB1B5919EB00C9008A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = OurFirstGmae/Info.plist;
@@ -1024,7 +1023,6 @@
 		09B33CCC1B5919EB00C9008A /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = OurFirstGmae/Info.plist;
