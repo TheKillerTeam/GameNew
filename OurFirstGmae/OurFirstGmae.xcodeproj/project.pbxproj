@@ -17,6 +17,7 @@
 		0735BBCE1B6F05B7000CFD5A /* Match.m in Sources */ = {isa = PBXBuildFile; fileRef = 0735BBCD1B6F05B7000CFD5A /* Match.m */; };
 		07AA29951B7305CD009E1013 /* news2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 07AA29941B7305CD009E1013 /* news2.jpg */; };
 		07AA29971B730EE2009E1013 /* news3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 07AA29961B730EE2009E1013 /* news3.jpg */; };
+		07DCF3531B902A9C009687B6 /* enterNameBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 07DCF3521B902A9C009687B6 /* enterNameBtn.png */; };
 		07F88CBE1B7487BF001A3445 /* ChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F88CBD1B7487BF001A3445 /* ChatCell.m */; };
 		0901A1931B78784200AAEDCF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0901A1921B78784200AAEDCF /* UIKit.framework */; };
 		0901A1961B7878BE00AAEDCF /* LoadingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0901A1951B7878BE00AAEDCF /* LoadingViewController.m */; };
@@ -161,6 +162,7 @@
 		0735BBCD1B6F05B7000CFD5A /* Match.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Match.m; sourceTree = "<group>"; };
 		07AA29941B7305CD009E1013 /* news2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = news2.jpg; sourceTree = "<group>"; };
 		07AA29961B730EE2009E1013 /* news3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = news3.jpg; sourceTree = "<group>"; };
+		07DCF3521B902A9C009687B6 /* enterNameBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = enterNameBtn.png; sourceTree = "<group>"; };
 		07F88CBC1B7487BF001A3445 /* ChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatCell.h; sourceTree = "<group>"; };
 		07F88CBD1B7487BF001A3445 /* ChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatCell.m; sourceTree = "<group>"; };
 		0901A1921B78784200AAEDCF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -467,6 +469,7 @@
 				09E9BFE21B90483F00502744 /* morningBackground.png */,
 				09E9BFE01B9047FA00502744 /* nightBackground.png */,
 				09E9BFB01B902E1A00502744 /* mainInputbarBackground.png */,
+				07DCF3521B902A9C009687B6 /* enterNameBtn.png */,
 				099C96D11B8EFBFD008862C6 /* mainJudgeBoard.png */,
 				099C96CB1B8EF522008862C6 /* mainYesBtn.png */,
 				099C96CC1B8EF522008862C6 /* mainNoBtn.png */,
@@ -808,6 +811,7 @@
 				09D884321B8DC49E00E6E88E /* mainOutOrLive.png in Resources */,
 				09907E531B8AEA3200FE2DF4 /* enterButtonOutfit.png in Resources */,
 				09E9BFCE1B903BEA00502744 /* superManButton2.png in Resources */,
+				07DCF3531B902A9C009687B6 /* enterNameBtn.png in Resources */,
 				09D884261B8DB0B600E6E88E /* mainRow1.png in Resources */,
 				099C96D21B8EFBFD008862C6 /* mainJudgeBoard.png in Resources */,
 				09B345411B90745600E65CE5 /* slotBackground.png in Resources */,

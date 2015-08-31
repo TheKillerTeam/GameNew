@@ -83,6 +83,7 @@ typedef enum {
 + (NetworkController *)sharedInstance;
 - (void)authenticateLocalUser;
 - (void)connect;
+- (void)reconnect;
 - (void)findMatchWithMinPlayers:(int)minPlayers maxPlayers:(int)maxPlayers
                  viewController:(UIViewController *)viewController;
 - (void)sendUpdatePlayerImage:(UIImage *)image;

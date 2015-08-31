@@ -63,7 +63,6 @@ TEAM_LIST.append([8,3,3])#14
 TEAM_LIST.append([7,4,4])#15
 TEAM_LIST.append([8,4,4])#16
 
-SECS_FOR_SHUTDOWN = 5
 SECS_FOR_GAMEOVER_SHUTDOWN = 70
 
 UNRESETED = 0
@@ -126,6 +125,7 @@ class GameMatch:
     def __init__(self, players):
         self.players = players
         self.state = MATCH_STATE_ACTIVE
+        self.quitting = False
         self.pendingShutdown = False
         self.shutdownTime = 0
         self.timer = LoopingCall(self.update)
@@ -142,47 +142,43 @@ class GameMatch:
 
     def update(self):
         print "Match update: %s" % (str(self))
-        if (self.state == MATCH_STATE_GAME_OVER):
-            if (self.pendingShutdown == False):
-                self.pendingShutdown = True
-                self.shutdownTime = time() + SECS_FOR_GAMEOVER_SHUTDOWN
         playerDisconnected = []
         for player in self.players:
             if player.protocol == None:
                 playerDisconnected.append(player)
                 if self.state == MATCH_STATE_ACTIVE:
                     if player.playerState == PLAYER_STATE_ALIVE:
-                        print "Player %s disconnected, shutdown after %d" % (player.alias, SECS_FOR_SHUTDOWN)
-                        if (self.pendingShutdown == False):
-                            self.pendingShutdown = True
-                            self.shutdownTime = time() + SECS_FOR_SHUTDOWN
                         for p in self.players:
                             if (p.protocol):
-                                p.protocol.sendPlayerDisconnected(player.playerId, SHUTTING_DOWN)                        
+                                p.protocol.sendPlayerDisconnected(player.playerId, SHUTTING_DOWN)
+                        self.quitting = True
                     else:
-                        print "Player %s disconnected" % (player.alias)
                         for p in self.players:
                             if (p.protocol):
                                 p.protocol.sendPlayerDisconnected(player.playerId, NOT_SHUTTING_DOWN)
                 else:
-                    print "Player %s disconnected" % (player.alias)
                     for p in self.players:
                         if (p.protocol):
                             p.protocol.sendPlayerDisconnected(player.playerId, NOT_SHUTTING_DOWN)
         if (len(playerDisconnected) != 0):
             for player in playerDisconnected:
+                print "Player %s disconnected" % (player.alias)
+                player.match = None
                 self.players.remove(player)
             playerDisconnected = []
-        if (self.pendingShutdown):
+        if (self.pendingShutdown == True):
             print "Shutdown countdown: %d" % (self.shutdownTime - time())
             if (time() > self.shutdownTime):
-                self.quit()
+                self.quitting = True
         if (len(self.players) == 0):
+            self.quitting = True
+        if (self.quitting == True):
             self.quit()
             
     def quit(self):
-        print "Match shut down "
-        self.timer.stop()
+        if self.timer.running:
+            print "Match shut down "
+            self.timer.stop()
         for matchPlayer in self.players:
             matchPlayer.match = None
             if matchPlayer.protocol:
@@ -226,12 +222,12 @@ class GameFactory(Factory):
             if existingPlayer.protocol == protocol:
                 existingPlayer.protocol = None
 
-    def playerConnected(self, protocol, playerImage, playerId, alias, continueMatch):
+    def playerConnected(self, protocol, playerImage, playerId, alias):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.playerImage = playerImage
                 existingPlayer.alias = alias
-                existingPlayer.continueMatch = continueMatch
+                existingPlayer.match = None
                 existingPlayer.protocol = protocol
                 protocol.player = existingPlayer
                 existingPlayer.protocol.sendNotInMatch()
@@ -256,12 +252,15 @@ class GameFactory(Factory):
     def playerSendChat(self, protocol, chat, chatType, playerId):
         if chatType == CHAT_TO_ALL:
             for existingPlayer in self.players:
-                if existingPlayer.playerId != playerId:
-                    existingPlayer.protocol.sendUpdateChat(chat,playerId)
+                if existingPlayer.playerId == playerId:            
+                    for player in existingPlayer.match.players:
+                        if player.playerId != playerId:
+                            player.protocol.sendUpdateChat(chat,playerId)
+                    break
         if chatType == CHAT_TO_TEAM:
             for existingPlayer in self.players:
                 if existingPlayer.playerId == playerId:
-                    for player in self.players:
+                    for player in existingPlayer.match.players:
                         if player.playerTeam == existingPlayer.playerTeam:
                             if player.playerId != playerId:
                                 if player.playerState == PLAYER_STATE_ALIVE:
@@ -269,26 +268,32 @@ class GameFactory(Factory):
                     break
         if chatType == CHAT_TO_DEAD:
             for existingPlayer in self.players:
-                if existingPlayer.playerState == PLAYER_STATE_DEAD:
-                    if existingPlayer.playerId != playerId:
-                        existingPlayer.protocol.sendUpdateChat(chat,playerId) 
-                        
+                if existingPlayer.playerId == playerId:              
+                    for player in existingPlayer.match.players:
+                        if player.playerState == PLAYER_STATE_DEAD:
+                            if player.playerId != playerId:
+                                player.protocol.sendUpdateChat(chat,playerId)
+                    break
+                
     def playerVoteFor(self, protocol, voteFor, playerId):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 votedFor = existingPlayer.voteFor
                 if votedFor == voteFor:
                     existingPlayer.voteFor = 99
-                    self.players[voteFor].voteCount = self.players[voteFor].voteCount - 1
+                    existingPlayer.match.players[voteFor].voteCount = existingPlayer.match.players[voteFor].voteCount - 1
                 else:
-                    self.players[voteFor].voteCount = self.players[voteFor].voteCount + 1
+                    existingPlayer.match.players[voteFor].voteCount = existingPlayer.match.players[voteFor].voteCount + 1
                     if votedFor != 99:
-                        self.players[existingPlayer.voteFor].voteCount = self.players[existingPlayer.voteFor].voteCount - 1
+                        existingPlayer.match.players[existingPlayer.voteFor].voteCount = existingPlayer.match.players[existingPlayer.voteFor].voteCount - 1
                     existingPlayer.voteFor = voteFor
                 break
         for existingPlayer in self.players:
-            if existingPlayer.playerId != playerId:
-                existingPlayer.protocol.sendUpdateVote(voteFor, votedFor, playerId)
+            if existingPlayer.playerId == playerId:
+                for player in existingPlayer.match.players:
+                    if player.playerId != playerId:
+                        player.protocol.sendUpdateVote(voteFor, votedFor, playerId)
+                break
                 
     def playerJudgeFor(self, protocol, judgeFor, playerId):
         for existingPlayer in self.players:
@@ -300,35 +305,46 @@ class GameFactory(Factory):
                     existingPlayer.judgeFor = judgeFor
                 break
         for existingPlayer in self.players:
-            if existingPlayer.playerId != playerId:
-                existingPlayer.protocol.sendUpdateJudge(judgeFor, judgedFor, playerId)
+            if existingPlayer.playerId == playerId:            
+                for player in existingPlayer.match.players:
+                    if player.playerId != playerId:
+                        player.protocol.sendUpdateJudge(judgeFor, judgedFor, playerId)
+                break
 
-    def startDiscussion(self, protocol):
+    def startDiscussion(self, protocol, playerId):
         allReseted = True;
         for existingPlayer in self.players:
-            if existingPlayer.reseted == UNRESETED:
-                allReseted = False;
+            if existingPlayer.playerId == playerId:
+                for player in existingPlayer.match.players:
+                    if player.reseted == UNRESETED:
+                        allReseted = False;
+                break
         if allReseted == True:
             for existingPlayer in self.players:
-                existingPlayer.reseted = UNRESETED
-            
+                if existingPlayer.playerId == playerId:
+                    for player in existingPlayer.match.players:
+                        player.reseted = UNRESETED
+                    break
+
     def resetVote(self, protocol, playerId):
-        for existingPlayer in self.players:
-            existingPlayer.voteFor = 99
-            existingPlayer.judgeFor = 99
-            existingPlayer.voteCount = 0
-            existingPlayer.confirmVote = NOTCONFIRMED
-        for existingPlayer in self.players:
-            if existingPlayer.playerId == playerId:
-                existingPlayer.reseted = RESETED
-                break
         allReseted = True
         for existingPlayer in self.players:
-            if existingPlayer.reseted == UNRESETED:
-                allReseted = False
+            if existingPlayer.playerId == playerId:
+                existingPlayer.voteFor = 99
+                existingPlayer.judgeFor = 99
+                existingPlayer.voteCount = 0
+                existingPlayer.confirmVote = NOTCONFIRMED
+                existingPlayer.reseted = RESETED
+                for player in existingPlayer.match.players:
+                    if player.reseted == UNRESETED:
+                        allReseted = False                
+                break
         if allReseted == True:
             for existingPlayer in self.players:
-                existingPlayer.protocol.sendAllowVote(0)
+                if existingPlayer.playerId == playerId:
+                    for player in existingPlayer.match.players:
+                        player.protocol.sendAllowVote()
+                    break
 
     def playerNightConfirmVote(self, protocol, playerId):
         for existingPlayer in self.players:
@@ -337,58 +353,81 @@ class GameFactory(Factory):
                 break
         allConfirmed = True;
         for existingPlayer in self.players:
-            if existingPlayer.playerState == PLAYER_STATE_ALIVE:
-                if existingPlayer.playerTeam == PLAYER_TEAM_MAFIA:
-                    if existingPlayer.confirmVote == NOTCONFIRMED:
-                        allConfirmed = False
-                if existingPlayer.playerTeam == PLAYER_TEAM_SHERIFF:
-                    if existingPlayer.confirmVote == NOTCONFIRMED:
-                        allConfirmed = False
+            if existingPlayer.playerId == playerId:
+                for player in existingPlayer.match.players:
+                    if player.playerState == PLAYER_STATE_ALIVE:
+                        if player.playerTeam == PLAYER_TEAM_MAFIA:
+                            if player.confirmVote == NOTCONFIRMED:
+                                allConfirmed = False
+                        if player.playerTeam == PLAYER_TEAM_SHERIFF:
+                            if player.confirmVote == NOTCONFIRMED:
+                                allConfirmed = False
+                break
         if allConfirmed == True:
             mafiaCount = 0
             for existingPlayer in self.players:
-                if existingPlayer.playerTeam == PLAYER_TEAM_MAFIA:
-                    if existingPlayer.playerState == PLAYER_STATE_ALIVE:
-                        mafiaCount += 1
+                if existingPlayer.playerId == playerId:
+                    for player in existingPlayer.match.players:
+                        if player.playerTeam == PLAYER_TEAM_MAFIA:
+                            if player.playerState == PLAYER_STATE_ALIVE:
+                                mafiaCount += 1
+                    break
             noOneDied = True
             for existingPlayer in self.players:
-                if existingPlayer.voteCount *2 >= mafiaCount:
-                    equalsToOtherPlayer = False;
-                    for player in self.players:
-                        if player.playerId != existingPlayer.playerId:
-                            if player.voteCount == existingPlayer.voteCount:
-                                equalsToOtherPlayer = True;
-                    if equalsToOtherPlayer == False:
-                        existingPlayer.playerState = PLAYER_STATE_DEAD
-                        noOneDied = False
-                        for player in self.players:
-                            player.protocol.sendPlayerDied(existingPlayer.playerId)
+                if existingPlayer.playerId == playerId:
+                    for player in existingPlayer.match.players:
+                        if player.voteCount *2 >= mafiaCount:
+                            equalsToOtherPlayer = False;
+                            for p in existingPlayer.match.players:
+                                if p.playerId != player.playerId:
+                                    if p.voteCount == player.voteCount:
+                                        equalsToOtherPlayer = True;
+                            if equalsToOtherPlayer == False:
+                                player.playerState = PLAYER_STATE_DEAD
+                                noOneDied = False
+                                for p in existingPlayer.match.players:
+                                    p.protocol.sendPlayerDied(player.playerId)
+                            break
                     break
             if noOneDied == True:
                 for existingPlayer in self.players:
-                    existingPlayer.protocol.sendPlayerDied("noOne")
-                    existingPlayer.protocol.sendGameOver(NOT_OVER_YET)
+                    if existingPlayer.playerId == playerId:
+                        for player in existingPlayer.match.players:
+                            player.protocol.sendPlayerDied("noOne")
+                            player.protocol.sendGameOver(NOT_OVER_YET)
             else:
                 alivePlayerCount = 0
                 aliveMafiaCount = 0
                 for existingPlayer in self.players:
-                    if existingPlayer.playerState == PLAYER_STATE_ALIVE:
-                        alivePlayerCount += 1
-                        if existingPlayer.playerTeam == PLAYER_TEAM_MAFIA:
-                            aliveMafiaCount += 1
+                    if existingPlayer.playerId == playerId:
+                        for player in existingPlayer.match.players:
+                            if player.playerState == PLAYER_STATE_ALIVE:
+                                alivePlayerCount += 1
+                                if player.playerTeam == PLAYER_TEAM_MAFIA:
+                                    aliveMafiaCount += 1
+                        break
                 if aliveMafiaCount == 0:
                     for existingPlayer in self.players:
-                        existingPlayer.protocol.sendGameOver(CIVILIAN_WIN)
-                        existingPlayer.match.state = MATCH_STATE_GAME_OVER
+                        if existingPlayer.playerId == playerId:
+                            for player in existingPlayer.match.players:
+                                player.protocol.sendGameOver(CIVILIAN_WIN)
+                                player.match.state = MATCH_STATE_GAME_OVER
+                            break
                 else:
                     if aliveMafiaCount *2 >= alivePlayerCount:
                         for existingPlayer in self.players:
-                            existingPlayer.protocol.sendGameOver(MAFIA_WIN)
-                            existingPlayer.match.state = MATCH_STATE_GAME_OVER
+                            if existingPlayer.playerId == playerId:
+                                for player in existingPlayer.match.players:
+                                    player.protocol.sendGameOver(MAFIA_WIN)
+                                    player.match.state = MATCH_STATE_GAME_OVER
+                                break
                     else:
                         for existingPlayer in self.players:
-                            existingPlayer.protocol.sendGameOver(NOT_OVER_YET)
-                            
+                            if existingPlayer.playerId == playerId:
+                                for player in existingPlayer.match.players:
+                                    player.protocol.sendGameOver(NOT_OVER_YET)
+                                break
+
     def playerDayConfirmVote(self, protocol, playerId):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
@@ -396,31 +435,42 @@ class GameFactory(Factory):
                 break
         allConfirmed = True;
         for existingPlayer in self.players:
-            if existingPlayer.playerState == PLAYER_STATE_ALIVE:
-                if existingPlayer.confirmVote == NOTCONFIRMED:
-                    allConfirmed = False
+            if existingPlayer.playerId == playerId:
+                for player in existingPlayer.match.players:
+                    if player.playerState == PLAYER_STATE_ALIVE:
+                        if player.confirmVote == NOTCONFIRMED:
+                            allConfirmed = False
+                break
         if allConfirmed == True:
             alivePlayerCount = 0
             for existingPlayer in self.players:
-                if existingPlayer.playerState == PLAYER_STATE_ALIVE:
-                    alivePlayerCount += 1
+                if existingPlayer.playerId == playerId:
+                    for player in existingPlayer.match.players:
+                        if player.playerState == PLAYER_STATE_ALIVE:
+                            alivePlayerCount += 1
             noOneToJudge = True
             for existingPlayer in self.players:
-                if existingPlayer.voteCount *2 >= alivePlayerCount:
-                    equalsToOtherPlayer = False;
-                    for player in self.players:
-                        if player.playerId != existingPlayer.playerId:
-                            if player.voteCount == existingPlayer.voteCount:
-                                equalsToOtherPlayer = True;
-                    if equalsToOtherPlayer == False:
-                        existingPlayer.beingJudged = 1
-                        noOneToJudge = False
-                        for player in self.players:
-                            player.protocol.sendJudgePlayer(existingPlayer.playerId)
+                if existingPlayer.playerId == playerId:
+                    for player in existingPlayer.match.players:
+                        if player.voteCount *2 >= alivePlayerCount:
+                            equalsToOtherPlayer = False;
+                            for p in existingPlayer.match.players:
+                                if p.playerId != player.playerId:
+                                    if p.voteCount == player.voteCount:
+                                        equalsToOtherPlayer = True;
+                            if equalsToOtherPlayer == False:
+                                player.beingJudged = 1
+                                noOneToJudge = False
+                                for p in existingPlayer.match.players:
+                                    p.protocol.sendJudgePlayer(player.playerId)
+                            break
                     break
             if noOneToJudge == True:
                 for existingPlayer in self.players:
-                    existingPlayer.protocol.sendJudgePlayer("noOne")
+                    if existingPlayer.playerId == playerId:
+                        for player in existingPlayer.match.players:
+                            player.protocol.sendJudgePlayer("noOne")
+                        break
                     
     def playerJudgementConfirmVote(self, protocol, playerId):
         for existingPlayer in self.players:
@@ -429,64 +479,102 @@ class GameFactory(Factory):
                 break
         allConfirmed = True;
         for existingPlayer in self.players:
-            if existingPlayer.playerState == PLAYER_STATE_ALIVE:
-                if existingPlayer.confirmVote == NOTCONFIRMED:
-                    if existingPlayer.beingJudged == 0:
-                        allConfirmed = False
+            if existingPlayer.playerId == playerId:
+                for player in existingPlayer.match.players:
+                    if player.playerState == PLAYER_STATE_ALIVE:
+                        if player.confirmVote == NOTCONFIRMED:
+                            if player.beingJudged == 0:
+                                allConfirmed = False
+                break
         if allConfirmed == True:
             alivePlayerCount = 0
             for existingPlayer in self.players:
-                if existingPlayer.playerState == PLAYER_STATE_ALIVE:
-                    if existingPlayer.beingJudged == 0:
-                        alivePlayerCount += 1
+                if existingPlayer.playerId == playerId:
+                    for player in existingPlayer.match.players:
+                        if player.playerState == PLAYER_STATE_ALIVE:
+                            if player.beingJudged == 0:
+                                alivePlayerCount += 1
+                    break
             guiltyVoteCount = 0
             for existingPlayer in self.players:
-                if existingPlayer.judgeFor == JUDGE_GUILTY:
-                    guiltyVoteCount += 1
+                if existingPlayer.playerId == playerId:
+                    for player in existingPlayer.match.players:
+                        if player.judgeFor == JUDGE_GUILTY:
+                            guiltyVoteCount += 1
+                    break
             noOneDied = True
             if guiltyVoteCount *2 >= alivePlayerCount:
                 noOneDied = False
                 for existingPlayer in self.players:
-                    if existingPlayer.beingJudged == 1:
-                        existingPlayer.playerState = PLAYER_STATE_DEAD
-                        existingPlayer.beingJudged = 0
-                    existingPlayer.protocol.sendPlayerDied(existingPlayer.playerId)
+                    if existingPlayer.playerId == playerId:
+                        for player in existingPlayer.match.players:
+                            if player.beingJudged == 1:
+                                player.playerState = PLAYER_STATE_DEAD
+                                player.beingJudged = 0
+                                for player in self.players:
+                                    player.protocol.sendPlayerDied(player.playerId)
+                        break
             if noOneDied == True:
                 for existingPlayer in self.players:
-                    if existingPlayer.beingJudged == 1:
-                        existingPlayer.beingJudged = 0                    
-                    existingPlayer.protocol.sendPlayerDied("noOne")
-                    existingPlayer.protocol.sendGameOver(NOT_OVER_YET)
+                    if existingPlayer.playerId == playerId:
+                        for player in existingPlayer.match.players:
+                            if player.beingJudged == 1:
+                                player.beingJudged = 0                    
+                            player.protocol.sendPlayerDied("noOne")
+                            player.protocol.sendGameOver(NOT_OVER_YET)
+                        break
             else:
                 alivePlayerCount = 0
                 aliveMafiaCount = 0
                 for existingPlayer in self.players:
-                    if existingPlayer.playerState == PLAYER_STATE_ALIVE:
-                        alivePlayerCount += 1
-                        if existingPlayer.playerTeam == PLAYER_TEAM_MAFIA:
-                            aliveMafiaCount += 1
+                    if existingPlayer.playerId == playerId:
+                        for player in existingPlayer.match.players:
+                            if player.playerState == PLAYER_STATE_ALIVE:
+                                alivePlayerCount += 1
+                                if player.playerTeam == PLAYER_TEAM_MAFIA:
+                                    aliveMafiaCount += 1
+                        break
                 if aliveMafiaCount == 0:
                     for existingPlayer in self.players:
-                        existingPlayer.protocol.sendGameOver(CIVILIAN_WIN)
-                        existingPlayer.match.state = MATCH_STATE_GAME_OVER
+                        if existingPlayer.playerId == playerId:
+                            for player in existingPlayer.match.players:
+                                player.protocol.sendGameOver(CIVILIAN_WIN)
+                                player.match.state = MATCH_STATE_GAME_OVER
+                            break
                 else:
                     if aliveMafiaCount *2 >= alivePlayerCount:
                         for existingPlayer in self.players:
-                            existingPlayer.protocol.sendGameOver(MAFIA_WIN)
-                            existingPlayer.match.state = MATCH_STATE_GAME_OVER
+                            if existingPlayer.playerId == playerId:
+                                for player in existingPlayer.match.players:
+                                    player.protocol.sendGameOver(MAFIA_WIN)
+                                    player.match.state = MATCH_STATE_GAME_OVER
+                                break
                     else:
                         for existingPlayer in self.players:
-                            existingPlayer.protocol.sendGameOver(NOT_OVER_YET)             
+                            if existingPlayer.playerId == playerId:
+                                for player in existingPlayer.match.players:
+                                    player.protocol.sendGameOver(NOT_OVER_YET)
+                                break
         
     def playerSendLastWords(self, protocol, lastWords, playerId):
         for existingPlayer in self.players:
-            existingPlayer.protocol.sendPlayerHasLastWords(lastWords, playerId)
+            if existingPlayer.playerId == playerId:
+                for player in existingPlayer.match.players:
+                    player.protocol.sendPlayerHasLastWords(lastWords, playerId)
+                    if player.match.state == MATCH_STATE_GAME_OVER:
+                        if player.match.pendingShutdown == False:
+                            player.match.pendingShutdown = True
+                            player.match.shutdownTime = time() + SECS_FOR_GAMEOVER_SHUTDOWN                      
+                break
                 
     def startMatch(self, playerIds):
         matchPlayers = []
         for existingPlayer in self.players:
             if existingPlayer.playerId in playerIds:
                 matchPlayers.append(existingPlayer)
+        for player in matchPlayers:
+            if player.match != None:
+                return
         match = GameMatch(matchPlayers)
         teamList = []
         for teamIndex in range(3):
@@ -553,9 +641,8 @@ class GameProtocol(Protocol):
         playerImage = message.readString()
         playerId = message.readString()
         alias = message.readString()
-        continueMatch = message.readByte()
-        self.log("Recv MESSAGE_PLAYER_CONNECTED %s %s %d" % (playerId, alias, continueMatch))
-        self.factory.playerConnected(self, playerImage, playerId, alias, continueMatch)
+        self.log("Recv MESSAGE_PLAYER_CONNECTED %s %s" % (playerId, alias))
+        self.factory.playerConnected(self, playerImage, playerId, alias)
 
     def playerImageUpdated(self, message):
         playerImage = message.readString()
@@ -615,9 +702,9 @@ class GameProtocol(Protocol):
         self.factory.playerJudgeFor(self, judgeFor, playerId)
     
     def startDiscussion(self, message):
-        uselessData = message.readByte()
+        playerId = message.readString()
         self.log("Recv MESSAGE_START_DISCUSSION")
-        self.factory.startDiscussion(self)
+        self.factory.startDiscussion(self, playerId)
         
     def resetVote(self, message):
         playerId = message.readString()
@@ -653,7 +740,7 @@ class GameProtocol(Protocol):
         self.log("Sent MESSAGE_JUDGE_PLAYER %s" % (playerId))
         self.sendMessage(message)
         
-    def sendAllowVote(self, uselessData):
+    def sendAllowVote(self):
         message = MessageWriter()
         message.writeByte(MESSAGE_ALLOW_VOTE)
         self.log("Sent MESSAGE_ALLOW_VOTE")
