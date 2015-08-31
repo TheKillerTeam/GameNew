@@ -1848,8 +1848,7 @@
                         selfState = PLAYER_STATE_DEAD;
                         [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
 
-                        [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateNormal];
-//                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
+                        [self.playerStateBtn setTitle:@"出局" forState:UIControlStateNormal];
                     }
                     
                     break;
@@ -1931,8 +1930,7 @@
                         selfState = PLAYER_STATE_DEAD;
                         [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
 
-//                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
-                    [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateNormal];
+                        [self.playerStateBtn setTitle:@"出局" forState:UIControlStateNormal];
                     }
                     
                     break;

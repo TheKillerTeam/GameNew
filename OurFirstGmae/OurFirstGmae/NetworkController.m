@@ -786,8 +786,7 @@ static NetworkController *sharedController = nil;
         NSLog(@"%@", playerID);
     }
     
-//    if (_networkState == NetworkStatePendingMatch) {
-    if (true) {
+    if (_networkState == NetworkStatePendingMatch) {
 
         [self dismissMatchmaker];
         //Send message to server to start match, with given player Ids
