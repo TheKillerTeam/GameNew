@@ -9,9 +9,13 @@
 #import "MorningOutViewController.h"
 
 @interface MorningOutViewController () <UIGestureRecognizerDelegate>
+{
+    BOOL fistOn;
+}
 
 @property (weak, nonatomic) IBOutlet UIImageView *morningOutImgView;
 @property (strong, nonatomic) IBOutlet UISwipeGestureRecognizer *swip;
+@property (weak, nonatomic) IBOutlet UIImageView *fistImageVIew;
 
 @end
 
@@ -22,23 +26,28 @@
     // Do any additional setup after loading the view.
     
     self.morningOutImgView.image = self.playerImage;
-    
+
     UIView *view =[[UIView alloc]initWithFrame:self.view.frame];
     view.backgroundColor=[UIColor blackColor];
     view.alpha = 0.5;
     [self.view insertSubview:view belowSubview:_morningOutImgView];
+  
 }
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
+    fistOn = YES;
+    [self fistAnimation];
     if (self.autoSwipe == true) {
         
         _swip.enabled=NO;
         [self performSelector:@selector(swipeUp:) withObject:nil afterDelay:2.0f];
-        
+      
+       
     }else {
-        
+      
+
         [self performSelector:@selector(swipeUp:) withObject:nil afterDelay:10.0f];
     }
 }
@@ -48,7 +57,37 @@
     // Dispose of any resources that can be recreated.
 }
 
+
+-(void)fistAnimation{
+    
+    if(fistOn){
+        
+    [self.fistImageVIew setTranslatesAutoresizingMaskIntoConstraints:YES];
+    CABasicAnimation * animation = [CABasicAnimation animationWithKeyPath:@"position"];
+    animation.duration = 0.5;
+    animation.repeatCount = HUGE_VALF;
+    animation.fromValue = [NSValue valueWithCGPoint:self.fistImageVIew.layer.position];
+    animation.toValue = [NSValue valueWithCGPoint:CGPointMake(self.fistImageVIew.layer.position.x,self.fistImageVIew.layer.position.y-30)];
+   
+    [self.fistImageVIew.layer addAnimation:animation forKey:@"fistMove"];
+    NSLog(@"fist = %@ ", NSStringFromCGRect(self.fistImageVIew.frame));
+    NSLog(@"player = %@ ", NSStringFromCGRect(self.morningOutImgView.frame));
+        
+    }
+    
+}
+
+-(void)hideFist{
+    
+    self.fistImageVIew.alpha = 0;
+}
+
+
+
+
 - (IBAction)swipeUp:(id)sender {
+    fistOn=NO;
+    [self hideFist];
     
     CABasicAnimation* shake = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
     

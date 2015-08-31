@@ -19,15 +19,18 @@
 #define PLAYER_TEAM_SHERIFF_IMAGE   @"cubeSheriff.png"
 #define PLAYER_TEAM_MAFIA_IMAGE     @"cubeMafia.png"
 
+#define PLAYER_TEAM_PEACE @"soltJobPeace.png"
+#define PLAYER_TEAM_RUIN @"soltJobRuin.png"
+#define PLAYER_TEAM_DISCOVER @"soltJobDiscover.png"
+
 @interface SlotMachine () {
     
     SlotMachineClass *slotClass;
-    UIImageView *iconImageView;
-    UIImageView *container;
-    UILabel *jobNameLb;
-    UIButton *startBtn;
     ViewController*vc;
+    UIImageView *iconImageView;
     NSInteger slotIndex;
+    UIImageView *jobImageView;
+//    UIButton *startBtn;
 }
 @property (strong,nonatomic)NSArray *slotIcon;
 @property (strong,nonatomic)NSArray *iconText;
@@ -46,17 +49,20 @@
                      [UIImage imageNamed:PLAYER_TEAM_SHERIFF_IMAGE],
                      [UIImage imageNamed:PLAYER_TEAM_MAFIA_IMAGE], nil];
     
-    self.iconText =@[PLAYER_TEAM_CIVILIAN_STRING,
-                     PLAYER_TEAM_SHERIFF_STRING,
-                     PLAYER_TEAM_MAFIA_STRING];
+    self.iconText =@[[UIImage imageNamed:PLAYER_TEAM_PEACE],
+                     [UIImage imageNamed:PLAYER_TEAM_DISCOVER],
+                     [UIImage imageNamed:PLAYER_TEAM_RUIN]];
     
     _presentView= [UIView new];
-    [self.presentView setFrame:CGRectMake(0, 0 , self.view.frame.size.width/2, self.view.frame.size.height/2)];
+    [self.presentView setFrame:CGRectMake(0, 0 , 220, 200)];
     self.presentView.center=CGPointMake(self.view.frame.size.width/2, self.view.frame.size.height/2);
-    self.presentView.backgroundColor =[UIColor yellowColor];
+    self.presentView.backgroundColor =[UIColor clearColor];
     [self.view addSubview:_presentView];
 
-    slotClass = [[SlotMachineClass alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width/2, self.view.frame.size.height/5)];
+    slotClass = [[SlotMachineClass alloc]initWithFrame:CGRectMake(0, 0, self.presentView.frame.size.width, self.presentView.frame.size.width-70)];
+    slotClass.backgroundImageView.image = [UIImage imageNamed:@"slotBackground.png"];
+
+    slotClass.coverImageView.image =[UIImage imageNamed:@"slotCover.png"];
     
     slotClass.delegate=self;
     slotClass.dataSource=self;
@@ -68,29 +74,15 @@
     [self.view insertSubview:view belowSubview:_presentView];
     [_presentView addSubview:slotClass];
     
-    ////解答圖
-//////////////////////////////
     
-//    container= [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, slotClass.frame.size.width, slotClass.frame.size.height)];
-//    container.center=CGPointMake(_presentView.frame.size.width/2, _presentView.frame.size.height/2+100);
-//    container.backgroundColor=[UIColor redColor];
-//    
-//    [_presentView addSubview:container];
-//    
-//    
-//    
-//    iconImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, container.frame.size.width           , container.frame.size.height)];
-//    [container addSubview:iconImageView];
+    jobImageView = [[UIImageView alloc]initWithFrame:CGRectMake(0, slotClass.frame.size.height,self.presentView.frame.size.width, self.presentView.frame.size.height-slotClass.frame.size.height)];
     
-//////////////////////////////
+    jobImageView.contentMode = UIViewContentModeScaleToFill;
     
-    jobNameLb = [[UILabel alloc]initWithFrame:CGRectMake(0, slotClass.frame.size.height,_presentView.frame.size.width, slotClass.frame.size.height-50)];
 
-    jobNameLb.backgroundColor=[UIColor redColor];
-    [jobNameLb setTextAlignment:NSTextAlignmentCenter];
-
-    [_presentView addSubview:jobNameLb];
+    [self.presentView addSubview:jobImageView];
     
+
     /*
     startBtn=[UIButton buttonWithType:UIButtonTypeCustom];
     
@@ -112,14 +104,14 @@
 
 -(void)viewDidAppear:(BOOL)animated{
     
-//    NSInteger iconArrayCount = _slotIcon.count;
-//    slotIndex = arc4random()%iconArrayCount;
+
     iconImageView.image = [_slotIcon objectAtIndex:slotIndex];  // 改變結果
-    _jobName=[_iconText objectAtIndex:slotIndex];
     slotClass.slotResult = [NSArray arrayWithObject:[NSNumber numberWithInteger:slotIndex]];
     
     [slotClass startSlide];
+
 }
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -128,13 +120,14 @@
 
 -(void)slotMachineWillStart:(SlotMachineClass *)slotClass{
     
-    startBtn.enabled=NO;
+//    startBtn.enabled=NO;
 }
 
 -(void)slotMachineDidEnd:(SlotMachineClass *)slotClass{
-    
-    startBtn.enabled=YES;
-    jobNameLb.text =_jobName;
+   
+//    startBtn.enabled=YES;
+
+    jobImageView.image =[self.iconText objectAtIndex:slotIndex];
 }
 
 -(NSArray*)iconsForMachine:(SlotMachineClass *)slotClass{

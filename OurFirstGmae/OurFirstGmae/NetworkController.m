@@ -12,7 +12,7 @@
 #import "Match.h"
 #import "Player.h"
 
-#define SERVER_IP @"192.168.196.121"
+#define SERVER_IP @"172.20.10.3"
 #define PLAYER_IMAGE_DEFAULT @"news2.jpg"
 
 typedef enum {

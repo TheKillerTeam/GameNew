@@ -25,11 +25,17 @@
 
 #define INPUT_BAR_HEIGHT 60
 #define SYSTEM_ID @"系統"
-#define SYSTEM_IMAGE @"Nobi Nobita.png"
+#define SYSTEM_IMAGE @"mainCoverDefault.png"
 
 #define PLAYER_TEAM_CIVILIAN_IMAGE  @"cubeCivilian.png"
 #define PLAYER_TEAM_SHERIFF_IMAGE   @"cubeSheriff.png"
 #define PLAYER_TEAM_MAFIA_IMAGE     @"cubeMafia.png"
+
+#define PLAYER_DAYOUT_IMAGE     @"cubeDayOut.png"
+#define PLAYER_NIGHTOUT_IMAGE     @"cubeNightOut.png"
+
+
+
 
 #define BACKGROUND_IMAGE_DAY @"morningBackground.png"
 #define BACKGROUND_IMAGE_NIGHT @"nightBackground.png"
@@ -38,13 +44,18 @@
 #define PLAYER_TEAM_SHERIFF     1
 #define PLAYER_TEAM_MAFIA       2
 
-#define PLAYER_TEAM_CIVILIAN_STRING @"平民"
-#define PLAYER_TEAM_SHERIFF_STRING  @"警察"
-#define PLAYER_TEAM_MAFIA_STRING    @"殺手"
+#define PLAYER_TEAM_CIVILIAN_STRING @"捍衛者"
+#define PLAYER_TEAM_SHERIFF_STRING  @"探索家"
+#define PLAYER_TEAM_MAFIA_STRING    @"入侵者"
+
+#define PLAYER_TEAM_CIVILIAN_CUBE_STRING @"和平魔方"
+#define PLAYER_TEAM_SHERIFF_CUBE_STRING  @"探索魔方"
+#define PLAYER_TEAM_MAFIA_CUBE_STRING    @"破壞魔方"
 
 #define PLAYER_TEAM_PEACE_IMAGE  @"mainCoverPeace.png"
 #define PLAYER_TEAM_EYES_IMAGE   @"mainCoverEyes.png"
 #define PLAYER_TEAM_FIRE_IMAGE     @"mainCoverFire.png"
+#define PLAYER_TEAM_HEART_IMAGE @"mainCoverHeart.png"
 
 #define PLAYER_STATE_ALIVE  0
 #define PLAYER_STATE_DEAD   1
@@ -68,9 +79,15 @@
 #define CHAT_TO_DEAD    @"mainConditionOut.png"
 #define CHAT_TO_NON     @"mainConditionNon.png"
 
+#define PLAYER_TEAM_INSTRUCTION_PEACE @"instructionOfPeace.png"
+#define PLAYER_TEAM_INSTRUCTION_DISCOVER @"instructionOfDiscover.png"
+#define PLAYER_TEAM_INSTRUCTION_HEART @"instructionOfHeart.png"
+#define PLAYER_TEAM_INSTRUCTION_RUIN @"instructionOfRuin.png"
+
 @interface ViewController () <NetworkControllerDelegate, UITableViewDelegate, UITableViewDataSource,NSStreamDelegate, UITextFieldDelegate, MorningOutViewControllerDelegate> {
     
     UIView *inputBar;
+    UIImageView *inputBarBackground;
     CGRect originframeChatBox;
     struct CGColor *oringincolorChatBox;
     
@@ -114,6 +131,7 @@
     int gameOverResult;
 }
 
+@property (weak, nonatomic) IBOutlet UIImageView *instructionImageView;
 @property (weak, nonatomic) IBOutlet UIButton *playerStateBtn;
 @property (weak, nonatomic) IBOutlet UIButton *playerAliasBtn;
 @property (weak, nonatomic) IBOutlet UIButton *gameStateBtn;
@@ -150,17 +168,30 @@
     chatData = [NSMutableArray new];
     
     self.chatBoxTableView.backgroundColor=[UIColor colorWithWhite:1 alpha:0.5];
+    UIImageView *viewBackground =[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    viewBackground.image =[UIImage imageNamed:@"viewBackground.png"];
+    [self.view insertSubview:viewBackground atIndex:0];
+    
+    
+    
     
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
    
     inputBar = [[UIView alloc]initWithFrame:CGRectMake(0,CGRectGetMaxY([UIScreen mainScreen].bounds)-INPUT_BAR_HEIGHT, CGRectGetWidth([UIScreen mainScreen].bounds),INPUT_BAR_HEIGHT)];
-    inputBar.backgroundColor = [UIColor grayColor];
-    
+    inputBarBackground=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, inputBar.frame.size.width, inputBar.frame.size.height)];
+    inputBarBackground.image =[UIImage imageNamed:@"mainInputbarBackground.png"];
+  
+    [inputBar addSubview:inputBarBackground];
     [inputBar addSubview:self.chatTextField];
     [inputBar addSubview:self.sendBtn];
     [inputBar addSubview:self.showCondition];
-    inputBar.backgroundColor=[UIColor grayColor];
     [self.view addSubview:inputBar];
+    
+  
+    
+    
+    
+    
     
     selfChatType = ChatToAll;
     
@@ -212,7 +243,7 @@
     lastVoteTime = [NSDate date];
     judgePlayerId = [NSString new];
     
-    [self.playerStateBtn setTitle:@"Alive" forState:UIControlStateNormal];
+    [self.playerStateBtn setTitle:@"遊戲中" forState:UIControlStateNormal];
     gameOverResult = NOT_OVER_YET;
 }
 
@@ -311,9 +342,13 @@
     [nightOutView setTransitioningDelegate:_transitionController];
     nightOutView.modalPresentationStyle= UIModalPresentationCustom;
     
+    
+    
+    
     [self presentViewController:nightOutView animated:YES completion:^{
         
         [self performSelector:@selector(dismissNightOutView) withObject:self afterDelay:7.0f];
+     
     }];
     
 }
@@ -336,9 +371,6 @@
         }];
 }
 
-- (IBAction)extraBtnPressed:(id)sender {
-    
-}
 
 - (void)showDayBackgroundImage{
     
@@ -407,11 +439,11 @@
             if (selfVoteFor != 99) {
                 
                 Player *playerChosen = [self.match.players objectAtIndex:selfVoteFor];
-                [self showSystemMessage:[NSString stringWithFormat:@"你決定投票殺死%@", playerChosen.alias]];
+                [self showSystemMessage:[NSString stringWithFormat:@"您決定封印%@", playerChosen.alias]];
                 
             }else {
                 
-                [self showSystemMessage:@"你決定投票今晚不殺人"];
+                [self showSystemMessage:@"您決定今晚放過所有人"];
             }
             
         }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
@@ -421,24 +453,24 @@
                 if ([[voteData objectAtIndex:i] isEqualToNumber:[NSNumber numberWithInt:1]]) {
                     
                     Player *playerChosen = [self.match.players objectAtIndex:i];
-                    [self showSystemMessage:[NSString stringWithFormat:@"你決定今晚調查%@的身份", playerChosen.alias]];
+                    [self showSystemMessage:[NSString stringWithFormat:@"你決定今晚探索%@擁有的魔方", playerChosen.alias]];
                     if (playerChosen.playerTeam == PLAYER_TEAM_MAFIA) {
                         
-                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_MAFIA_STRING]];
+                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的魔方是%@", playerChosen.alias, PLAYER_TEAM_MAFIA_CUBE_STRING]];
                         
                     }else if (playerChosen.playerTeam == PLAYER_TEAM_SHERIFF) {
                         
-                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_SHERIFF_STRING]];
+                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的魔方是%@", playerChosen.alias, PLAYER_TEAM_SHERIFF_CUBE_STRING]];
                         
                     }else if (playerChosen.playerTeam == PLAYER_TEAM_CIVILIAN) {
                         
-                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的身份是%@", playerChosen.alias, PLAYER_TEAM_CIVILIAN_STRING]];
+                        [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的魔方是%@", playerChosen.alias, PLAYER_TEAM_CIVILIAN_CUBE_STRING]];
                     }
                     
                     return;
                 }
             }
-            [self showSystemMessage:@"你今晚沒有調查任何人"];
+            [self showSystemMessage:@"你今晚沒有探索任何人"];
         }
     }
 }
@@ -474,7 +506,7 @@
     
     if (selfJudgeFor == JUDGE_GUILTY) {
         
-        [self showSystemMessage:[NSString stringWithFormat:@"你決定投票處死%@", judgePlayerAlias]];
+        [self showSystemMessage:[NSString stringWithFormat:@"你決定投票認定%@有嫌疑", judgePlayerAlias]];
         
     }else if (selfJudgeFor == JUDGE_INNOCENT) {
         
@@ -659,34 +691,38 @@
         case PLAYER_TEAM_CIVILIAN:
             
             self.playerTeamBtn.image =[UIImage imageNamed:PLAYER_TEAM_PEACE_IMAGE];
+            self.instructionImageView.image = [UIImage imageNamed:PLAYER_TEAM_INSTRUCTION_PEACE];
             break;
             
         case PLAYER_TEAM_SHERIFF:
             
             self.playerTeamBtn.image =[UIImage imageNamed:PLAYER_TEAM_EYES_IMAGE];
+            self.instructionImageView.image = [UIImage imageNamed:PLAYER_TEAM_INSTRUCTION_DISCOVER];
             break;
             
         case PLAYER_TEAM_MAFIA:
             
             self.playerTeamBtn.image =[UIImage imageNamed:PLAYER_TEAM_FIRE_IMAGE];
+            self.instructionImageView.image = [UIImage imageNamed:PLAYER_TEAM_INSTRUCTION_RUIN];
             break;
             
         default:
+           
             break;
     }
     
     //show systemMessage
     if (selfTeam == PLAYER_TEAM_MAFIA) {
 
-        [self showSystemMessage:[NSString stringWithFormat:@"你的身份是%@", PLAYER_TEAM_MAFIA_STRING]];
+        [self showSystemMessage:[NSString stringWithFormat:@"您的身份是%@", PLAYER_TEAM_MAFIA_STRING]];
         
     }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
         
-        [self showSystemMessage:[NSString stringWithFormat:@"你的身份是%@", PLAYER_TEAM_SHERIFF_STRING]];
+        [self showSystemMessage:[NSString stringWithFormat:@"您的身份是%@", PLAYER_TEAM_SHERIFF_STRING]];
 
     }else if (selfTeam == PLAYER_TEAM_CIVILIAN) {
         
-        [self showSystemMessage:[NSString stringWithFormat:@"你的身份是%@", PLAYER_TEAM_CIVILIAN_STRING]];
+        [self showSystemMessage:[NSString stringWithFormat:@"您的身份是%@", PLAYER_TEAM_CIVILIAN_STRING]];
     }
 
     //changeGameState
@@ -697,7 +733,7 @@
     
     [self dismissViewControllerAnimated:true completion:^{
         
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"你已經死了" message:@"在你斷氣之前,你還有最後一口氣能留下遺囑" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"您即將被封印" message:@"在你被封印之前,你還有最後的機會留下線索" preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction *done = [UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
@@ -808,7 +844,7 @@
             [self changeJudgeData:JUDGE_GUILTY withInt:-1 fromSelf:true];
             
             //set message
-            judgeMessage = [NSString stringWithFormat:@"取消了對%@的有罪投票", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"取消了對%@的投票", judgePlayerAlias];
             
             //update selfVoteFor
             selfJudgeFor = 99;
@@ -819,7 +855,7 @@
             [self changeJudgeData:JUDGE_GUILTY withInt:+1 fromSelf:true];
             
             //set message
-            judgeMessage = [NSString stringWithFormat:@"認為%@有罪", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"認為%@有嫌疑", judgePlayerAlias];
             
             //update selfVoteFor
             selfJudgeFor = JUDGE_GUILTY;
@@ -834,7 +870,7 @@
             [self changeJudgeData:JUDGE_GUILTY withInt:+1 fromSelf:true];
             
             //set message
-            judgeMessage = [NSString stringWithFormat:@"改變了主意，認為%@有罪", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"改變了主意，認為%@有嫌疑", judgePlayerAlias];
             
             //update selfVoteFor
             selfJudgeFor = JUDGE_GUILTY;
@@ -885,7 +921,7 @@
             [self changeJudgeData:JUDGE_INNOCENT withInt:-1 fromSelf:true];
             
             //set message
-            judgeMessage = [NSString stringWithFormat:@"取消了對%@的無罪投票", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"取消了對%@的投票", judgePlayerAlias];
             
             //update selfVoteFor
             selfJudgeFor = 99;
@@ -896,7 +932,7 @@
             [self changeJudgeData:JUDGE_INNOCENT withInt:+1 fromSelf:true];
             
             //set message
-            judgeMessage = [NSString stringWithFormat:@"認為%@無罪", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"認為%@沒有嫌疑", judgePlayerAlias];
             
             //update selfVoteFor
             selfJudgeFor = JUDGE_INNOCENT;
@@ -911,7 +947,7 @@
             [self changeJudgeData:JUDGE_INNOCENT withInt:+1 fromSelf:true];
             
             //set message
-            judgeMessage = [NSString stringWithFormat:@"改變了主意，認為%@無罪", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"改變了主意，認為%@沒有嫌疑", judgePlayerAlias];
             
             //update selfVoteFor
             selfJudgeFor = JUDGE_INNOCENT;
@@ -986,6 +1022,46 @@
     [self presentViewController:alert animated:true completion:nil];
 }
 
+- (IBAction)playerTeamBtnPressed:(id)sender {
+    
+    
+    
+    
+    [UIView beginAnimations:@"animationForInstruction" context:nil];
+    [UIView setAnimationDuration:0.3];
+    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+    [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:self.instructionImageView cache:YES];
+    [self.instructionImageView setTranslatesAutoresizingMaskIntoConstraints:YES];
+    
+    CGRect frame = self.instructionImageView.frame;
+    
+    if(frame.origin.x<0) {
+        
+        frame.origin.x =0;
+        self.instructionImageView.hidden = false;
+    }else
+    {
+        frame.origin.x = -250;
+        
+    }
+    
+    self.instructionImageView.frame =frame;
+    
+    [UIView commitAnimations];
+    
+    
+    
+}
+
+
+
+    
+
+
+
+
+
+
 #pragma mark - UITextFieldDelegate Methods
 
 - (BOOL) textFieldShouldReturn:(UITextField *)textField {
@@ -1005,7 +1081,7 @@
     
     if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId]) {
         
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"你已經死了" message:@"在你斷氣之前,你還有最後一口氣能留下遺囑" preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"您即將被封印" message:@"在你被封印之前,你還有最後的機會能留下線索" preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction *done = [UIAlertAction actionWithTitle:@"Done" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
@@ -1025,7 +1101,7 @@
         
         [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
             
-            textField.placeholder = @"leave your lastwords here";
+            textField.placeholder = @"留下你最後的線索";
             textField.returnKeyType = UIReturnKeyDone;
         }];
         
@@ -1084,6 +1160,7 @@
         }else {
             
             cell.playerName.textColor = [UIColor grayColor];
+           
         }
         
         if (selfShouldVote) {
@@ -1169,6 +1246,9 @@
         if (p.playerState == PLAYER_STATE_DEAD) {
             
             cell.playerTeamImageView.hidden = false;
+            
+         
+            
             
         }else {
             
@@ -1541,11 +1621,11 @@
         //set message
         if (judgeFor == JUDGE_GUILTY) {
             
-            judgeMessage = [NSString stringWithFormat:@"取消了對%@的有罪投票", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"取消了對%@的有嫌疑的投票", judgePlayerAlias];
             
         }else {
             
-            judgeMessage = [NSString stringWithFormat:@"取消了對%@的無罪投票", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"取消了對%@的無嫌疑投票", judgePlayerAlias];
         }
         
     }else if (judgedFor == 99) {//原本未選取
@@ -1556,11 +1636,11 @@
         //set message
         if (judgeFor == JUDGE_GUILTY) {
             
-            judgeMessage = [NSString stringWithFormat:@"認為%@有罪", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"認為%@有嫌疑", judgePlayerAlias];
             
         }else {
             
-            judgeMessage = [NSString stringWithFormat:@"認為%@無罪", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"認為%@無嫌疑", judgePlayerAlias];
         }
         
     }else {//原本有選取玩家
@@ -1574,11 +1654,11 @@
         //set message
         if (judgeFor == JUDGE_GUILTY) {
             
-            judgeMessage = [NSString stringWithFormat:@"改變了主意，認為%@有罪", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"改變了主意，認為%@有嫌疑", judgePlayerAlias];
             
         }else {
             
-            judgeMessage = [NSString stringWithFormat:@"改變了主意，認為%@無罪", judgePlayerAlias];
+            judgeMessage = [NSString stringWithFormat:@"改變了主意，認為%@無嫌疑", judgePlayerAlias];
         }
     }
     
@@ -1698,13 +1778,13 @@
         
             waitForLastWords = false;
         
-            [nightResultsForAll addObject:@"作晚月黑風高,但是所有人都平安的度過了"];
+            [nightResultsForAll addObject:@"昨晚刀聲霍霍,但是所有人都平安的度過了"];
 
             if (selfState == PLAYER_STATE_ALIVE) {
             
                 if (selfTeam == PLAYER_TEAM_MAFIA) {
 
-                    [nightResults addObject:@"殺手今晚沒有殺人"];
+                    [nightResults addObject:@"破壞魔方今晚沒有啟動"];
                 }
             }
         }else {
@@ -1713,13 +1793,14 @@
         
             if ([[GKLocalPlayer localPlayer].playerID isEqualToString:playerId]) {
         
-                [nightResults addObject:@"你在今晚不幸地被殺手殺死了"];
+                [nightResults addObject:@"您在今晚不幸地被某人封印了"];
             
                 for (Player *p in self.match.players) {
                 
                     if ([p.playerId isEqualToString:playerId]) {
                     
                         [self performSelector:@selector(callNightOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
+                        
                     
                         break;
                     }
@@ -1734,7 +1815,7 @@
                 
                         if ([p.playerId isEqualToString:playerId]) {
                     
-                            [nightResults addObject:[NSString stringWithFormat:@"殺手今晚前去殺掉了%@", p.alias]];
+                            [nightResults addObject:[NSString stringWithFormat:@"今晚破壞魔方啟動了,將%@封印至心之魔方中", p.alias]];
                             break;
                         }
                     }
@@ -1750,8 +1831,8 @@
                     if ([[GKLocalPlayer localPlayer].playerID isEqualToString:p.playerId]) {
                         
                         selfState = PLAYER_STATE_DEAD;
-                        [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateNormal];
-//                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
+                        [self.playerStateBtn setTitle:@"出局" forState:UIControlStateNormal];
+                  
                     }
                     
                     break;
@@ -1777,6 +1858,8 @@
             
             waitForLastWords = false;
             
+            
+            
             [judgementResults addObject:[NSString stringWithFormat:@"依據審判的結果,我們決定再給%@一次機會", judgePlayerAlias]];
             
         }else {
@@ -1785,13 +1868,15 @@
             
             if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId]) {
                 
-                [judgementResults addObject:@"因為沒能說服多數人相信你是無辜的,你被處死了"];
+                [judgementResults addObject:@"因為沒能說服多數人相信你是無辜的,您將被封印"];
                 
                 for (Player *p in self.match.players) {
                     
                     if ([p.playerId isEqualToString:judgePlayerId]) {
-                        
+                     
                         [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
+                        
+                        
                         
                         break;
                     }
@@ -1799,16 +1884,18 @@
                 
             }else {
                 
-                [judgementResults addObject:[NSString stringWithFormat:@"依據審判的結果,我們處死了%@", judgePlayerAlias]];
-                [judgementResults addObject:[NSString stringWithFormat:@"請稍候%@留下遺囑", judgePlayerAlias]];
+                [judgementResults addObject:[NSString stringWithFormat:@"依據審判的結果,我們封印了%@", judgePlayerAlias]];
+                [judgementResults addObject:[NSString stringWithFormat:@"請稍候%@留下線索", judgePlayerAlias]];
 
                 for (Player *p in self.match.players) {
                     
                     if ([p.playerId isEqualToString:judgePlayerId]) {
                         
                         if (selfState == PLAYER_STATE_ALIVE) {
-
+                            
                             [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
+                          
+                            
                         }
                     }
                 }
@@ -1825,7 +1912,8 @@
                         selfState = PLAYER_STATE_DEAD;
                         
 //                        self.playerStateLabel.text = [NSString stringWithFormat:@"Dead"];
-                    [self.playerStateBtn setTitle:@"Dead" forState:UIControlStateDisabled];
+                    [self.playerStateBtn setTitle:@"出局" forState:UIControlStateDisabled];
+                  
                     }
                     
                     break;
@@ -1885,41 +1973,41 @@
             if ([p.playerId isEqualToString:playerId]) {
             
                 [nightResultsForAll addObject:@"很不幸的有人看不見今天的太陽"];
-                [nightResultsForAll addObject:[NSString stringWithFormat:@"%@被發現陳屍於家中", p.alias]];
+                [nightResultsForAll addObject:[NSString stringWithFormat:@"%@憑空消失,旁邊卻多了一顆方塊", p.alias]];
 
                 if ([lastWords isEqualToString:LAST_WORDS_EMPTY]) {
                 
-                    [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身旁沒有留下任何遺囑", p.alias]];
+                    [nightResultsForAll addObject:[NSString stringWithFormat:@"%@沒有留下任何線索", p.alias]];
                     
                     if (p.playerTeam == PLAYER_TEAM_MAFIA) {
                         
-                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_MAFIA_STRING]];
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的魔方是%@", p.alias, PLAYER_TEAM_MAFIA_CUBE_STRING]];
                         
                     }else if (p.playerTeam == PLAYER_TEAM_SHERIFF) {
                         
-                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_SHERIFF_STRING]];
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的魔方是%@", p.alias, PLAYER_TEAM_SHERIFF_CUBE_STRING]];
                         
                     }else if (p.playerTeam == PLAYER_TEAM_CIVILIAN) {
                         
-                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_CIVILIAN_STRING]];
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的魔方是%@", p.alias, PLAYER_TEAM_CIVILIAN_CUBE_STRING]];
                     }
                 
                 }else {
                 
-                    [nightResultsForAll addObject:[NSString stringWithFormat:@"我們在%@的身旁發現了沾滿血跡的遺囑", p.alias]];
+                    [nightResultsForAll addObject:[NSString stringWithFormat:@"我們在方塊旁,發現了%@留下的的的線索", p.alias]];
                     [nightResultsForAll addObject:[NSString stringWithFormat:@"上面寫道:%@", lastWords]];
                 
                     if (p.playerTeam == PLAYER_TEAM_MAFIA) {
                     
-                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_MAFIA_STRING]];
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的魔方是%@", p.alias, PLAYER_TEAM_MAFIA_CUBE_STRING]];
                     
                     }else if (p.playerTeam == PLAYER_TEAM_SHERIFF) {
                     
-                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_SHERIFF_STRING]];
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的魔方是%@", p.alias, PLAYER_TEAM_SHERIFF_CUBE_STRING]];
                     
                     }else if (p.playerTeam == PLAYER_TEAM_CIVILIAN) {
                     
-                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的身份是%@", p.alias, PLAYER_TEAM_CIVILIAN_STRING]];
+                        [nightResultsForAll addObject:[NSString stringWithFormat:@"%@的魔方是%@", p.alias, PLAYER_TEAM_CIVILIAN_CUBE_STRING]];
                     }
                 }
                 [self.playerListTableView reloadData];
@@ -1948,23 +2036,23 @@
             
         if ([lastWords isEqualToString:LAST_WORDS_EMPTY]) {
                 
-            [self showSystemMessage:[NSString stringWithFormat:@"%@輕輕地走了,什麼話都沒留下", judgePlayerAlias]];
+            [self showSystemMessage:[NSString stringWithFormat:@"%@突然消失了,什麼線索都沒留下", judgePlayerAlias]];
                     
         }else {
             
-            [self showSystemMessage:[NSString stringWithFormat:@"%@的遺囑上面寫道:%@", judgePlayerAlias, lastWords]];
+            [self showSystemMessage:[NSString stringWithFormat:@"%@的線索上面寫道:%@", judgePlayerAlias, lastWords]];
             
             if (judgePlayer.playerTeam == PLAYER_TEAM_MAFIA) {
                 
-                [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"%@的身份是%@", judgePlayerAlias, PLAYER_TEAM_MAFIA_STRING] afterDelay:1.5f ];
+                [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"%@的魔方是%@", judgePlayerAlias, PLAYER_TEAM_MAFIA_CUBE_STRING] afterDelay:1.5f ];
                 
             }else if (judgePlayer.playerTeam == PLAYER_TEAM_SHERIFF) {
                 
-                [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"%@的身份是%@", judgePlayerAlias, PLAYER_TEAM_SHERIFF_STRING] afterDelay:1.5f ];
+                [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"%@的魔方是%@", judgePlayerAlias, PLAYER_TEAM_SHERIFF_CUBE_STRING] afterDelay:1.5f ];
                 
             }else if (judgePlayer.playerTeam == PLAYER_TEAM_CIVILIAN) {
                 
-                [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"%@的身份是%@", judgePlayerAlias, PLAYER_TEAM_CIVILIAN_STRING] afterDelay:1.5f ];
+                [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"%@的魔方是%@", judgePlayerAlias, PLAYER_TEAM_CIVILIAN_CUBE_STRING] afterDelay:1.5f ];
             }
         }
         [self.playerListTableView reloadData];
@@ -2040,7 +2128,7 @@
             break;
             
         case GameStateGameStart:
-            [self.gameStateBtn setTitle:@"GameStart" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"遊戲開始" forState:UIControlStateNormal];
             
             //initialize dayCount;
             dayCount = 1;
@@ -2062,7 +2150,7 @@
             break;
             
         case GameStateNightStart:
-            [self.gameStateBtn setTitle:@"NightStart" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"月黑風高" forState:UIControlStateNormal];
             
             //nightBeginAnimation
             [self showNightBackgroundImage];
@@ -2089,7 +2177,7 @@
             break;
             
         case GameStateNightDiscussion:
-            [self.gameStateBtn setTitle:@"NightDiscussion" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"討論階段" forState:UIControlStateNormal];
             
             [[NetworkController sharedInstance] sendStartDiscussion];
     
@@ -2097,15 +2185,15 @@
                 
                 if (selfTeam == PLAYER_TEAM_MAFIA) {
                     
-                    [self showSystemMessage:@"殺手可以開始討論及選擇對象"];
+                    [self showSystemMessage:@"您可以開始討論及選擇將封印對象"];
                     
                 }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
                     
-                    [self showSystemMessage:@"警察可以開始選擇對象"];
+                    [self showSystemMessage:@"您可以開始選擇需探索的對象"];
                     
                 }else if (selfTeam == PLAYER_TEAM_CIVILIAN) {
                     
-                    [self showSystemMessage:@"你不安的在家中等待天明"];
+                    [self showSystemMessage:@"您不安的在家中等待天明"];
                 }
                 
             }else {
@@ -2161,18 +2249,18 @@
             break;
             
         case GameStateNightVote:
-            [self.gameStateBtn setTitle:@"NightVote" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"投票階段" forState:UIControlStateNormal];
 
             //showSystemMessage
             if (selfState == PLAYER_STATE_ALIVE) {
                 
                 if (selfTeam == PLAYER_TEAM_MAFIA) {
                     
-                    [self showSystemMessage:@"殺手請確認選擇"];
-                    
+                    [self showSystemMessage:@"請確認選擇"];
+                
                 }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
                     
-                    [self showSystemMessage:@"警察請確認選擇"];
+                    [self showSystemMessage:@"請確認選擇"];
                 }
                 
             }else {
@@ -2193,7 +2281,7 @@
             break;
             
         case GameStateShowNightResults:
-            [self.gameStateBtn setTitle:@"ShowNightResults" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"最後結果" forState:UIControlStateNormal];
             
             //disable chat
             self.chatTextField.enabled = false;
@@ -2221,7 +2309,7 @@
             break;
             
         case GameStateDayStart:
-            [self.gameStateBtn setTitle:@"DayStart" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"東曦既駕" forState:UIControlStateNormal];
             
             //dayBeginAnimation
             [self showDayBackgroundImage];
@@ -2274,7 +2362,7 @@
             break;
             
         case GameStateDayDiscussion:
-            [self.gameStateBtn setTitle:@"DayDiscussion" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"討論階段" forState:UIControlStateNormal];
             
             [[NetworkController sharedInstance] sendStartDiscussion];
             
@@ -2312,7 +2400,7 @@
             break;
             
         case GameStateDayVote:
-            [self.gameStateBtn setTitle:@"DayVote" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"投票階段" forState:UIControlStateNormal];
             
             //showSystemMessage
             [self showSystemMessage:@"所有人請確認選擇"];
@@ -2329,7 +2417,7 @@
             break;
             
         case GameStateShowDayResults:
-            [self.gameStateBtn setTitle:@"ShowDayResults" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"最後結果" forState:UIControlStateNormal];
             
             //disable chat
             self.chatTextField.enabled = false;
@@ -2361,7 +2449,7 @@
             break;
             
         case GameStateJudgementDiscussion:
-            [self.gameStateBtn setTitle:@"JudgementDiscussion" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"討論階段" forState:UIControlStateNormal];
             
             [[NetworkController sharedInstance] sendStartDiscussion];
             
@@ -2427,7 +2515,7 @@
             break;
             
         case GameStateJudgementVote:
-             [self.gameStateBtn setTitle:@"JudgementVote" forState:UIControlStateNormal];
+             [self.gameStateBtn setTitle:@"投票階段" forState:UIControlStateNormal];
 
             //showSystemMessage
             [self showSystemMessage:@"所有人請確認投票"];
@@ -2472,7 +2560,7 @@
             break;
             
         case GameStateGameOver:
-            [self.gameStateBtn setTitle:@"GameOver" forState:UIControlStateNormal];
+            [self.gameStateBtn setTitle:@"遊戲結束" forState:UIControlStateNormal];
             
             //gameOverAnimation
             if (gameOverResult == MAFIA_WIN) {
@@ -2487,13 +2575,13 @@
             //showSystemMessage
             if (gameOverResult == MAFIA_WIN) {
                 
-                [self showSystemMessage:@"遊戲結束,殺手方獲勝"];
+                [self showSystemMessage:@"遊戲結束,新的主宰世界的力量,誕生了,我們將臣服於新的王者"];
                 
             }else if (gameOverResult == CIVILIAN_WIN) {
                 
-                [self showSystemMessage:@"遊戲結束,英雄方獲勝"];
+                [self showSystemMessage:@"遊戲結束,日子又平安的過去,感謝各路英雄的努力,成功的守護住我們的地球"];
             }
-            [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"玩家們可以留下來互相交流,遊戲將在一分鐘後結束"] afterDelay:1.5f];
+            [self performSelector:@selector(showSystemMessage:) withObject:[NSString stringWithFormat:@"英雄們可以留下來互相交流,遊戲將在一分鐘後結束"] afterDelay:1.5f];
 
             //hide judgementVoteView
             self.judgementVoteView.hidden = true;
