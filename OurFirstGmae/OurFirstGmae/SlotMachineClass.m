@@ -18,27 +18,23 @@ static BOOL isSlide =NO;
     CALayer *scrollLayer;
     NSArray *currentResults;
 }
-//
-//@property(strong,nonatomic)UIImageView *backgroundImageView;//背景
-//@property(strong,nonatomic)UIImageView *coverImageView;//遮罩
-//@property(strong,nonatomic)UIView *contentView;// 底層圖
 -(id)initWithFrame:(CGRect)frame{
     self=[super initWithFrame:frame];
     if(self){
         self.backgroundImageView =[[UIImageView alloc]initWithFrame:frame];
-        self.backgroundImageView.contentMode=UIViewContentModeCenter;
+        self.backgroundImageView.contentMode=UIViewContentModeScaleToFill;
         [self addSubview:_backgroundImageView];//背景
         
         self.contentView=[[UIView alloc]initWithFrame:frame];
-        self.contentView.backgroundColor=[UIColor blueColor];
         [self addSubview:_contentView];//底層
         
         self.coverImageView =[[UIImageView alloc]initWithFrame:frame];
-        self.coverImageView.contentMode = UIViewContentModeCenter;
+        self.coverImageView.contentMode = UIViewContentModeScaleToFill;
+       
         [self addSubview:_contentView];//遮罩
         
         scrollLayerArray = [NSMutableArray array];//圖層陣列
-        self.singleUnitDuration = 0.8f;
+        self.singleUnitDuration = 1.0f;
         
     }
     return self;
@@ -70,48 +66,39 @@ static BOOL isSlide =NO;
 
 -(void)reload{
     
-    if(self.dataSource){
-        for(CALayer *containerLayer  in _contentView.layer.sublayers){
+        if(self.dataSource){
+            
+            for(CALayer *containerLayer  in _contentView.layer.sublayers){
             [containerLayer removeFromSuperlayer];
+            }
+            
         }
-    }
-    scrollLayerArray=[NSMutableArray array];
-   
+        scrollLayerArray=[NSMutableArray array];
     
-
         CALayer *containLayer =[CALayer new];
         containLayer.frame = CGRectMake(0, 0, _contentView.frame.size.width, _contentView.frame.size.height);
         containLayer.masksToBounds = YES;
-    containLayer.backgroundColor=[UIColor clearColor].CGColor;
-    
-        
-        
+        containLayer.backgroundColor=[UIColor clearColor].CGColor;
         scrollLayer = [CALayer new];
         scrollLayer.frame = CGRectMake(0, 0, _contentView.frame.size.width, _contentView.frame.size.height);
-    scrollLayer.backgroundColor=[UIColor blueColor].CGColor;
         [containLayer addSublayer:scrollLayer];
         [_contentView.layer addSublayer:containLayer];
-//        [scrollLayerArray addObject:scrollLayer];
 
+        NSInteger numOfSlot = [self.dataSource numberOfslotsInMachine:self];
+        NSArray *imageBox = [self.dataSource iconsForMachine:self];
+        NSInteger imageNum = imageBox.count;
+        NSInteger scrollIndex =-40*imageNum;
     
-    
-//    CGFloat iconUnitHeight =_contentView.frame.size.height; //每個圖的高
-     NSInteger numOfSlot = [self.dataSource numberOfslotsInMachine:self];
-     NSArray *imageBox = [self.dataSource iconsForMachine:self];
-     NSInteger imageNum = imageBox.count;
-     NSInteger scrollIndex =-40*imageNum;
-    for(int j = 0 ; j>scrollIndex ;j--){
+        for(int j = 0 ; j>scrollIndex ;j--){
         UIImage *iconImage = [imageBox objectAtIndex:abs(j)%numOfSlot];
         CALayer *iconLayer  = [CALayer new];
         NSInteger offset =j*scrollLayer.frame.size.height;
         iconLayer.frame=CGRectMake(0,offset, scrollLayer.frame.size.width, scrollLayer.frame.size.height);
-
         iconLayer.contents =(id)iconImage.CGImage;
-//        iconLayer.contentsScale =iconImage.scale; //圖大小
         iconLayer.contentsGravity=kCAGravityCenter;
         [scrollLayer addSublayer:iconLayer];
         
-    }
+        }
     
 }
 
@@ -207,7 +194,9 @@ static BOOL isSlide =NO;
         CABasicAnimation *slideAnimation = [CABasicAnimation animationWithKeyPath:keyPath];
         slideAnimation.fillMode = kCAFillModeForwards;//
         slideAnimation.duration = self.singleUnitDuration;//動畫時間
+        slideAnimation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
         slideAnimation.toValue = [NSNumber numberWithFloat:scrollLayer.position.y + slideY];
+ 
         //最後位移
         slideAnimation.removedOnCompletion = NO;
         

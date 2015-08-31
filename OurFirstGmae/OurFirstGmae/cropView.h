@@ -17,6 +17,8 @@
 
 @property(nonatomic,strong)IBOutlet UIImage*image;
 @property(nonatomic,strong)IBOutlet UIImageView*sentView;
+@property(nonatomic,strong)IBOutlet UIImageView* sendHeadImageView;
+
 
 
 @end

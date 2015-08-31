@@ -9,7 +9,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "outView.h"
 
-#define DEAD_PLAYER_IMAGE @"news2.jpg"
+#define DEAD_PLAYER_IMAGE @"cubeNightOut.png"
 
 @interface outView () {
 

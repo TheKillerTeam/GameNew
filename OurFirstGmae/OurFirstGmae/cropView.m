@@ -67,9 +67,15 @@
     
     
      self.sentView=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, backgroundImg.frame.size.width, backgroundImg.frame.size.height)];
-     self.sentView.center =backgroundImg.center;
+//     self.sentView.center =backgroundImg.center;
      self.sentView.backgroundColor=[UIColor clearColor];
      [self addSubview:_sentView];
+    
+     self.sendHeadImageView =[[UIImageView alloc]initWithFrame:backgroundImg.frame];
+     self.sendHeadImageView.center = self.sentView.center;
+     self.sendHeadImageView.backgroundColor = [UIColor clearColor];
+     self.sendHeadImageView.userInteractionEnabled=YES;
+    [self.sentView addSubview:self.sendHeadImageView];
 
     
      mask=[[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 2*RADIUS, 2*RADIUS)];
@@ -80,7 +86,7 @@
      mask.layer.mask=maskLayer;
      mask.layer.backgroundColor=[UIColor whiteColor].CGColor;
      mask.userInteractionEnabled=YES;
-     [_sentView addSubview:mask];
+     [self.sendHeadImageView addSubview:mask];
      [self.sentView setUserInteractionEnabled:YES];
     
   
@@ -101,7 +107,9 @@
     clothImage.backgroundColor=[UIColor clearColor];
     
     originClothFrame = clothImage.frame;
-    [_sentView insertSubview:clothImage belowSubview:mask];
+    [_sentView insertSubview:clothImage belowSubview:self.sendHeadImageView];
+    
+    
     
     
     hairImg= [[UIImageView alloc]initWithFrame:CGRectMake(0, -35, 230, 320)];
@@ -110,8 +118,12 @@
     hairImg.frame=hair;
     hairImg.backgroundColor=[UIColor clearColor];
     originHairFrame=hairImg.frame;
-    [_sentView insertSubview:hairImg  aboveSubview:mask];
+    [self.sendHeadImageView insertSubview:hairImg  aboveSubview:mask];
+    
+    
 
+    
+    
     
     
     clothFrame  = [UITableView new];
@@ -146,6 +158,7 @@
 
 -(void)setImage:(UIImage*)image1{
     picetureView.image=image1;
+  
     
 }
 
@@ -288,8 +301,8 @@
 
 -(void)btnPressed{
    
-    UIGraphicsBeginImageContext(_sentView.bounds.size);
-    [_sentView.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIGraphicsBeginImageContext(self.sendHeadImageView.bounds.size);
+    [self.sendHeadImageView.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *myImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
