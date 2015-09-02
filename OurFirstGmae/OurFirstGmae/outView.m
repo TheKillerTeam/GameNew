@@ -45,7 +45,7 @@ static int k = 10;
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
     
-    [self performSelector:@selector(showLaser) withObject:nil afterDelay:2.0f];
+    [self performSelector:@selector(showLaser) withObject:nil afterDelay:1.0f];
 }
 
 - (void)showLaser {

@@ -22,6 +22,7 @@
 #import "LoadingViewController.h"
 #import "outView.h"
 #import "MorningOutViewController.h"
+#import "GameOverViewController.h"
 
 #define INPUT_BAR_HEIGHT 60
 #define SYSTEM_ID @"系統"
@@ -57,8 +58,9 @@
 #define PLAYER_TEAM_FIRE_IMAGE     @"mainCoverFire.png"
 #define PLAYER_TEAM_HEART_IMAGE @"mainCoverHeart.png"
 
-#define PLAYER_STATE_ALIVE  0
-#define PLAYER_STATE_DEAD   1
+#define PLAYER_STATE_ALIVE          0
+#define PLAYER_STATE_NIGHT_DEAD     1
+#define PLAYER_STATE_MORNING_DEAD   2
 
 #define VOTE_MINIMUM_TIME_INTERVAL 0.5f
 
@@ -83,6 +85,8 @@
 #define PLAYER_TEAM_INSTRUCTION_DISCOVER @"instructionOfDiscover.png"
 #define PLAYER_TEAM_INSTRUCTION_HEART @"instructionOfHeart.png"
 #define PLAYER_TEAM_INSTRUCTION_RUIN @"instructionOfRuin.png"
+
+#define CIRCLE_TAG  5000
 
 @interface ViewController () <NetworkControllerDelegate, UITableViewDelegate, UITableViewDataSource,NSStreamDelegate, UITextFieldDelegate, MorningOutViewControllerDelegate> {
     
@@ -109,6 +113,7 @@
     LoadingViewController *loadingView;
     MorningOutViewController* morningOutView;
     outView *nightOutView;
+    GameOverViewController *gameOverView;
     UIViewController *rootVC;
     
     ChatType selfChatType;
@@ -130,6 +135,14 @@
     
     int gameOverResult;
 }
+
+@property (weak, nonatomic) IBOutlet UILabel *sheriff;
+@property (weak, nonatomic) IBOutlet UILabel *civilianCount;
+@property (weak, nonatomic) IBOutlet UILabel *mafiaCount;
+@property (weak, nonatomic) IBOutlet UIView *counterBar;
+
+
+
 
 @property (weak, nonatomic) IBOutlet UIImageView *instructionImageView;
 @property (weak, nonatomic) IBOutlet UIButton *playerStateBtn;
@@ -316,7 +329,7 @@
     morningOutView.playerImage = playerImage;
     
     if ([[GKLocalPlayer localPlayer].playerID isEqualToString:judgePlayerId] ||
-        selfState == PLAYER_STATE_DEAD) {
+        selfState != PLAYER_STATE_ALIVE) {
         
         morningOutView.autoSwipe = true;
         
@@ -348,9 +361,31 @@
     
     [self presentViewController:nightOutView animated:YES completion:^{
         
-        [self performSelector:@selector(dismissNightOutView) withObject:self afterDelay:7.0f];
+        [self performSelector:@selector(dismissNightOutView) withObject:self afterDelay:5.0f];
+        
+
      
     }];
+    
+}
+
+-(void)callGameOverView:(NSArray*)images{
+    
+
+    
+   
+    gameOverView = [ self.storyboard instantiateViewControllerWithIdentifier:@"gameOverView"];
+    
+    gameOverView.backgroundImage = images[1];
+    gameOverView.winnerImage =images[0];
+    gameOverView.view.backgroundColor = [UIColor clearColor];
+    gameOverView.modalPresentationStyle = UIModalPresentationCustom;
+    
+    [self presentViewController:gameOverView animated:YES completion:^{
+        
+    }];
+    
+    
     
 }
 
@@ -404,7 +439,7 @@
 
 - (IBAction)confirmVoteButtonPressed:(id)sender {
     
-    if (selfState == PLAYER_STATE_DEAD ||
+    if (selfState != PLAYER_STATE_ALIVE ||
         [NetworkController sharedInstance].gameState == GameStateGameOver) {
         
         //change confirmVoteButton into leaveGameButton
@@ -537,8 +572,10 @@
     [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:self.playerListTableView cache:YES];
     [self.playerListTableView setTranslatesAutoresizingMaskIntoConstraints:YES];
      [self.confirmVoteButton setTranslatesAutoresizingMaskIntoConstraints:YES];
+     [self.counterBar setTranslatesAutoresizingMaskIntoConstraints:YES];
     CGRect frame = self.playerListTableView.frame;
     CGRect frameForBtn = self.confirmVoteButton.frame;
+    CGRect countBarFrame = self.counterBar.frame;
     
     if(frame.origin.y<0) {
 
@@ -546,10 +583,13 @@
         if(frameForBtn.origin.x>283)
         {
             frameForBtn.origin.x=283;
+            
             self.confirmVoteButton.hidden =false;
         }
         
-        frame.origin.y =103;
+        frame.origin.y =134;
+        countBarFrame.origin.y = 99;
+        self.counterBar.hidden =false;
         self.playerListTableView.hidden = false;
         
     }else {
@@ -559,7 +599,7 @@
             if ([NetworkController sharedInstance].gameState == GameStateJudgementDiscussion ||
                 [NetworkController sharedInstance].gameState == GameStateJudgementVote ||
                 [NetworkController sharedInstance].gameState == GameStateGameOver ||
-                selfState == PLAYER_STATE_DEAD) {
+                selfState != PLAYER_STATE_ALIVE) {
                 
             }else {
                 
@@ -567,12 +607,13 @@
             }
         }
         
-        frame.origin.y -=frame.size.height+110;
+        frame.origin.y -=frame.size.height+134;
+        countBarFrame.origin.y -=countBarFrame.size.height+99;
         [self performSelector:@selector(setHiddenPlayerList) withObject:self afterDelay:0.3f];
     }
     
     self.playerListTableView.frame =frame;
-
+    self.counterBar.frame = countBarFrame;
     self.confirmVoteButton.frame=frameForBtn;
     
     [UIView commitAnimations];
@@ -585,16 +626,18 @@
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:self.playerListTableView cache:YES];
     [self.playerListTableView setTranslatesAutoresizingMaskIntoConstraints:YES];
-    
+    [self.counterBar setTranslatesAutoresizingMaskIntoConstraints:YES];
     CGRect frame = self.playerListTableView.frame;
-    
+    CGRect countBarFrame = self.counterBar.frame;
     if(frame.origin.y>=0) {
         
-        frame.origin.y -=frame.size.height+110;
+        frame.origin.y -=frame.size.height+134;
+        countBarFrame.origin.y -=countBarFrame.size.height+99;
         [self performSelector:@selector(setHiddenPlayerList) withObject:self afterDelay:0.3f];
     }
- 
+    self.counterBar.frame=countBarFrame;
     self.playerListTableView.frame =frame;
+    
     
     [UIView commitAnimations];
 }
@@ -602,6 +645,7 @@
 - (void)setHiddenPlayerList {
     
     self.playerListTableView.hidden = true;
+    self.counterBar.hidden =true;
 }
 
 - (void)showPlayerList {
@@ -611,16 +655,20 @@
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     [UIView setAnimationTransition:UIViewAnimationTransitionNone forView:self.playerListTableView cache:YES];
     [self.playerListTableView setTranslatesAutoresizingMaskIntoConstraints:YES];
+    [self.counterBar setTranslatesAutoresizingMaskIntoConstraints:YES];
     
     CGRect frame = self.playerListTableView.frame;
-    
+    CGRect countBarFrame = self.counterBar.frame;
     if(frame.origin.y<0) {
         
-        frame.origin.y =103;
+        frame.origin.y =134;
+        countBarFrame.origin.y = 99;
         self.playerListTableView.hidden = false;
+        self.counterBar.hidden =false;
     }
     
     self.playerListTableView.frame =frame;
+    self.counterBar.frame = countBarFrame;
     
     [UIView commitAnimations];
 }
@@ -631,13 +679,16 @@
     [UIView setAnimationDuration:0.3];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     [self.confirmVoteButton setTranslatesAutoresizingMaskIntoConstraints:YES];
-    
+
+
     CGRect frameForBtn= self.confirmVoteButton.frame;
     
     if(frameForBtn.origin.x<=283)
     {
         frameForBtn.origin.x +=frameForBtn.size.width+20;
+        
         [self performSelector:@selector(setHiddenConfirmButton) withObject:self afterDelay:0.3f];
+        
     }
     
     self.confirmVoteButton.frame = frameForBtn;
@@ -1137,7 +1188,33 @@
         tempDragImageView = [[dragImageView alloc]initWithFrame:CGRectMake(0, 0, 100, 100)];
         tempDragImageView.contentMode = UIViewContentModeScaleAspectFit;
         tempDragImageView.backgroundColor=[UIColor clearColor];
-        tempDragImageView.image = player.playerImage;
+        UIImageView* targetImageView = [[UIImageView alloc]initWithFrame:tempDragImageView.frame];
+        UIImageView* playerImageView =[[UIImageView alloc]initWithFrame:tempDragImageView.frame];
+        UIImageView* jailImageView = [[UIImageView alloc]initWithFrame:tempDragImageView.frame];
+        
+       
+        
+        if(player.playerState ==PLAYER_STATE_ALIVE){
+        playerImageView.image = player.playerImage;
+       [targetImageView addSubview:playerImageView];
+        
+        }else if(player.playerState ==PLAYER_STATE_MORNING_DEAD){
+        playerImageView.image = player.playerImage;
+        jailImageView.image =[UIImage imageNamed:@"barImage.png"];
+         [targetImageView addSubview:playerImageView];
+         [targetImageView addSubview:jailImageView];
+        }else if(player.playerState ==PLAYER_STATE_NIGHT_DEAD){
+        playerImageView.image = player.playerImage;
+        jailImageView.image = [UIImage imageNamed:@"outCube.png"];
+            [targetImageView addSubview:playerImageView];
+            [targetImageView addSubview:jailImageView];
+        }
+        
+        UIGraphicsBeginImageContext(targetImageView.bounds.size);
+        [targetImageView.layer renderInContext:UIGraphicsGetCurrentContext()];
+        UIImage *targetImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+        tempDragImageView.image =targetImage;
         
         [playerDragImageViewArray addObject:tempDragImageView];
     }
@@ -1149,8 +1226,19 @@
     circle.backgroundColor=[UIColor clearColor];
     circle.ImgArray  = playerDragImageViewArray;
     circle.center = self.backgroundImg.center;
+    circle.tag = CIRCLE_TAG;
     [self.thePlayerView insertSubview:circle atIndex:1];
     [circle loadView];
+}
+
+- (void)updateCircleView {
+    //remove existing circle
+    circleView *existingCircle = (circleView *)[self.thePlayerView viewWithTag:CIRCLE_TAG];
+    [existingCircle removeFromSuperview];
+    
+    [self initImageView];
+    
+    [self fromCircleView];
 }
 
 #pragma mark - UITableView
@@ -1258,7 +1346,7 @@
             
         }
         
-        if (p.playerState == PLAYER_STATE_DEAD) {
+        if (p.playerState != PLAYER_STATE_ALIVE) {
             
             cell.playerTeamImageView.hidden = false;
             
@@ -1841,11 +1929,11 @@
         
                 if ([p.playerId isEqualToString:playerId]) {
             
-                    p.playerState = PLAYER_STATE_DEAD;
+                    p.playerState = PLAYER_STATE_NIGHT_DEAD;
                     
                     if ([[GKLocalPlayer localPlayer].playerID isEqualToString:p.playerId]) {
                         
-                        selfState = PLAYER_STATE_DEAD;
+                        selfState = PLAYER_STATE_NIGHT_DEAD;
                         [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
 
                         [self.playerStateBtn setTitle:@"出局" forState:UIControlStateNormal];
@@ -1923,11 +2011,11 @@
                 
                 if ([p.playerId isEqualToString:judgePlayerId]) {
                     
-                    p.playerState = PLAYER_STATE_DEAD;
+                    p.playerState = PLAYER_STATE_MORNING_DEAD;
                     
                     if ([[GKLocalPlayer localPlayer].playerID isEqualToString:p.playerId]) {
                         
-                        selfState = PLAYER_STATE_DEAD;
+                        selfState = PLAYER_STATE_MORNING_DEAD;
                         [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
 
                         [self.playerStateBtn setTitle:@"出局" forState:UIControlStateNormal];
@@ -2089,6 +2177,9 @@
             [self performSelector:@selector(switchToGameStateGameOver) withObject:self afterDelay:3.0f];
         }
     }
+    
+    //updateCircleView
+    [self updateCircleView];
 }
 
 - (void)playerDisconnected:(NSString *)playerId willShutDown:(int)willShutDown {
@@ -2125,10 +2216,15 @@
         
     }else if (whoWins == MAFIA_WIN) {
         
+    
+        
+        
         NSLog(@"MAFIA_WIN");
         gameOverResult = MAFIA_WIN;
         
     }else if (whoWins == CIVILIAN_WIN) {
+        
+
      
         NSLog(@"CIVILIAN_WIN");
         gameOverResult = CIVILIAN_WIN;
@@ -2287,7 +2383,7 @@
             
             //allow confirm
             if (selfShouldVote == true ||
-                selfState == PLAYER_STATE_DEAD) {
+                selfState != PLAYER_STATE_ALIVE) {
                 
                 self.confirmVoteButton.enabled = true;
                 
@@ -2425,7 +2521,7 @@
             
             //allow confirm
             if (selfShouldVote == true ||
-                selfState == PLAYER_STATE_DEAD) {
+                selfState != PLAYER_STATE_ALIVE) {
                 
                 self.confirmVoteButton.enabled = true;
                 
@@ -2542,7 +2638,7 @@
             
             //allow confirm
             if (selfShouldVote == true ||
-                selfState == PLAYER_STATE_DEAD) {
+                selfState != PLAYER_STATE_ALIVE) {
                 
                 self.confirmVoteButton.enabled = true;
             }else
@@ -2583,14 +2679,26 @@
         case GameStateGameOver:
             [self.gameStateBtn setTitle:@"遊戲結束" forState:UIControlStateNormal];
             
-            //gameOverAnimation
-            if (gameOverResult == MAFIA_WIN) {
+            if(gameOverResult == CIVILIAN_WIN ){
                 
-                //TODO:[self showGameOverAnimationWithWhoWins:MAFIA_WIN];
-
-            }else if (gameOverResult == CIVILIAN_WIN) {
+                UIImage* winnerImage = [UIImage imageNamed:@"goodWinCube.png"];
+                UIImage* winnerBackground =[UIImage imageNamed:@"goodWin.png"];
                 
-                //TODO:[self showGameOverAnimationWithWhoWins:CIVILIAN_WIN];
+                NSArray* imageArray =[NSArray arrayWithObjects:winnerImage,winnerBackground,nil];
+                
+                
+                [self performSelector:@selector(callGameOverView:) withObject:imageArray afterDelay:1.0];
+                
+                
+            }else if (gameOverResult == MAFIA_WIN){
+                
+                UIImage* winnerImage = [UIImage imageNamed:@"badWinCube.png"];
+                UIImage* winnerBackground =[UIImage imageNamed:@"badWin.png"];
+                
+                NSArray* imageArray =[NSArray arrayWithObjects:winnerImage,winnerBackground,nil];
+                
+                [self performSelector:@selector(callGameOverView:) withObject:imageArray afterDelay:1.0];
+                
             }
             
             //showSystemMessage

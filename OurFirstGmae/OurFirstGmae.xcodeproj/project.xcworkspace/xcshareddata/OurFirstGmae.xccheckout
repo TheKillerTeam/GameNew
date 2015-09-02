@@ -7,22 +7,18 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>2FA1728C-619E-4B38-BFAF-0F4881EB5622</string>
 	<key>IDESourceControlProjectName</key>
-	<string>OurFirstGmae</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>83F8BCC108F0EF047935116FFFDC38570B981584</key>
 		<string>https://github.com/TheKillerTeam/GameNew.git</string>
-		<key>9EBACAAC5DA334A653E28FFDA78EE9BC688B1845</key>
-		<string>https://github.com/TheKillerTeam/Game.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>OurFirstGmae/OurFirstGmae.xcodeproj</string>
+	<string>OurFirstGmae/OurFirstGmae.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>83F8BCC108F0EF047935116FFFDC38570B981584</key>
 		<string>../../..</string>
-		<key>9EBACAAC5DA334A653E28FFDA78EE9BC688B1845</key>
-		<string>../../../../PROJECT</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://github.com/TheKillerTeam/GameNew.git</string>
@@ -39,14 +35,6 @@
 			<string>83F8BCC108F0EF047935116FFFDC38570B981584</string>
 			<key>IDESourceControlWCCName</key>
 			<string>git</string>
-		</dict>
-		<dict>
-			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
-			<string>public.vcs.git</string>
-			<key>IDESourceControlWCCIdentifierKey</key>
-			<string>9EBACAAC5DA334A653E28FFDA78EE9BC688B1845</string>
-			<key>IDESourceControlWCCName</key>
-			<string>PROJECT</string>
 		</dict>
 	</array>
 </dict>
