@@ -140,4 +140,10 @@
     return self.iconText.count;
 }
 //
+
+- (BOOL)prefersStatusBarHidden {
+    
+    return YES;
+}
+
 @end

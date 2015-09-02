@@ -144,4 +144,10 @@
         [self.delegate swiped];
     }];
 }
+
+- (BOOL)prefersStatusBarHidden {
+    
+    return YES;
+}
+
 @end

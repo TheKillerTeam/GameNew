@@ -29,6 +29,7 @@ MESSAGE_PLAYER_SEND_LAST_WORDS = 20
 MESSAGE_PLAYER_HAS_LAST_WORDS = 21
 MESSAGE_PLAYER_DISCONNECTED = 22
 MESSAGE_GAME_OVER = 23
+MESSAGE_NOTIFY_READY = 24
 
 MATCH_STATE_ACTIVE = 0
 MATCH_STATE_GAME_OVER = 1
@@ -590,6 +591,11 @@ class GameFactory(Factory):
             index += 1
         for matchPlayer in matchPlayers:
             matchPlayer.protocol.sendMatchStarted(match)
+            
+    def notifyReady(self, player, inviter):
+        for existingPlayer in self.players:
+            if existingPlayer.playerId == inviter:
+                existingPlayer.protocol.sendNotifyReady(player.playerId)    
 
 class GameProtocol(Protocol):
 
@@ -775,6 +781,18 @@ class GameProtocol(Protocol):
         self.log("Sent MESSAGE_PLAYER_DISCONNECTED %s %d" % (playerId, willShutDown))
         self.sendMessage(message)
         
+    def sendNotifyReady(self, playerId):
+        message = MessageWriter()
+        message.writeByte(MESSAGE_NOTIFY_READY)
+        message.writeString(playerId)
+        self.log("Sent PLAYER_NOTIFY_READY %s" % (playerId))
+        self.sendMessage(message)
+        
+    def notifyReady(self, message):
+        inviter = message.readString()
+        self.log("Recv MESSAGE_NOTIFY_READY %s" % (inviter))
+        self.factory.notifyReady(self.player, inviter)        
+    
     def processMessage(self, message):
         messageId = message.readByte()
         if messageId == MESSAGE_PLAYER_CONNECTED:
@@ -803,6 +821,8 @@ class GameProtocol(Protocol):
             return self.playerJudgementConfirmVote(message)
         if messageId == MESSAGE_PLAYER_SEND_LAST_WORDS:
             return self.playerSendLastWords(message)
+        if messageId == MESSAGE_NOTIFY_READY:
+            return self.notifyReady(message)        
         self.log("Unexpected message: %d" % (messageId))
 
     def dataReceived(self, data):

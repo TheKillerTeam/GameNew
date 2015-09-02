@@ -34,9 +34,6 @@
 #define PLAYER_DAYOUT_IMAGE     @"cubeDayOut.png"
 #define PLAYER_NIGHTOUT_IMAGE     @"cubeNightOut.png"
 
-
-
-
 #define BACKGROUND_IMAGE_DAY @"morningBackground.png"
 #define BACKGROUND_IMAGE_NIGHT @"nightBackground.png"
 
@@ -74,10 +71,10 @@
 #define NOT_SHUTTING_DOWN   0
 #define SHUTTING_DOWN       1
 
-#define CHAT_TO_ALL     @"mainConditionAll.png"
-#define CHAT_TO_TEAM    @"mainConditionTeam.png"
-#define CHAT_TO_DEAD    @"mainConditionOut.png"
-#define CHAT_TO_NON     @"mainConditionNon.png"
+#define CHAT_TO_ALL_IMAGE     @"mainConditionAll.png"
+#define CHAT_TO_TEAM_IMAGE    @"mainConditionTeam.png"
+#define CHAT_TO_DEAD_IMAGE    @"mainConditionOut.png"
+#define CHAT_TO_NON_IMAGE     @"mainConditionNon.png"
 
 #define PLAYER_TEAM_INSTRUCTION_PEACE @"instructionOfPeace.png"
 #define PLAYER_TEAM_INSTRUCTION_DISCOVER @"instructionOfDiscover.png"
@@ -141,7 +138,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *playerListTableView;
 @property (weak, nonatomic) IBOutlet UITextField *chatTextField;
 @property (weak, nonatomic) IBOutlet UIButton *sendBtn;
-@property (weak, nonatomic) IBOutlet UIButton *showCondition;
+@property (weak, nonatomic) IBOutlet UIButton *chatConditionButton;
 @property (weak, nonatomic) IBOutlet UIView *thePlayerView;
 @property (weak, nonatomic) IBOutlet UIImageView *backgroundImg;
 @property (nonatomic, strong) TransitionDelegate *transitionController;
@@ -172,9 +169,6 @@
     viewBackground.image =[UIImage imageNamed:@"viewBackground.png"];
     [self.view insertSubview:viewBackground atIndex:0];
     
-    
-    
-    
     [[NSNotificationCenter defaultCenter]addObserver:self selector:@selector(keyboardWillChangeFrame:) name:UIKeyboardWillChangeFrameNotification object:nil];
    
     inputBar = [[UIView alloc]initWithFrame:CGRectMake(0,CGRectGetMaxY([UIScreen mainScreen].bounds)-INPUT_BAR_HEIGHT, CGRectGetWidth([UIScreen mainScreen].bounds),INPUT_BAR_HEIGHT)];
@@ -184,22 +178,27 @@
     [inputBar addSubview:inputBarBackground];
     [inputBar addSubview:self.chatTextField];
     [inputBar addSubview:self.sendBtn];
-    [inputBar addSubview:self.showCondition];
+    [inputBar addSubview:self.chatConditionButton];
     [self.view addSubview:inputBar];
     
-  
-    
-    
-    
-    
-    
     selfChatType = ChatToAll;
-    
+    self.chatTextField.enabled = false;
+    [self changeChatConditionButtonImage:CHAT_TO_NON_IMAGE];
     //////
+    
+    UIImageView *tempImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"listBackgroundBorder.png"]];
+    [tempImageView setFrame:self.playerListTableView.frame];
+    
+    self.playerListTableView.backgroundView = tempImageView;
+    tempImageView = nil;
     
     self.playerListTableView.delegate=self;
     self.playerListTableView.dataSource=self;
+
+    //
     self.backgroundImg.image=[UIImage imageNamed:BACKGROUND_IMAGE_DAY];
+    
+    [self setHiddeninstructionImageView];
 
     ///////cicle
     [self initImageView];
@@ -244,6 +243,8 @@
     judgePlayerId = [NSString new];
     
     [self.playerStateBtn setTitle:@"遊戲中" forState:UIControlStateNormal];
+    [self.playerStateBtn setTitleColor:[UIColor colorWithRed:45.0f/255.0f green:223.0f/255.0f blue:255.0f/255.0f alpha:1] forState:UIControlStateNormal];
+    
     gameOverResult = NOT_OVER_YET;
 }
 
@@ -727,17 +728,20 @@
     //show systemMessage
     if (selfTeam == PLAYER_TEAM_MAFIA) {
 
-        [self showSystemMessage:[NSString stringWithFormat:@"您的身份是%@", PLAYER_TEAM_MAFIA_STRING]];
+        [self showSystemMessage:[NSString stringWithFormat:@"您的魔方是%@", PLAYER_TEAM_MAFIA_CUBE_STRING]];
         
     }else if (selfTeam == PLAYER_TEAM_SHERIFF) {
         
-        [self showSystemMessage:[NSString stringWithFormat:@"您的身份是%@", PLAYER_TEAM_SHERIFF_STRING]];
+        [self showSystemMessage:[NSString stringWithFormat:@"您的魔方是%@", PLAYER_TEAM_SHERIFF_CUBE_STRING]];
 
     }else if (selfTeam == PLAYER_TEAM_CIVILIAN) {
         
-        [self showSystemMessage:[NSString stringWithFormat:@"您的身份是%@", PLAYER_TEAM_CIVILIAN_STRING]];
+        [self showSystemMessage:[NSString stringWithFormat:@"您的魔方是%@", PLAYER_TEAM_CIVILIAN_CUBE_STRING]];
     }
 
+    //show instructionImageView
+    [self playerTeamBtnPressed:nil];
+    
     //changeGameState
     [self performSelector:@selector(switchToNextGameState) withObject:self afterDelay:1.5f];
 }
@@ -1023,6 +1027,12 @@
     self.chatTextField.enabled = true;
 }
 
+- (void)changeChatConditionButtonImage:(NSString *)imageName {
+    
+    [self.chatConditionButton setImage:[UIImage imageNamed:imageName] forState:UIControlStateNormal];
+}
+
+
 - (void)showBackToMenuAlertWithTitle:(NSString *)titleString {
     
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:titleString message:@"將回到Menu" preferredStyle:UIAlertControllerStyleAlert];
@@ -1038,9 +1048,6 @@
 
 - (IBAction)playerTeamBtnPressed:(id)sender {
     
-    
-    
-    
     [UIView beginAnimations:@"animationForInstruction" context:nil];
     [UIView setAnimationDuration:0.3];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
@@ -1049,32 +1056,38 @@
     
     CGRect frame = self.instructionImageView.frame;
     
-    if(frame.origin.x<0) {
+    if (frame.origin.x<0) {
         
         frame.origin.x =0;
         self.instructionImageView.hidden = false;
-    }else
-    {
-        frame.origin.x = -250;
         
+    }else {
+        
+        frame.origin.x = -250;
+        [self performSelector:@selector(setHiddeninstructionImageView) withObject:self afterDelay:0.3f];
+
     }
     
     self.instructionImageView.frame =frame;
     
     [UIView commitAnimations];
-    
-    
-    
 }
 
-
-
+- (void)setHiddeninstructionImageView {
     
+    self.instructionImageView.hidden = true;
 
+}
 
+- (NSUInteger)supportedInterfaceOrientations {
+    
+    return UIInterfaceOrientationMaskPortrait;
+}
 
-
-
+- (BOOL)prefersStatusBarHidden {
+    
+    return YES;
+}
 
 #pragma mark - UITextFieldDelegate Methods
 
@@ -1849,6 +1862,7 @@
                         [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
 
                         [self.playerStateBtn setTitle:@"出局" forState:UIControlStateNormal];
+                        [self.playerStateBtn setTitleColor:[UIColor colorWithRed:255.0f/255.0f green:33.0f/255.0f blue:72.0f/255.0f alpha:1] forState:UIControlStateNormal];
                     }
                     
                     break;
@@ -1931,6 +1945,7 @@
                         [self.confirmVoteButton setTitle:@"離開遊戲" forState:UIControlStateNormal];
 
                         [self.playerStateBtn setTitle:@"出局" forState:UIControlStateNormal];
+                        [self.playerStateBtn setTitleColor:[UIColor colorWithRed:255.0f/255.0f green:33.0f/255.0f blue:72.0f/255.0f alpha:1] forState:UIControlStateNormal];
                     }
                     
                     break;
@@ -2225,12 +2240,14 @@
                     
                     selfChatType = ChatToTeam;
                     self.chatTextField.enabled = true;
+                    [self changeChatConditionButtonImage:CHAT_TO_TEAM_IMAGE];
                 }
                 
             }else {
                 
                 selfChatType = ChatToDead;
                 self.chatTextField.enabled = true;
+                [self changeChatConditionButtonImage:CHAT_TO_DEAD_IMAGE];
             }
             
             //allow Receive/Send Vote
@@ -2303,7 +2320,8 @@
             
             //disable chat
             self.chatTextField.enabled = false;
-            
+            [self changeChatConditionButtonImage:CHAT_TO_NON_IMAGE];
+
             //showNightResults
             if (nightResults.count != 0) {
                 
@@ -2391,11 +2409,13 @@
 
                 selfChatType = ChatToAll;
                 self.chatTextField.enabled = true;
+                [self changeChatConditionButtonImage:CHAT_TO_ALL_IMAGE];
                 
             }else {
                 
                 selfChatType = ChatToDead;
                 self.chatTextField.enabled = true;
+                [self changeChatConditionButtonImage:CHAT_TO_DEAD_IMAGE];
             }
             
             //allow Receive/Send Vote
@@ -2441,7 +2461,8 @@
             
             //disable chat
             self.chatTextField.enabled = false;
-            
+            [self changeChatConditionButtonImage:CHAT_TO_NON_IMAGE];
+
             //showDayResults
             if (dayResults.count != 0) {
                 
@@ -2480,11 +2501,15 @@
 
                 selfChatType = ChatToAll;
                 self.chatTextField.enabled = true;
+                [self changeChatConditionButtonImage:CHAT_TO_ALL_IMAGE];
+
                 
             }else {
                 
                 selfChatType = ChatToDead;
                 self.chatTextField.enabled = true;
+                [self changeChatConditionButtonImage:CHAT_TO_DEAD_IMAGE];
+
             }
             
             //disable Vote
@@ -2557,7 +2582,8 @@
             
             //disable chat
             self.chatTextField.enabled = false;
-            
+            [self changeChatConditionButtonImage:CHAT_TO_NON_IMAGE];
+
             //showjudgementResults
             if (judgementResults.count != 0) {
                 
@@ -2610,6 +2636,8 @@
             //allowAllChat
             selfChatType = ChatToAll;
             [self performSelector:@selector(enableChatTextField) withObject:nil afterDelay:1.5f];
+            [self performSelector:@selector(changeChatConditionButtonImage:) withObject:CHAT_TO_ALL_IMAGE afterDelay:1.5f];
+            
 
             //show all playerTeam
             [self.playerListTableView reloadData];
