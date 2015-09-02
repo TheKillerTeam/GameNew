@@ -317,8 +317,8 @@
                                             </mask>
                                         </variation>
                                     </button>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="instructionOfDiscover.png" translatesAutoresizingMaskIntoConstraints="NO" id="FOe-Ll-sbU">
-                                        <rect key="frame" x="-250" y="99" width="194" height="142"/>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="instructionOfDiscover.png" translatesAutoresizingMaskIntoConstraints="NO" id="FOe-Ll-sbU">
+                                        <rect key="frame" x="-262" y="0.0" width="206" height="169"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1z0-OG-NdX">
                                         <rect key="frame" x="187" y="99" width="188" height="35"/>
@@ -443,8 +443,8 @@
                                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="7QF-cL-gfr" id="t4y-n9-les">
                                                     <autoresizingMask key="autoresizingMask"/>
                                                     <subviews>
-                                                        <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="W4Z-F1-vbf">
-                                                            <rect key="frame" x="0.0" y="-1" width="188" height="43.5"/>
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W4Z-F1-vbf">
+                                                            <rect key="frame" x="0.0" y="0.0" width="188" height="43.5"/>
                                                             <subviews>
                                                                 <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Doraemon.png" translatesAutoresizingMaskIntoConstraints="NO" id="G9U-Jk-3Qf">
                                                                     <rect key="frame" x="4" y="0.0" width="43.5" height="43.5"/>
@@ -464,8 +464,8 @@
                                                                 <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="7FU-rT-mDm">
                                                                     <rect key="frame" x="164" y="11" width="19.5" height="20.5"/>
                                                                 </imageView>
-                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="123" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pPk-tV-TW4">
-                                                                    <rect key="frame" x="47" y="14" width="109" height="14.5"/>
+                                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="123" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pPk-tV-TW4">
+                                                                    <rect key="frame" x="51.5" y="14" width="108.5" height="14.5"/>
                                                                     <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                                     <nil key="highlightedColor"/>
@@ -519,7 +519,9 @@
                                     <constraint firstItem="jbY-fX-qqu" firstAttribute="top" secondItem="D5q-eW-R6Q" secondAttribute="bottom" constant="4" id="8va-D2-Y1a"/>
                                     <constraint firstItem="eav-Nw-fB4" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="smQ-nu-RCR" secondAttribute="leading" constant="5" id="9wg-IZ-fJG"/>
                                     <constraint firstItem="vl1-dQ-qKD" firstAttribute="top" secondItem="ICc-De-o8e" secondAttribute="bottom" constant="8" id="9yj-I4-hhj"/>
+                                    <constraint firstItem="FOe-Ll-sbU" firstAttribute="top" secondItem="smQ-nu-RCR" secondAttribute="top" id="Am2-VR-2r6"/>
                                     <constraint firstItem="mTK-S2-h1S" firstAttribute="top" secondItem="Z7f-MC-Fl5" secondAttribute="bottom" constant="5" id="Cer-bR-e1z"/>
+                                    <constraint firstAttribute="bottom" secondItem="FOe-Ll-sbU" secondAttribute="bottom" constant="252" id="DbF-4v-lbI"/>
                                     <constraint firstItem="MCN-4Z-3fL" firstAttribute="leading" secondItem="D5q-eW-R6Q" secondAttribute="trailing" constant="125" id="Eea-n1-CkN"/>
                                     <constraint firstItem="AZV-FS-vE9" firstAttribute="top" secondItem="smQ-nu-RCR" secondAttribute="top" constant="8" id="G76-5M-5ps"/>
                                     <constraint firstAttribute="height" constant="421" id="GW0-x6-o6P"/>
