@@ -317,8 +317,8 @@
                                             </mask>
                                         </variation>
                                     </button>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="instructionOfDiscover.png" translatesAutoresizingMaskIntoConstraints="NO" id="FOe-Ll-sbU">
-                                        <rect key="frame" x="-262" y="0.0" width="206" height="169"/>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="instructionOfDiscover.png" translatesAutoresizingMaskIntoConstraints="NO" id="FOe-Ll-sbU">
+                                        <rect key="frame" x="-200" y="99" width="194" height="142"/>
                                     </imageView>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="1z0-OG-NdX">
                                         <rect key="frame" x="187" y="99" width="188" height="35"/>
@@ -827,6 +827,7 @@
                     <connections>
                         <outlet property="backgroundImg" destination="jbY-fX-qqu" id="dCM-Nl-DSM"/>
                         <outlet property="chatBoxTableView" destination="IDb-2d-ITH" id="1ls-wM-EyE"/>
+                        <outlet property="chatConditionButton" destination="sGX-Vc-ymD" id="rrn-v3-kQx"/>
                         <outlet property="chatTextField" destination="fiq-dG-2BP" id="7HF-dW-Yvo"/>
                         <outlet property="civilianCount" destination="YAT-Ci-B7Y" id="hdH-bO-gr8"/>
                         <outlet property="confirmVoteButton" destination="t5a-ye-fsw" id="sTD-YY-Dag"/>
@@ -846,7 +847,6 @@
                         <outlet property="playerTeamBtn" destination="eav-Nw-fB4" id="rqG-yM-tPF"/>
                         <outlet property="sendBtn" destination="GbH-GN-Wzs" id="JfF-Gq-cD3"/>
                         <outlet property="sheriff" destination="84x-uq-bZL" id="ee1-Z3-Y4P"/>
-                        <outlet property="showCondition" destination="sGX-Vc-ymD" id="Ne0-mV-NOs"/>
                         <outlet property="thePlayerView" destination="smQ-nu-RCR" id="EHK-5Z-7zR"/>
                     </connections>
                 </viewController>

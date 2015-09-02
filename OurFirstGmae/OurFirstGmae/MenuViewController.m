@@ -269,6 +269,16 @@
     NSLog(@"%f", r.size.width);
 }
 
+- (NSUInteger)supportedInterfaceOrientations {
+    
+    return UIInterfaceOrientationMaskPortrait;
+}
+
+- (BOOL)prefersStatusBarHidden {
+    
+    return YES;
+}
+
 #pragma mark - NetworkControllerDelegate
 
 - (void)networkStateChanged:(NetworkState)networkState {

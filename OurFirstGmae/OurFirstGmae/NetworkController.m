@@ -12,7 +12,7 @@
 #import "Match.h"
 #import "Player.h"
 
-#define SERVER_IP @"172.20.10.3"
+#define SERVER_IP @"192.168.196.169"
 #define PLAYER_IMAGE_DEFAULT @"news2.jpg"
 
 typedef enum {
@@ -41,6 +41,7 @@ typedef enum {
     MessagePlayerHasLastWords           = 21,       //from Server
     MessagePlayerDisconnected           = 22,       //from Server
     MessageGameOver                     = 23,       //from Server
+    MessageNotifyReady                  = 24,   //to, from Server
     
 } MessageType;
 
@@ -328,6 +329,17 @@ static NetworkController *sharedController = nil;
     [self sendData:writer.data];
 }
 
+- (void)sendNotifyReady:(NSString *)inviterId {
+    
+    MessageWriter * writer = [MessageWriter new];
+    
+    [writer writeByte:MessageNotifyReady];
+    
+    [writer writeString:inviterId];
+    
+    [self sendData:writer.data];
+}
+
 - (void)processMessage:(NSData *)data {
     
     MessageReader * reader = [[MessageReader alloc] initWithData:data];
@@ -412,6 +424,17 @@ static NetworkController *sharedController = nil;
         
         int whoWins = [reader readByte];
         [self.delegate gameOver:whoWins];
+        
+    }else if (msgType == MessageNotifyReady) {
+        
+        NSString *playerId = [reader readString];
+        NSLog(@"Player %@ ready", playerId);
+        
+        if (_mmvc != nil) {
+            
+            [_mmvc setHostedPlayerReady:playerId];
+            //TODO:[_mmvc setHostedPlayer:<#(GKPlayer *)#> didConnect:<#(BOOL)#>];
+        }
     }
 }
 
@@ -678,6 +701,21 @@ static NetworkController *sharedController = nil;
         NSLog(@"Authentication changed: player authenticated.");
         [self setNetworkState:NetworkStateAuthenticated];
         _userAuthenticated = TRUE;
+        
+        [GKMatchmaker sharedMatchmaker].inviteHandler = ^(GKInvite *acceptedInvite, NSArray *playersToInvite) {
+            
+            NSLog(@"Received invite");
+            self.pendingInvite = acceptedInvite;
+            self.pendingPlayersToInvite = playersToInvite;
+            
+            if (_networkState >= NetworkStateConnected) {
+                
+                [self setNetworkState:NetworkStateReceivedMatchStatus];
+                [self setGameState:GameStateNotInGame];
+            }
+            
+        };
+        
         [self connect];
         
     } else if (![GKLocalPlayer localPlayer].isAuthenticated && _userAuthenticated) {
@@ -687,7 +725,6 @@ static NetworkController *sharedController = nil;
         [self disconnect];
         [self setNetworkState:NetworkStateNotAvailable];
     }
-    
 }
 
 - (void)authenticateLocalUser {
@@ -730,11 +767,19 @@ static NetworkController *sharedController = nil;
     _presentingViewController = viewController;
     [_presentingViewController dismissViewControllerAnimated:NO completion:nil];
     
-    if (FALSE) {
+    if (_pendingInvite != nil) {
         
-        // TODO: Will add code here later!
+        [self sendNotifyReady:_pendingInvite.sender.playerID];
         
-    } else {
+        _mmvc = [[GKMatchmakerViewController alloc] initWithInvite:_pendingInvite];
+        _mmvc.hosted = YES;
+        _mmvc.matchmakerDelegate = self;
+        
+        [_presentingViewController presentViewController:_mmvc animated:YES completion:nil];
+        self.pendingInvite = nil;
+        self.pendingPlayersToInvite = nil;
+        
+    }else {
         
         GKMatchRequest *request = [GKMatchRequest new];
         request.minPlayers = minPlayers;

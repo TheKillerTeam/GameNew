@@ -34,17 +34,18 @@ static int k = 10;
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    
     _outOfplayerImgView.image = self.playerImage;
     
     UIView *view =[[UIView alloc]initWithFrame:self.view.frame];
     view.backgroundColor=[UIColor blackColor];
     view.alpha=0.5;
     [self.view insertSubview:view belowSubview:_outOfplayerImgView];
-}
 
-- (void)viewDidAppear:(BOOL)animated {
-    [super viewDidAppear:animated];
-    
     [self performSelector:@selector(showLaser) withObject:nil afterDelay:1.0f];
 }
 
@@ -131,6 +132,11 @@ static int k = 10;
 }
 
 - (BOOL)shouldAutorotate {
+    
+    return YES;
+}
+
+- (BOOL)prefersStatusBarHidden {
     
     return YES;
 }

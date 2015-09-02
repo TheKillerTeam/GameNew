@@ -80,6 +80,9 @@ typedef enum {
 
 @property (assign, readonly) GameState gameState;
 
+@property (retain) GKInvite *pendingInvite;
+@property (retain) NSArray *pendingPlayersToInvite;
+
 + (NetworkController *)sharedInstance;
 - (void)authenticateLocalUser;
 - (void)connect;
