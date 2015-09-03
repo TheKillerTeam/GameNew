@@ -199,7 +199,7 @@
     [self changeChatConditionButtonImage:CHAT_TO_NON_IMAGE];
     //////
     
-    UIImageView *tempImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"listBackgroundBorder.png"]];
+    UIImageView *tempImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"listBackgeound.png"]];
     [tempImageView setFrame:self.playerListTableView.frame];
     
     self.playerListTableView.backgroundView = tempImageView;

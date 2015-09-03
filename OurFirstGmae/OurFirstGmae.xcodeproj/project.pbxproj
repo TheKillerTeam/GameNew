@@ -17,7 +17,6 @@
 		0735BBCE1B6F05B7000CFD5A /* Match.m in Sources */ = {isa = PBXBuildFile; fileRef = 0735BBCD1B6F05B7000CFD5A /* Match.m */; };
 		07AA29951B7305CD009E1013 /* news2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 07AA29941B7305CD009E1013 /* news2.jpg */; };
 		07AA29971B730EE2009E1013 /* news3.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 07AA29961B730EE2009E1013 /* news3.jpg */; };
-		07D571061B96DDC300D3A5E6 /* listBackgroundBorder.png in Resources */ = {isa = PBXBuildFile; fileRef = 07D571051B96DDC300D3A5E6 /* listBackgroundBorder.png */; };
 		07DCF3531B902A9C009687B6 /* enterNameBtn.png in Resources */ = {isa = PBXBuildFile; fileRef = 07DCF3521B902A9C009687B6 /* enterNameBtn.png */; };
 		07F88CBE1B7487BF001A3445 /* ChatCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 07F88CBD1B7487BF001A3445 /* ChatCell.m */; };
 		0901A1931B78784200AAEDCF /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0901A1921B78784200AAEDCF /* UIKit.framework */; };
@@ -25,6 +24,7 @@
 		090E90741B673C1D002435F3 /* playerInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 090E90731B673C1D002435F3 /* playerInfoViewController.m */; };
 		093C731F1B66817800CA5400 /* play6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 093C731E1B66817800CA5400 /* play6.jpg */; };
 		095D9F2D1B95712000AF021C /* GameOverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 095D9F2C1B95712000AF021C /* GameOverViewController.m */; };
+		096558591B970C570052765C /* listBackgeound.png in Resources */ = {isa = PBXBuildFile; fileRef = 096558581B970C570052765C /* listBackgeound.png */; };
 		0969CC321B95DFBF00751904 /* goodWinCube.png in Resources */ = {isa = PBXBuildFile; fileRef = 0969CC311B95DFBF00751904 /* goodWinCube.png */; };
 		0969CC341B95EEAD00751904 /* badWinCube.png in Resources */ = {isa = PBXBuildFile; fileRef = 0969CC331B95EEAD00751904 /* badWinCube.png */; };
 		0969CC371B9600D900751904 /* launchImage.png in Resources */ = {isa = PBXBuildFile; fileRef = 0969CC351B9600D900751904 /* launchImage.png */; };
@@ -171,7 +171,6 @@
 		0735BBCD1B6F05B7000CFD5A /* Match.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Match.m; sourceTree = "<group>"; };
 		07AA29941B7305CD009E1013 /* news2.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = news2.jpg; sourceTree = "<group>"; };
 		07AA29961B730EE2009E1013 /* news3.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = news3.jpg; sourceTree = "<group>"; };
-		07D571051B96DDC300D3A5E6 /* listBackgroundBorder.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = listBackgroundBorder.png; sourceTree = "<group>"; };
 		07DCF3521B902A9C009687B6 /* enterNameBtn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = enterNameBtn.png; sourceTree = "<group>"; };
 		07F88CBC1B7487BF001A3445 /* ChatCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChatCell.h; sourceTree = "<group>"; };
 		07F88CBD1B7487BF001A3445 /* ChatCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChatCell.m; sourceTree = "<group>"; };
@@ -183,6 +182,7 @@
 		093C731E1B66817800CA5400 /* play6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = play6.jpg; sourceTree = "<group>"; };
 		095D9F2B1B95712000AF021C /* GameOverViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameOverViewController.h; sourceTree = "<group>"; };
 		095D9F2C1B95712000AF021C /* GameOverViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameOverViewController.m; sourceTree = "<group>"; };
+		096558581B970C570052765C /* listBackgeound.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = listBackgeound.png; sourceTree = "<group>"; };
 		0969CC311B95DFBF00751904 /* goodWinCube.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = goodWinCube.png; sourceTree = "<group>"; };
 		0969CC331B95EEAD00751904 /* badWinCube.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = badWinCube.png; sourceTree = "<group>"; };
 		0969CC351B9600D900751904 /* launchImage.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launchImage.png; sourceTree = "<group>"; };
@@ -470,6 +470,7 @@
 		09B02BA81B6B7F53002D8FBF /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				096558581B970C570052765C /* listBackgeound.png */,
 				09BD1A141B96E206006DF3A0 /* outCube.png */,
 				09BD1A151B96E206006DF3A0 /* barImage.png */,
 				09BD1A0C1B96CEC3006DF3A0 /* badWin.png */,
@@ -487,7 +488,6 @@
 				09B3453C1B90745600E65CE5 /* slotBackground.png */,
 				09B3453F1B90745600E65CE5 /* slotCover.png */,
 				09E9BFE41B904A7400502744 /* viewBackground.png */,
-				07D571051B96DDC300D3A5E6 /* listBackgroundBorder.png */,
 				09E9BFDE1B9046B600502744 /* mainProfessionBtn.png */,
 				09E9BFD61B90423600502744 /* gameName.png */,
 				09E9BFD21B903D7400502744 /* superManButton1.png */,
@@ -806,7 +806,6 @@
 				096FC43A1B873D030001446D /* scan1.png in Resources */,
 				093C731F1B66817800CA5400 /* play6.jpg in Resources */,
 				096FC3B81B8711D70001446D /* PlayerInfoBackground.png in Resources */,
-				07D571061B96DDC300D3A5E6 /* listBackgroundBorder.png in Resources */,
 				09A4382E1B61288000B08E1A /* play7.jpg in Resources */,
 				09E9BFC81B90342200502744 /* mainConditionTeam.png in Resources */,
 				09907E571B8AEE6200FE2DF4 /* enterClosetBackground.png in Resources */,
@@ -870,6 +869,7 @@
 				096FC4571B88679D0001446D /* hair4.png in Resources */,
 				07AA29951B7305CD009E1013 /* news2.jpg in Resources */,
 				09B3454D1B90C43F00E65CE5 /* soltJobRuin.png in Resources */,
+				096558591B970C570052765C /* listBackgeound.png in Resources */,
 				09BD1A161B96E206006DF3A0 /* outCube.png in Resources */,
 				0969CC341B95EEAD00751904 /* badWinCube.png in Resources */,
 				09C4A5B61B93F2F700564E81 /* instructionOfRuin.png in Resources */,
