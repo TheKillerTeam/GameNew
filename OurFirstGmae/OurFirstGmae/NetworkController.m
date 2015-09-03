@@ -12,8 +12,9 @@
 #import "Match.h"
 #import "Player.h"
 
-#define SERVER_IP @"192.168.196.169"
-#define PLAYER_IMAGE_DEFAULT @"news2.jpg"
+#define SERVER_IP @"220.134.136.189"
+#define PLAYER_IMAGE_DEFAULT @"NPCPlayer.png"
+#define PLAYER_HEAD_IMAGE_DEFAULT @"news2.jpg"
 
 typedef enum {
     
@@ -169,10 +170,17 @@ static NetworkController *sharedController = nil;
     
     [writer writeByte:MessagePlayerConnected];
     
-    UIImage *img = [UIImage imageNamed:PLAYER_IMAGE_DEFAULT];
-    NSData *imageData = UIImagePNGRepresentation(img);
-    NSString *base64string = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-    [writer writeString:base64string];
+    UIImage *playerImage = [UIImage imageNamed:PLAYER_IMAGE_DEFAULT];
+    NSData *playerImageData = UIImagePNGRepresentation(playerImage);
+    NSString *playerImagebase64string = [playerImageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    UIImage *playerHeadImage = [UIImage imageNamed:PLAYER_HEAD_IMAGE_DEFAULT];
+    NSData *playerHeadImageData = UIImagePNGRepresentation(playerHeadImage);
+    NSString *playerHeadImagebase64string = [playerHeadImageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    [writer writeString:playerImagebase64string];
+    
+    [writer writeString:playerHeadImagebase64string];
     
     [writer writeString:[GKLocalPlayer localPlayer].playerID];
     [writer writeString:[GKLocalPlayer localPlayer].alias];
@@ -197,15 +205,21 @@ static NetworkController *sharedController = nil;
     [self sendData:writer.data];
 }
 
-- (void)sendUpdatePlayerImage:(UIImage *)image {
+- (void)sendUpdatePlayerImage:(UIImage *)playerImage withPlayerHeadImage:(UIImage *)playerHeadImage {
     
     MessageWriter * writer = [MessageWriter new];
     
     [writer writeByte:MessagePlayerImageUpdated];
     
-    NSData *imageData = UIImagePNGRepresentation(image);
-    NSString *base64string = [imageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
-    [writer writeString:base64string];
+    NSData *playerImageData = UIImagePNGRepresentation(playerImage);
+    NSString *playerImagebase64string = [playerImageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    NSData *playerHeadImageData = UIImagePNGRepresentation(playerHeadImage);
+    NSString *playerHeadImagebase64string = [playerHeadImageData base64EncodedStringWithOptions:NSDataBase64Encoding64CharacterLineLength];
+    
+    [writer writeString:playerImagebase64string];
+    
+    [writer writeString:playerHeadImagebase64string];
     
     [writer writeString:[GKLocalPlayer localPlayer].playerID];
     
@@ -362,11 +376,17 @@ static NetworkController *sharedController = nil;
         for (unsigned char i = 0; i < numPlayers; ++i) {
             
             NSString *playerImageString = [reader readString];
+            NSString *playerHeadImageString = [reader readString];
             NSString *playerId = [reader readString];
             NSString *alias = [reader readString];
             int playerState = [reader readByte];
             int playerTeam = [reader readByte];
-            Player *player = [[Player alloc] initWithPlayerImageString:playerImageString playerId:playerId alias:alias playerState:playerState playerTeam:playerTeam];
+            Player *player = [[Player alloc] initWithPlayerImageString:playerImageString
+                                                 playerHeadImageString:playerHeadImageString
+                                                              playerId:playerId
+                                                                 alias:alias
+                                                           playerState:playerState
+                                                            playerTeam:playerTeam];
             [players addObject:player];
         }
         Match *match = [[Match alloc] initWithState:matchState players:players];

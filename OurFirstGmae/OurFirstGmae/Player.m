@@ -10,13 +10,24 @@
 
 @implementation Player
 
-- (id)initWithPlayerImageString:(NSString*)playerImageString playerId:(NSString*)playerId alias:(NSString*)alias playerState:(int)playerState playerTeam:(int)playerTeam{
+- (id)initWithPlayerImageString:(NSString*)playerImageString
+          playerHeadImageString:(NSString *)playerHeadImageString
+                       playerId:(NSString *)playerId
+                          alias:(NSString *)alias
+                    playerState:(int)playerState
+                     playerTeam:(int)playerTeam {
     
     if ((self = [super init])) {
         
         NSData *playerImageData = [[NSData alloc] initWithBase64EncodedString:playerImageString options:NSDataBase64DecodingIgnoreUnknownCharacters];
         UIImage *playerImage = [UIImage imageWithData:playerImageData];
+        
+        NSData *playerHeadImageData = [[NSData alloc] initWithBase64EncodedString:playerHeadImageString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+        UIImage *playerHeadImage = [UIImage imageWithData:playerHeadImageData];
+        
         self.playerImage = playerImage;
+        self.playerHeadImage = playerHeadImage;
+        
         self.playerId = playerId;
         self.alias = alias;
         self.playerState = playerState;
@@ -28,6 +39,7 @@
 - (void)dealloc {
     
     self.playerImage = nil;
+    self.playerHeadImage = nil;
     self.playerId = nil;
     self.alias = nil;
 }

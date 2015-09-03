@@ -12,7 +12,7 @@
 @class Match;
 
 @interface ViewController : UIViewController
-@property (nonatomic, strong)UIView *willRemoveView;
+
 @property (nonatomic, strong) Match *match;
 @property (nonatomic, strong) UIImage *playerImage;
 

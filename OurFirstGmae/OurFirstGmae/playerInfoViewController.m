@@ -138,10 +138,16 @@
     
     UIGraphicsBeginImageContext(_crop.sentView.bounds.size);
     [_crop.sentView.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *myImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIImage *fullAppearanceImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    [self.delegate transImage:myImage];
+    UIGraphicsBeginImageContext(_crop.sendHeadImageView.bounds.size);
+    [_crop.sendHeadImageView.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *headImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    
+    [self.delegate transFullAppearanceImage:fullAppearanceImage withHeadImage:headImage];
 
     [self dismissViewControllerAnimated:true completion:nil];
 }

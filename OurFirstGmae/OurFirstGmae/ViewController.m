@@ -138,9 +138,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *mafiaCount;
 @property (weak, nonatomic) IBOutlet UIView *counterBar;
 
-
-
-
 @property (weak, nonatomic) IBOutlet UIImageView *instructionImageView;
 @property (weak, nonatomic) IBOutlet UIButton *playerStateBtn;
 @property (weak, nonatomic) IBOutlet UIButton *playerAliasBtn;
@@ -256,9 +253,41 @@
     judgePlayerId = [NSString new];
     
     [self.playerStateBtn setTitle:@"遊戲中" forState:UIControlStateNormal];
-    [self.playerStateBtn setTitleColor:[UIColor colorWithRed:45.0f/255.0f green:223.0f/255.0f blue:255.0f/255.0f alpha:1] forState:UIControlStateNormal];
+    [self.playerStateBtn setTitleColor:[UIColor colorWithRed:37.0/255.0f green:214.0/255.0f blue:255.0f/255.0f alpha:1] forState:UIControlStateNormal];
     
     gameOverResult = NOT_OVER_YET;
+    
+    //顯示本局各魔方數
+    int sheriffCount = 0;
+    int mafiaCount = 0;
+    int civilianCount = 0;
+    
+    for (Player *matchPlayer in self.match.players) {
+        
+        switch (matchPlayer.playerTeam) {
+                
+            case PLAYER_TEAM_SHERIFF:
+                
+                sheriffCount++;
+                break;
+                
+            case PLAYER_TEAM_MAFIA:
+                
+                mafiaCount++;
+                break;
+                
+            case PLAYER_TEAM_CIVILIAN:
+                
+                civilianCount++;
+                
+            default:
+                
+                break;
+        }
+    }
+    self.sheriff.text = [NSString stringWithFormat:@"X%d", sheriffCount];
+    self.mafiaCount.text = [NSString stringWithFormat:@"X%d", mafiaCount];
+    self.civilianCount.text = [NSString stringWithFormat:@"X%d", civilianCount];
 }
 
 - (void) viewDidAppear:(BOOL)animated {
@@ -1205,20 +1234,22 @@
         UIImageView* playerImageView =[[UIImageView alloc]initWithFrame:tempDragImageView.frame];
         UIImageView* jailImageView = [[UIImageView alloc]initWithFrame:tempDragImageView.frame];
         
-       
+        if (player.playerState ==PLAYER_STATE_ALIVE) {
+            
+            playerImageView.image = player.playerImage;
+            [targetImageView addSubview:playerImageView];
         
-        if(player.playerState ==PLAYER_STATE_ALIVE){
-        playerImageView.image = player.playerImage;
-       [targetImageView addSubview:playerImageView];
-        
-        }else if(player.playerState ==PLAYER_STATE_MORNING_DEAD){
-        playerImageView.image = player.playerImage;
-        jailImageView.image =[UIImage imageNamed:@"barImage.png"];
-         [targetImageView addSubview:playerImageView];
-         [targetImageView addSubview:jailImageView];
-        }else if(player.playerState ==PLAYER_STATE_NIGHT_DEAD){
-        playerImageView.image = player.playerImage;
-        jailImageView.image = [UIImage imageNamed:@"outCube.png"];
+        }else if (player.playerState ==PLAYER_STATE_MORNING_DEAD) {
+            
+            playerImageView.image = player.playerImage;
+            jailImageView.image =[UIImage imageNamed:@"barImage.png"];
+            [targetImageView addSubview:playerImageView];
+            [targetImageView addSubview:jailImageView];
+
+        }else if (player.playerState ==PLAYER_STATE_NIGHT_DEAD) {
+            
+            playerImageView.image = player.playerImage;
+            jailImageView.image = [UIImage imageNamed:@"outCube.png"];
             [targetImageView addSubview:playerImageView];
             [targetImageView addSubview:jailImageView];
         }
@@ -1265,7 +1296,8 @@
         
         Player *p = [self.match.players objectAtIndex:indexPath.row];
         
-        cell.playerPhoto.image = p.playerImage;
+        cell.playerPhoto.image = p.playerHeadImage;
+
         cell.playerName.text = p.alias;
         cell.vote.text = [NSString stringWithFormat:@"%d",[[voteData objectAtIndex:indexPath.row] intValue]];
         
@@ -1398,7 +1430,7 @@
                 
                 if ([p.playerId isEqualToString:tmpPlayerId]) {
                     
-                    [cell.playerImageImageView setImage:p.playerImage];
+                    [cell.playerImageImageView setImage:p.playerHeadImage];
                     
                     if ([p.playerId isEqualToString:[GKLocalPlayer localPlayer].playerID]) {//若發話人為自己
 
@@ -1993,8 +2025,6 @@
                     if ([p.playerId isEqualToString:judgePlayerId]) {
                      
                         [self performSelector:@selector(callMorningOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
-                        
-                        
                         
                         break;
                     }

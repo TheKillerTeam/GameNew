@@ -11,7 +11,7 @@
 
 @protocol playerInfoViewControllerDelegate
 
--(void)transImage:(UIImage*)image;
+-(void)transFullAppearanceImage:(UIImage *)fullAppearanceImage withHeadImage:(UIImage *)headImage;
 
 @end
 

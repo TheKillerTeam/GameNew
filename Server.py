@@ -187,9 +187,10 @@ class GameMatch:
 
 class GamePlayer:
 
-    def __init__(self, protocol, playerImage, playerId, alias):
+    def __init__(self, protocol, playerImage, playerHeadImage, playerId, alias):
         self.protocol = protocol
         self.playerImage = playerImage
+        self.playerHeadImage = playerHeadImage
         self.playerId = playerId
         self.alias = alias
         self.match = None
@@ -207,6 +208,7 @@ class GamePlayer:
 
     def write(self, message):
         message.writeString(self.playerImage)
+        message.writeString(self.playerHeadImage)
         message.writeString(self.playerId)
         message.writeString(self.alias)
         message.writeByte(self.playerState)
@@ -223,25 +225,27 @@ class GameFactory(Factory):
             if existingPlayer.protocol == protocol:
                 existingPlayer.protocol = None
 
-    def playerConnected(self, protocol, playerImage, playerId, alias):
+    def playerConnected(self, protocol, playerImage, playerHeadImage, playerId, alias):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.playerImage = playerImage
+                existingPlayer.playerHeadImage = playerHeadImage
                 existingPlayer.alias = alias
                 existingPlayer.match = None
                 existingPlayer.protocol = protocol
                 protocol.player = existingPlayer
                 existingPlayer.protocol.sendNotInMatch()
                 return
-        newPlayer = GamePlayer(protocol, playerImage, playerId, alias)
+        newPlayer = GamePlayer(protocol, playerImage, playerHeadImage, playerId, alias)
         protocol.player = newPlayer
         self.players.append(newPlayer)
         newPlayer.protocol.sendNotInMatch()
 
-    def playerImageUpdated(self, protocol, playerImage, playerId):
+    def playerImageUpdated(self, protocol, playerImage, playerHeadImage, playerId):
         for existingPlayer in self.players:
             if existingPlayer.playerId == playerId:
                 existingPlayer.playerImage = playerImage
+                existingPlayer.playerHeadImage = playerHeadImage
                 break
             
     def playerAliasUpdated(self, protocol, playerAlias, playerId):
@@ -497,24 +501,28 @@ class GameFactory(Factory):
                                 alivePlayerCount += 1
                     break
             guiltyVoteCount = 0
+            innocentVoteCount = 0
             for existingPlayer in self.players:
                 if existingPlayer.playerId == playerId:
                     for player in existingPlayer.match.players:
                         if player.judgeFor == JUDGE_GUILTY:
                             guiltyVoteCount += 1
+                        if player.judgeFor == JUDGE_INNOCENT:
+                            innocentVoteCount += 1
                     break
             noOneDied = True
             if guiltyVoteCount *2 >= alivePlayerCount:
-                noOneDied = False
-                for existingPlayer in self.players:
-                    if existingPlayer.playerId == playerId:
-                        for player in existingPlayer.match.players:
-                            if player.beingJudged == 1:
-                                player.playerState = PLAYER_STATE_DEAD
-                                player.beingJudged = 0
-                                for player in self.players:
-                                    player.protocol.sendPlayerDied(player.playerId)
-                        break
+                if guiltyVoteCount != innocentVoteCount:
+                    noOneDied = False
+                    for existingPlayer in self.players:
+                        if existingPlayer.playerId == playerId:
+                            for player in existingPlayer.match.players:
+                                if player.beingJudged == 1:
+                                    player.playerState = PLAYER_STATE_DEAD
+                                    player.beingJudged = 0
+                                    for player in self.players:
+                                        player.protocol.sendPlayerDied(player.playerId)
+                            break
             if noOneDied == True:
                 for existingPlayer in self.players:
                     if existingPlayer.playerId == playerId:
@@ -645,16 +653,18 @@ class GameProtocol(Protocol):
 
     def playerConnected(self, message):
         playerImage = message.readString()
+        playerHeadImage = message.readString()
         playerId = message.readString()
         alias = message.readString()
         self.log("Recv MESSAGE_PLAYER_CONNECTED %s %s" % (playerId, alias))
-        self.factory.playerConnected(self, playerImage, playerId, alias)
+        self.factory.playerConnected(self, playerImage, playerHeadImage, playerId, alias)
 
     def playerImageUpdated(self, message):
         playerImage = message.readString()
+        playerHeadImage = message.readString()
         playerId = message.readString()
         self.log("Recv MESSAGE_PLAYER_IMAGE_UPDATED %s" % (playerId))
-        self.factory.playerImageUpdated(self, playerImage, playerId)
+        self.factory.playerImageUpdated(self, playerImage, playerHeadImage, playerId)
         
     def playerAliasUpdated(self, message):
         playerAlias = message.readString()

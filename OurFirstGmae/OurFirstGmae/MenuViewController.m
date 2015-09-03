@@ -6,8 +6,6 @@
 //  Copyright (c) 2015年 CAI CHENG-HONG. All rights reserved.
 //
 
-//TODO: @邀請好友
-
 #import "MenuViewController.h"
 #import "NetworkController.h"
 #import "Match.h"
@@ -16,6 +14,7 @@
 #import "ViewController.h"
 
 #define PLAYER_IMAGE_DEFAULT @"NPCPlayer.png"
+#define PLAYER_HEAD_IMAGE_DEFAULT @"news3.jpg"
 
 #define MIN_PLAYER_COUNTS 2
 #define MAX_PLAYER_COUNTS 16
@@ -28,6 +27,7 @@
     Match *_match;
     int playerCounts;
     UIImage *playerImage;
+    UIImage *playerHeadImage;
     NSString *playerAlias;
     
     UIAlertAction *secureTextAlertAction;
@@ -36,7 +36,6 @@
 }
 
 @property (weak, nonatomic) IBOutlet UIButton *networkStateButton;
-//@property (weak, nonatomic) IBOutlet UILabel *debugLabel;
 @property (weak, nonatomic) IBOutlet UIButton *playerAliasButton;
 @property (weak, nonatomic) IBOutlet UIPickerView *playerCountsPickerView;
 @property (weak, nonatomic) IBOutlet UIImageView *playerImageImageView;
@@ -63,10 +62,11 @@
     
     playerCounts = MIN_PLAYER_COUNTS;
     
-    //TODO:if theres a saved playerImage, load it instead of using default
     playerImage = [UIImage imageNamed:PLAYER_IMAGE_DEFAULT];
     _playerImageImageView.backgroundColor=[UIColor clearColor];
     self.playerImageImageView.image = playerImage;
+    
+    playerHeadImage = [UIImage imageNamed:PLAYER_HEAD_IMAGE_DEFAULT];
     
     playerAlias = @"玩家暱稱";
     
@@ -306,7 +306,6 @@
             
         case NetworkStateNotAvailable:
             
-//            self.debugLabel.text = @"Not Available";
             [self.networkStateButton setTitle:@"未登入Game Center" forState:UIControlStateNormal];
             
             [self.playerAliasButton setTitle:playerAlias forState:UIControlStateNormal];
@@ -315,14 +314,12 @@
             
         case NetworkStatePendingAuthentication:
             
-//            self.debugLabel.text = @"Pending Authentication";
             [self.networkStateButton setTitle:@"登入Game Center中" forState:UIControlStateNormal];
 
             break;
             
         case NetworkStateAuthenticated:
             
-//            self.debugLabel.text = @"Authenticated";
             [self.networkStateButton setTitle:@"已登入Game Center" forState:UIControlStateNormal];
 
             
@@ -333,50 +330,43 @@
             
         case NetworkStateConnectingToServer:
             
-//            self.debugLabel.text = @"Connecting to Server";
             [self.networkStateButton setTitle:@"與伺服器連線中" forState:UIControlStateNormal];
 
             break;
             
         case NetworkStateConnected:
             
-//            self.debugLabel.text = @"Connected";
             [self.networkStateButton setTitle:@"已與伺服器連線" forState:UIControlStateNormal];
 
             break;
             
         case NetworkStatePendingMatchStatus:
             
-//            self.debugLabel.text = @"Pending Match Status";
             [self.networkStateButton setTitle:@"準備遊戲資訊中" forState:UIControlStateNormal];
 
             break;
             
         case NetworkStateReceivedMatchStatus:
             
-//            self.debugLabel.text = @"Received Match Status,\nReady to Look for a Match";
             [self.networkStateButton setTitle:@"準備完成,請開始遊戲" forState:UIControlStateNormal];
             
-            [[NetworkController sharedInstance]sendUpdatePlayerImage:playerImage];
+            [[NetworkController sharedInstance]sendUpdatePlayerImage:playerImage withPlayerHeadImage:playerHeadImage];
             [[NetworkController sharedInstance]sendUpdatePlayerAlias:playerAlias];
             
             break;
             
         case NetworkStatePendingMatch:
             
-//            self.debugLabel.text = @"Pending Match";
             [self.networkStateButton setTitle:@"準備開始遊戲" forState:UIControlStateNormal];
             break;
             
         case NetworkStatePendingMatchStart:
             
-//            self.debugLabel.text = @"Pending Start";
             [self.networkStateButton setTitle:@"準備開始遊戲" forState:UIControlStateNormal];
             break;
             
         case NetworkStateMatchActive:
             
-//            self.debugLabel.text = @"Match Active";
             [self.networkStateButton setTitle:@"遊戲已開始" forState:UIControlStateNormal];
             break;
     }
@@ -437,9 +427,10 @@
 
 #pragma mark - playerInfoViewControllerDelegate
 
-- (void)transImage:(UIImage *)image {
+- (void)transFullAppearanceImage:(UIImage *)fullAppearanceImage withHeadImage:(UIImage *)headImage {
     
-    playerImage = image;
+    playerImage = fullAppearanceImage;
+    playerHeadImage = headImage;
     
     self.playerImageImageView.image = playerImage;
 }
