@@ -23,10 +23,8 @@
 		0901A1961B7878BE00AAEDCF /* LoadingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0901A1951B7878BE00AAEDCF /* LoadingViewController.m */; };
 		090E90741B673C1D002435F3 /* playerInfoViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 090E90731B673C1D002435F3 /* playerInfoViewController.m */; };
 		093C731F1B66817800CA5400 /* play6.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 093C731E1B66817800CA5400 /* play6.jpg */; };
-		0944B8B51B9C81EA0021B123 /* instructionOfDiscover.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8B21B9C81EA0021B123 /* instructionOfDiscover.png */; };
 		0944B8B61B9C81EA0021B123 /* instructionOfRuin.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8B31B9C81EA0021B123 /* instructionOfRuin.png */; };
 		0944B8B71B9C81EA0021B123 /* instructionOfPeace.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8B41B9C81EA0021B123 /* instructionOfPeace.png */; };
-		0944B8BB1B9C825D0021B123 /* soltJobDiscover.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8B81B9C825D0021B123 /* soltJobDiscover.png */; };
 		0944B8BC1B9C825D0021B123 /* soltJobPeace.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8B91B9C825D0021B123 /* soltJobPeace.png */; };
 		0944B8BD1B9C825D0021B123 /* soltJobRuin.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8BA1B9C825D0021B123 /* soltJobRuin.png */; };
 		0944B8C11B9C83270021B123 /* NPCPlayer.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8C01B9C83270021B123 /* NPCPlayer.png */; };
@@ -35,6 +33,8 @@
 		0944B8D51B9C8C500021B123 /* enterButtonOutfit.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8D21B9C8C500021B123 /* enterButtonOutfit.png */; };
 		0944B8D61B9C8C500021B123 /* enterButtonSoldiers.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8D31B9C8C500021B123 /* enterButtonSoldiers.png */; };
 		0944B8D71B9C8C500021B123 /* enterButtonStart.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8D41B9C8C500021B123 /* enterButtonStart.png */; };
+		0944B8D91B9C95360021B123 /* soltJobDiscover.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8D81B9C95360021B123 /* soltJobDiscover.png */; };
+		0944B8DB1B9C95840021B123 /* instructionOfDiscover.png in Resources */ = {isa = PBXBuildFile; fileRef = 0944B8DA1B9C95840021B123 /* instructionOfDiscover.png */; };
 		095D9F2D1B95712000AF021C /* GameOverViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 095D9F2C1B95712000AF021C /* GameOverViewController.m */; };
 		096558591B970C570052765C /* listBackgeound.png in Resources */ = {isa = PBXBuildFile; fileRef = 096558581B970C570052765C /* listBackgeound.png */; };
 		0969CC321B95DFBF00751904 /* goodWinCube.png in Resources */ = {isa = PBXBuildFile; fileRef = 0969CC311B95DFBF00751904 /* goodWinCube.png */; };
@@ -182,10 +182,8 @@
 		090E90721B673C1D002435F3 /* playerInfoViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = playerInfoViewController.h; sourceTree = "<group>"; };
 		090E90731B673C1D002435F3 /* playerInfoViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = playerInfoViewController.m; sourceTree = "<group>"; };
 		093C731E1B66817800CA5400 /* play6.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = play6.jpg; sourceTree = "<group>"; };
-		0944B8B21B9C81EA0021B123 /* instructionOfDiscover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = instructionOfDiscover.png; sourceTree = "<group>"; };
 		0944B8B31B9C81EA0021B123 /* instructionOfRuin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = instructionOfRuin.png; sourceTree = "<group>"; };
 		0944B8B41B9C81EA0021B123 /* instructionOfPeace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = instructionOfPeace.png; sourceTree = "<group>"; };
-		0944B8B81B9C825D0021B123 /* soltJobDiscover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = soltJobDiscover.png; sourceTree = "<group>"; };
 		0944B8B91B9C825D0021B123 /* soltJobPeace.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = soltJobPeace.png; sourceTree = "<group>"; };
 		0944B8BA1B9C825D0021B123 /* soltJobRuin.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = soltJobRuin.png; sourceTree = "<group>"; };
 		0944B8C01B9C83270021B123 /* NPCPlayer.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = NPCPlayer.png; sourceTree = "<group>"; };
@@ -194,6 +192,8 @@
 		0944B8D21B9C8C500021B123 /* enterButtonOutfit.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = enterButtonOutfit.png; sourceTree = "<group>"; };
 		0944B8D31B9C8C500021B123 /* enterButtonSoldiers.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = enterButtonSoldiers.png; sourceTree = "<group>"; };
 		0944B8D41B9C8C500021B123 /* enterButtonStart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = enterButtonStart.png; sourceTree = "<group>"; };
+		0944B8D81B9C95360021B123 /* soltJobDiscover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = soltJobDiscover.png; sourceTree = "<group>"; };
+		0944B8DA1B9C95840021B123 /* instructionOfDiscover.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = instructionOfDiscover.png; sourceTree = "<group>"; };
 		095D9F2B1B95712000AF021C /* GameOverViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GameOverViewController.h; sourceTree = "<group>"; };
 		095D9F2C1B95712000AF021C /* GameOverViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GameOverViewController.m; sourceTree = "<group>"; };
 		096558581B970C570052765C /* listBackgeound.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = listBackgeound.png; sourceTree = "<group>"; };
@@ -476,10 +476,10 @@
 			children = (
 				0944B8C01B9C83270021B123 /* NPCPlayer.png */,
 				0944B8C21B9C86DA0021B123 /* npcHead.png */,
-				0944B8B21B9C81EA0021B123 /* instructionOfDiscover.png */,
+				0944B8DA1B9C95840021B123 /* instructionOfDiscover.png */,
 				0944B8B31B9C81EA0021B123 /* instructionOfRuin.png */,
 				0944B8B41B9C81EA0021B123 /* instructionOfPeace.png */,
-				0944B8B81B9C825D0021B123 /* soltJobDiscover.png */,
+				0944B8D81B9C95360021B123 /* soltJobDiscover.png */,
 				0944B8B91B9C825D0021B123 /* soltJobPeace.png */,
 				0944B8BA1B9C825D0021B123 /* soltJobRuin.png */,
 				096558581B970C570052765C /* listBackgeound.png */,
@@ -829,6 +829,7 @@
 				09E9BFC51B90342200502744 /* mainConditionAll.png in Resources */,
 				096FC4551B8867000001446D /* hair3.png in Resources */,
 				09B3453B1B9065F100E65CE5 /* mainCoverDefault.png in Resources */,
+				0944B8DB1B9C95840021B123 /* instructionOfDiscover.png in Resources */,
 				09FF35D61B96A03100E3676C /* mainConditionNon.png in Resources */,
 				09C4A5BE1B9426CB00564E81 /* cubeDayOut.png in Resources */,
 				09E9BFD01B903BEA00502744 /* superMan2.png in Resources */,
@@ -854,7 +855,6 @@
 				09B345411B90745600E65CE5 /* slotBackground.png in Resources */,
 				0969CC321B95DFBF00751904 /* goodWinCube.png in Resources */,
 				0944B8B71B9C81EA0021B123 /* instructionOfPeace.png in Resources */,
-				0944B8BB1B9C825D0021B123 /* soltJobDiscover.png in Resources */,
 				09DE689C1B73D19900CA4B3D /* Nobi Nobita@2x.png in Resources */,
 				09D884021B8CA04800E6E88E /* cubeSheriff.png in Resources */,
 				096FC4491B8862250001446D /* clothe2.png in Resources */,
@@ -868,9 +868,9 @@
 				09DE689B1B73D19900CA4B3D /* Mario@2x.png in Resources */,
 				096FC4771B88CDA60001446D /* forPlayerHair3.png in Resources */,
 				096FC47D1B88D2130001446D /* forPlayer1.png in Resources */,
+				0944B8D91B9C95360021B123 /* soltJobDiscover.png in Resources */,
 				096FC46B1B888B410001446D /* forPlayer2.png in Resources */,
 				09BD1A171B96E206006DF3A0 /* barImage.png in Resources */,
-				0944B8B51B9C81EA0021B123 /* instructionOfDiscover.png in Resources */,
 				0944B8D61B9C8C500021B123 /* enterButtonSoldiers.png in Resources */,
 				09907E5D1B8B01B100FE2DF4 /* enterBackground.png in Resources */,
 				0969CC381B9600D900751904 /* launchBoder.png in Resources */,
