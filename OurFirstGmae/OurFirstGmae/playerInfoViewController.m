@@ -143,6 +143,15 @@
     
     UIGraphicsBeginImageContext(_crop.sendHeadImageView.bounds.size);
     [_crop.sendHeadImageView.layer renderInContext:UIGraphicsGetCurrentContext()];
+    UIImage *myImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    
+    UIImageView *modifyImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 250,250)];
+    modifyImage.backgroundColor=[UIColor clearColor];
+    modifyImage.image = myImage;
+    modifyImage.contentMode =UIViewContentModeTop;
+    UIGraphicsBeginImageContext(modifyImage.bounds.size);
+    [modifyImage.layer renderInContext:UIGraphicsGetCurrentContext()];
     UIImage *headImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     

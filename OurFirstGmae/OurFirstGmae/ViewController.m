@@ -1136,9 +1136,9 @@
     
     CGRect frame = self.instructionImageView.frame;
     
-    if (frame.origin.x<0) {
+    if (frame.origin.x<-10) {
         
-        frame.origin.x =0;
+        frame.origin.x =-10;
         self.instructionImageView.hidden = false;
         
     }else {

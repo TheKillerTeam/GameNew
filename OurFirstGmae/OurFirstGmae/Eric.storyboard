@@ -135,8 +135,8 @@
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="enterBackground.png" translatesAutoresizingMaskIntoConstraints="NO" id="YtC-kr-32h">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
-                            <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SnL-fM-I0k">
-                                <rect key="frame" x="16" y="297" width="140" height="60"/>
+                            <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleAspectFit" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SnL-fM-I0k">
+                                <rect key="frame" x="16" y="297" width="140" height="69"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <state key="normal" title="Play" image="enterButtonStart.png">
@@ -155,13 +155,13 @@
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cNI-g5-rez">
                                 <rect key="frame" x="16" y="485" width="140" height="120"/>
                                 <subviews>
-                                    <button hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XsF-oL-k6p">
+                                    <button hidden="YES" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XsF-oL-k6p">
                                         <rect key="frame" x="0.0" y="0.0" width="140" height="120"/>
                                         <state key="normal" image="enterButtonSoldiers.png">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
-                                    <view clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gtg-pl-CJR">
+                                    <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gtg-pl-CJR">
                                         <rect key="frame" x="0.0" y="54" width="140" height="42"/>
                                         <subviews>
                                             <pickerView hidden="YES" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Gw-VX-3Z5">
@@ -176,7 +176,7 @@
                                 </subviews>
                             </view>
                             <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZQ-Ax-efX">
-                                <rect key="frame" x="16" y="357" width="140" height="60"/>
+                                <rect key="frame" x="16" y="357" width="140" height="66"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                 <state key="normal" title="國國國國國國" backgroundImage="enterNameBtn.png">
                                     <color key="titleColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
@@ -184,16 +184,6 @@
                                 </state>
                                 <connections>
                                     <action selector="playerAliasButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="Arf-Ae-UdB"/>
-                                </connections>
-                            </button>
-                            <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fCe-TK-suB">
-                                <rect key="frame" x="16" y="417" width="140" height="60"/>
-                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                <state key="normal" image="enterButtonOutfit.png">
-                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                </state>
-                                <connections>
-                                    <action selector="editCharacterButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="mQt-Cq-SAL"/>
                                 </connections>
                             </button>
                             <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7Fc-ij-736">
@@ -205,8 +195,8 @@
                                     <imageView userInteractionEnabled="NO" alpha="0.0" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="PlayerInfoBackground.png" translatesAutoresizingMaskIntoConstraints="NO" id="dn2-Mn-cc6">
                                         <rect key="frame" x="25" y="30" width="150" height="180"/>
                                     </imageView>
-                                    <imageView userInteractionEnabled="NO" alpha="0.0" tag="1" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="NPCPlayer.png" translatesAutoresizingMaskIntoConstraints="NO" id="8Gt-Hh-5Vt">
-                                        <rect key="frame" x="35" y="50" width="130" height="140"/>
+                                    <imageView opaque="NO" userInteractionEnabled="NO" alpha="0.0" tag="1" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="NPCPlayer.png" translatesAutoresizingMaskIntoConstraints="NO" id="8Gt-Hh-5Vt">
+                                        <rect key="frame" x="29" y="50" width="142" height="152"/>
                                     </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -222,6 +212,16 @@
                             <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="ZrD-zV-B0A">
                                 <rect key="frame" x="324" y="565" width="20" height="20"/>
                             </activityIndicatorView>
+                            <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleAspectFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fCe-TK-suB">
+                                <rect key="frame" x="16" y="417" width="140" height="71"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                <state key="normal" image="enterButtonOutfit.png">
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="editCharacterButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="mQt-Cq-SAL"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" red="0.76246843434343436" green="0.76246843434343436" blue="0.76246843434343436" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
@@ -247,12 +247,12 @@
         </scene>
     </scenes>
     <resources>
-        <image name="NPCPlayer.png" width="304" height="384"/>
+        <image name="NPCPlayer.png" width="336" height="406"/>
         <image name="PlayerInfoBackground.png" width="1113" height="1284"/>
         <image name="enterBackground.png" width="375" height="667"/>
-        <image name="enterButtonOutfit.png" width="241" height="149"/>
-        <image name="enterButtonSoldiers.png" width="262" height="243"/>
-        <image name="enterButtonStart.png" width="241" height="149"/>
+        <image name="enterButtonOutfit.png" width="482" height="298"/>
+        <image name="enterButtonSoldiers.png" width="524" height="486"/>
+        <image name="enterButtonStart.png" width="482" height="298"/>
         <image name="enterClosetBackground.png" width="212" height="206"/>
         <image name="enterNameBtn.png" width="241" height="149"/>
         <image name="superMan1.png" width="1009" height="681"/>

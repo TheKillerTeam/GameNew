@@ -14,7 +14,7 @@
 #import "ViewController.h"
 
 #define PLAYER_IMAGE_DEFAULT @"NPCPlayer.png"
-#define PLAYER_HEAD_IMAGE_DEFAULT @"news3.jpg"
+#define PLAYER_HEAD_IMAGE_DEFAULT @"npcHead.png"
 
 #define MIN_PLAYER_COUNTS 2
 #define MAX_PLAYER_COUNTS 16

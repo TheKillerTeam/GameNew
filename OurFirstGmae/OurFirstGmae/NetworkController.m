@@ -14,7 +14,7 @@
 
 #define SERVER_IP @"172.20.10.12"
 #define PLAYER_IMAGE_DEFAULT @"NPCPlayer.png"
-#define PLAYER_HEAD_IMAGE_DEFAULT @"news2.jpg"
+#define PLAYER_HEAD_IMAGE_DEFAULT @"npcHead.png"
 
 typedef enum {
     

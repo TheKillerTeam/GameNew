@@ -146,13 +146,13 @@
     [picetureView addGestureRecognizer:panGesture];
     [picetureView addGestureRecognizer:pinchGesture];
     
-    
-    button= [UIButton buttonWithType:UIButtonTypeCustom];
-    [button setTitle:@"add" forState:UIControlStateNormal];
-    [button setBackgroundColor:[UIColor redColor]];
-    [button setFrame:CGRectMake(0, 0, 50,50)];
-    [button addTarget:self action:@selector(btnPressed) forControlEvents:UIControlEventTouchUpInside];
-    [self addSubview:button];
+//    
+//    button= [UIButton buttonWithType:UIButtonTypeCustom];
+//    [button setTitle:@"add" forState:UIControlStateNormal];
+//    [button setBackgroundColor:[UIColor redColor]];
+//    [button setFrame:CGRectMake(0, 0, 50,50)];
+//    [button addTarget:self action:@selector(btnPressed) forControlEvents:UIControlEventTouchUpInside];
+//    [self addSubview:button];
     
 }
 
@@ -298,21 +298,35 @@
 
 
 
-
--(void)btnPressed{
-   
-    UIGraphicsBeginImageContext(self.sendHeadImageView.bounds.size);
-    [self.sendHeadImageView.layer renderInContext:UIGraphicsGetCurrentContext()];
-    UIImage *myImage = UIGraphicsGetImageFromCurrentImageContext();
-    UIGraphicsEndImageContext();
-    
-    UIImageView *testView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 100,100)];
-    
-    testView.image = myImage;
-    
-    [self addSubview:testView];
-    
-}
+//
+//-(void)btnPressed{
+//   
+//    UIGraphicsBeginImageContext(self.sendHeadImageView.bounds.size);
+//    [self.sendHeadImageView.layer renderInContext:UIGraphicsGetCurrentContext()];
+//    UIImage *myImage = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    
+//    
+//    UIImageView *modifyImage = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 250,250)];
+//    modifyImage.backgroundColor=[UIColor redColor];
+//    modifyImage.image = myImage;
+//    modifyImage.contentMode =UIViewContentModeTop;
+//    UIGraphicsBeginImageContext(modifyImage.bounds.size);
+//    [modifyImage.layer renderInContext:UIGraphicsGetCurrentContext()];
+//    UIImage *myImage2 = UIGraphicsGetImageFromCurrentImageContext();
+//    UIGraphicsEndImageContext();
+//    
+//    UIImageView *testView = [[UIImageView alloc]initWithFrame:CGRectMake(0, 0, 100,100)];
+//    
+//    testView.image = myImage2;
+//    
+//    [self addSubview:testView];
+//    
+//    
+//  
+//
+//    
+//}
 
 
 @end
