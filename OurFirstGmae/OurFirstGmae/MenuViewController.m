@@ -225,6 +225,7 @@
         
             playerAlias = [alert.textFields[0] text];
             [self.playerAliasButton setTitle:playerAlias forState:UIControlStateNormal];
+            
             [[NetworkController sharedInstance]sendUpdatePlayerAlias:playerAlias];
         }];
         
