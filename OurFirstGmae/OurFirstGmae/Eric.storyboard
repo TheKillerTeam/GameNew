@@ -179,10 +179,10 @@
                                             <action selector="playButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="7Au-zl-IQk"/>
                                         </connections>
                                     </button>
-                                    <view hidden="YES" opaque="NO" clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gtg-pl-CJR">
+                                    <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gtg-pl-CJR">
                                         <rect key="frame" x="27" y="276" width="119" height="42"/>
                                         <subviews>
-                                            <pickerView hidden="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Gw-VX-3Z5">
+                                            <pickerView hidden="YES" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Gw-VX-3Z5">
                                                 <rect key="frame" x="-16" y="-60" width="135" height="162"/>
                                                 <connections>
                                                     <outlet property="dataSource" destination="xEB-HQ-a5K" id="AAj-v5-oRI"/>
