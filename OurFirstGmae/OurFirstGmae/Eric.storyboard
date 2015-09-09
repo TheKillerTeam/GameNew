@@ -179,9 +179,6 @@
                                             <action selector="playButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="7Au-zl-IQk"/>
                                         </connections>
                                     </button>
-                                    <activityIndicatorView hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="ZrD-zV-B0A">
-                                        <rect key="frame" x="112" y="51" width="20" height="20"/>
-                                    </activityIndicatorView>
                                     <view hidden="YES" opaque="NO" clipsSubviews="YES" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gtg-pl-CJR">
                                         <rect key="frame" x="27" y="276" width="119" height="42"/>
                                         <subviews>
@@ -204,7 +201,7 @@
                                             <action selector="editCharacterButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="mQt-Cq-SAL"/>
                                         </connections>
                                     </button>
-                                    <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZQ-Ax-efX">
+                                    <button hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZQ-Ax-efX">
                                         <rect key="frame" x="169" y="33" width="156" height="55"/>
                                         <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="20"/>
                                         <inset key="contentEdgeInsets" minX="7" minY="-11" maxX="0.0" maxY="0.0"/>
@@ -214,7 +211,7 @@
                                         </state>
                                     </button>
                                     <button opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vsQ-JA-nMx">
-                                        <rect key="frame" x="8" y="33" width="148" height="68"/>
+                                        <rect key="frame" x="8" y="33" width="154" height="68"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <inset key="contentEdgeInsets" minX="3" minY="-14" maxX="0.0" maxY="0.0"/>
                                         <state key="normal" title="連線中" backgroundImage="internetConditionBtn.png">
@@ -222,6 +219,9 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="ZrD-zV-B0A">
+                                        <rect key="frame" x="124" y="51" width="20" height="20"/>
+                                    </activityIndicatorView>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>

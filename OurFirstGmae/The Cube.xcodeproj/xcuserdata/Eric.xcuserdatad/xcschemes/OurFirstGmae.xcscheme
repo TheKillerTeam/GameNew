@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "09B33CA31B5919EB00C9008A"
-            BuildableName = "OurFirstGmae.app"
-            BlueprintName = "OurFirstGmae"
-            ReferencedContainer = "container:OurFirstGmae.xcodeproj">
+            BuildableName = "The Cube.app"
+            BlueprintName = "The Cube"
+            ReferencedContainer = "container:The Cube.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -77,9 +77,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "09B33CA31B5919EB00C9008A"
-            BuildableName = "OurFirstGmae.app"
-            BlueprintName = "OurFirstGmae"
-            ReferencedContainer = "container:OurFirstGmae.xcodeproj">
+            BuildableName = "The Cube.app"
+            BlueprintName = "The Cube"
+            ReferencedContainer = "container:The Cube.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>
