@@ -585,18 +585,29 @@ class GameFactory(Factory):
             if player.match != None:
                 return
         match = GameMatch(matchPlayers)
-        teamList = []
-        for teamIndex in range(3):
-            for i in range(TEAM_LIST[len(matchPlayers)][teamIndex]):
-                teamList.append(teamIndex)
-        random.shuffle(teamList)
-        index = 0
+#        teamList = []
+#        for teamIndex in range(3):
+#            for i in range(TEAM_LIST[len(matchPlayers)][teamIndex]):
+#                teamList.append(teamIndex)
+#        random.shuffle(teamList)
+#        index = 0
+#        for matchPlayer in matchPlayers:
+#            matchPlayer.match = match
+#            matchPlayer.playerState = PLAYER_STATE_ALIVE
+#            matchPlayer.playerTeam = teamList[index]
+#            matchPlayer.voteFor = 99
+#            index += 1
+#for demo
         for matchPlayer in matchPlayers:
             matchPlayer.match = match
             matchPlayer.playerState = PLAYER_STATE_ALIVE
-            matchPlayer.playerTeam = teamList[index]
+            matchPlayer.playerTeam = PLAYER_TEAM_CIVILIAN
             matchPlayer.voteFor = 99
-            index += 1
+            if matchPlayer.playerId == 'g:596751F8FA0A56CD7239831F65FE6770\x00':
+                matchPlayer.playerTeam = PLAYER_TEAM_MAFIA
+            if matchPlayer.playerId == 'G:555015669\x00':
+                matchPlayer.playerTeam = PLAYER_TEAM_SHERIFF
+#for demo
         for matchPlayer in matchPlayers:
             matchPlayer.protocol.sendMatchStarted(match)
             
