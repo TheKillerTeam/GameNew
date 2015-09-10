@@ -47,6 +47,7 @@ static int k = 10;
     [self.view insertSubview:view belowSubview:_outOfplayerImgView];
 
     [self performSelector:@selector(showLaser) withObject:nil afterDelay:1.0f];
+    [_outOfplayerImgView performSelector:@selector(setImage:) withObject:[UIImage imageNamed:DEAD_PLAYER_IMAGE] afterDelay:3.0f];
 }
 
 - (void)showLaser {
