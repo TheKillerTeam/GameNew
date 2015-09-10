@@ -133,6 +133,14 @@
     int gameOverResult;
 }
 
+@property (weak, nonatomic) IBOutlet UIView *discoverView;
+@property (weak, nonatomic) IBOutlet UILabel *discoverTargetName;
+@property (weak, nonatomic) IBOutlet UIImageView *discoverTargetCube;
+@property (weak, nonatomic) IBOutlet UIImageView *discoverTargetCubeName;
+
+
+
+
 @property (weak, nonatomic) IBOutlet UILabel *sheriff;
 @property (weak, nonatomic) IBOutlet UILabel *civilianCount;
 @property (weak, nonatomic) IBOutlet UILabel *mafiaCount;
@@ -533,23 +541,80 @@
                     if (playerChosen.playerTeam == PLAYER_TEAM_MAFIA) {
                         
                         [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的魔方是%@", playerChosen.alias, PLAYER_TEAM_MAFIA_CUBE_STRING]];
+                        /////////////
+                            [self callTheDiscoverView:playerChosen.alias withCubeImage:[UIImage imageNamed:@"cubeMafia.png"] withCubeName:[UIImage imageNamed:@"soltJobRuin.png"]];
+                        
                         
                     }else if (playerChosen.playerTeam == PLAYER_TEAM_SHERIFF) {
                         
                         [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的魔方是%@", playerChosen.alias, PLAYER_TEAM_SHERIFF_CUBE_STRING]];
                         
+                        
+                        /////////////
+                           [self callTheDiscoverView:playerChosen.alias withCubeImage:[UIImage imageNamed:@"cubeSheriff.png"] withCubeName:[UIImage imageNamed:@"soltJobDiscover.png"]];
+                        
                     }else if (playerChosen.playerTeam == PLAYER_TEAM_CIVILIAN) {
                         
                         [nightResults addObject:[NSString stringWithFormat:@"你發現了%@的魔方是%@", playerChosen.alias, PLAYER_TEAM_CIVILIAN_CUBE_STRING]];
+                        ///////////////
+                         [self callTheDiscoverView:playerChosen.alias withCubeImage:[UIImage imageNamed:@"cubeCivilian.png"] withCubeName:[UIImage imageNamed:@"soltJobPeace.png"]];
                     }
                     
                     return;
                 }
+                
+                               
+                
+
             }
             [self showSystemMessage:@"你今晚沒有探索任何人"];
         }
     }
 }
+
+
+-(void)callTheDiscoverView:(NSString*)discoveredName withCubeImage:(UIImage*)cube withCubeName:(UIImage*)cubeName{
+    
+    self.discoverView.hidden=NO;
+    [UIView beginAnimations: @"Fade Out Discover" context:nil];
+    
+
+    
+    [UIView setAnimationDuration:1];
+    
+    self.discoverView.alpha=1;
+    
+    [UIView commitAnimations];
+    self.discoverTargetName.text = discoveredName;
+    self.discoverTargetCube.image = cube;
+    self.discoverTargetCubeName.image = cubeName;
+    
+    [self performSelector:@selector(dismissDiscoverView) withObject:nil afterDelay:3.0];
+    
+    
+
+    
+}
+
+-(void)dismissDiscoverView{
+
+    [UIView beginAnimations: @"dismiss Discover" context:nil];
+    
+    [UIView setAnimationDuration:1];
+    
+    self.discoverView.alpha=0;
+    
+    [UIView commitAnimations];
+    
+    [self performSelector:@selector(setDiscoverViewHidden) withObject:nil afterDelay:3.0];
+    
+}
+
+- (void) setDiscoverViewHidden {
+    
+    self.discoverView.hidden = YES;
+}
+
 
 - (void)processDayVoteResult {
     
@@ -1948,6 +2013,8 @@
                     if ([p.playerId isEqualToString:playerId]) {
                     
                         [self performSelector:@selector(callNightOutViewWithPlayerImage:) withObject:p.playerImage afterDelay:1.0f];
+                        
+                        
                         
                     
                         break;

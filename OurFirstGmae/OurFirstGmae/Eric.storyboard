@@ -162,35 +162,20 @@
                                             <action selector="playerAliasButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="1Hh-Y2-5Hd"/>
                                         </connections>
                                     </button>
-                                    <button hidden="YES" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XsF-oL-k6p">
-                                        <rect key="frame" x="12" y="199" width="144" height="135"/>
-                                        <state key="normal" image="enterHeros.png">
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                    </button>
-                                    <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleAspectFit" fixedFrame="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SnL-fM-I0k">
-                                        <rect key="frame" x="12" y="123" width="148" height="58"/>
+                                    <button hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleAspectFit" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SnL-fM-I0k">
+                                        <rect key="frame" x="8" y="81" width="152" height="58"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                         <color key="tintColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
-                                        <state key="normal" title="Play" image="enterStartBtn.png">
+                                        <inset key="contentEdgeInsets" minX="0.0" minY="-8" maxX="0.0" maxY="0.0"/>
+                                        <state key="normal" title="準備中" backgroundImage="internetConditionBtn.png">
+                                            <color key="titleColor" red="0.59999999999999998" green="0.59999999999999998" blue="0.59999999999999998" alpha="1" colorSpace="calibratedRGB"/>
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
                                             <action selector="playButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="7Au-zl-IQk"/>
                                         </connections>
                                     </button>
-                                    <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gtg-pl-CJR">
-                                        <rect key="frame" x="27" y="276" width="119" height="42"/>
-                                        <subviews>
-                                            <pickerView hidden="YES" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Gw-VX-3Z5">
-                                                <rect key="frame" x="-16" y="-60" width="135" height="162"/>
-                                                <connections>
-                                                    <outlet property="dataSource" destination="xEB-HQ-a5K" id="AAj-v5-oRI"/>
-                                                    <outlet property="delegate" destination="xEB-HQ-a5K" id="7Gw-zR-tLY"/>
-                                                </connections>
-                                            </pickerView>
-                                        </subviews>
-                                    </view>
                                     <button hidden="YES" opaque="NO" alpha="0.0" contentMode="scaleAspectFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fCe-TK-suB">
                                         <rect key="frame" x="169" y="283" width="186" height="51"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -201,17 +186,8 @@
                                             <action selector="editCharacterButtonPressed:" destination="xEB-HQ-a5K" eventType="touchUpInside" id="mQt-Cq-SAL"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="vsQ-JA-nMx">
-                                        <rect key="frame" x="8" y="33" width="154" height="68"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="20"/>
-                                        <inset key="contentEdgeInsets" minX="3" minY="-14" maxX="0.0" maxY="0.0"/>
-                                        <state key="normal" title="連線中" backgroundImage="internetConditionBtn.png">
-                                            <color key="titleColor" white="0.59999999999999998" alpha="1" colorSpace="calibratedWhite"/>
-                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                                        </state>
-                                    </button>
                                     <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" animating="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="ZrD-zV-B0A">
-                                        <rect key="frame" x="124" y="51" width="20" height="20"/>
+                                        <rect key="frame" x="124" y="94" width="20" height="20"/>
                                     </activityIndicatorView>
                                     <button hidden="YES" opaque="NO" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cZQ-Ax-efX">
                                         <rect key="frame" x="166" y="33" width="163" height="55"/>
@@ -222,6 +198,24 @@
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                     </button>
+                                    <button hidden="YES" userInteractionEnabled="NO" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="XsF-oL-k6p">
+                                        <rect key="frame" x="12" y="158" width="144" height="135"/>
+                                        <state key="normal" image="enterHeros.png">
+                                            <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                        </state>
+                                    </button>
+                                    <view opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gtg-pl-CJR">
+                                        <rect key="frame" x="27" y="235" width="119" height="42"/>
+                                        <subviews>
+                                            <pickerView hidden="YES" alpha="0.0" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="3Gw-VX-3Z5">
+                                                <rect key="frame" x="-16" y="-60" width="135" height="162"/>
+                                                <connections>
+                                                    <outlet property="dataSource" destination="xEB-HQ-a5K" id="AAj-v5-oRI"/>
+                                                    <outlet property="delegate" destination="xEB-HQ-a5K" id="7Gw-zR-tLY"/>
+                                                </connections>
+                                            </pickerView>
+                                        </subviews>
+                                    </view>
                                 </subviews>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             </view>
@@ -233,7 +227,6 @@
                         <outlet property="activityIndicatorView" destination="ZrD-zV-B0A" id="DAh-0E-hNc"/>
                         <outlet property="closetBackgroundImageView" destination="5q0-q9-GMs" id="rVK-Tq-dfM"/>
                         <outlet property="editAliasButton" destination="wAN-Gt-PiP" id="fdw-iD-4LT"/>
-                        <outlet property="networkStateButton" destination="vsQ-JA-nMx" id="OoV-yR-Wc8"/>
                         <outlet property="outfitBtn" destination="fCe-TK-suB" id="1sd-Ge-snK"/>
                         <outlet property="playBtn" destination="SnL-fM-I0k" id="5i5-Zw-2ke"/>
                         <outlet property="playerAliasButton" destination="cZQ-Ax-efX" id="7iM-te-Orp"/>
@@ -258,7 +251,6 @@
         <image name="enterEditBtn.png" width="56" height="67"/>
         <image name="enterHeros.png" width="392" height="364"/>
         <image name="enterOutfitBtn.png" width="408" height="136"/>
-        <image name="enterStartBtn.png" width="408" height="190"/>
         <image name="internetConditionBtn.png" width="300" height="138"/>
         <image name="superMan1.png" width="1009" height="681"/>
         <image name="superManButton2.png" width="161" height="160"/>

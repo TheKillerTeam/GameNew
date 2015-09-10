@@ -35,8 +35,6 @@
     UIImageView *gameNameImageView;
 }
 @property (weak, nonatomic) IBOutlet UIButton *editAliasButton;
-
-@property (weak, nonatomic) IBOutlet UIButton *networkStateButton;
 @property (weak, nonatomic) IBOutlet UIButton *playerAliasButton;
 @property (weak, nonatomic) IBOutlet UIPickerView *playerCountsPickerView;
 @property (weak, nonatomic) IBOutlet UIImageView *playerImageImageView;
@@ -156,7 +154,7 @@
     self.closetBackgroundImageView.alpha = 1.0;
     self.playerImageImageView.alpha = 1.0;
     self.playerAliasButton.alpha = 1.0;
-    self.networkStateButton.alpha = 1.0;
+
     self.editAliasButton.alpha = 1.0;
     
     [UIView commitAnimations];
@@ -289,11 +287,11 @@
     
     if (networkState == NetworkStateReceivedMatchStatus) {
         
-        self.playBtn.enabled = true;
+        self.playBtn.userInteractionEnabled = true;
         
     }else {
         
-        self.playBtn.enabled = false;
+        self.playBtn.userInteractionEnabled = false;
     }
     
     if (networkState == NetworkStateNotAvailable ||
@@ -310,7 +308,7 @@
             
         case NetworkStateNotAvailable:
             
-            [self.networkStateButton setTitle:@"未登入" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"未登入" forState:UIControlStateNormal];
             
             [self.playerAliasButton setTitle:playerAlias forState:UIControlStateNormal];
 
@@ -318,13 +316,13 @@
             
         case NetworkStatePendingAuthentication:
             
-            [self.networkStateButton setTitle:@"登入中" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"登入中" forState:UIControlStateNormal];
 
             break;
             
         case NetworkStateAuthenticated:
             
-            [self.networkStateButton setTitle:@"已登入" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"已登入" forState:UIControlStateNormal];
 
             
             playerAlias = [GKLocalPlayer localPlayer].alias;
@@ -334,25 +332,25 @@
             
         case NetworkStateConnectingToServer:
             
-            [self.networkStateButton setTitle:@"連線中" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"連線中" forState:UIControlStateNormal];
 
             break;
             
         case NetworkStateConnected:
             
-            [self.networkStateButton setTitle:@"已連線" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"已連線" forState:UIControlStateNormal];
 
             break;
             
         case NetworkStatePendingMatchStatus:
             
-            [self.networkStateButton setTitle:@"準備中" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"準備中" forState:UIControlStateNormal];
 
             break;
             
         case NetworkStateReceivedMatchStatus:
             
-            [self.networkStateButton setTitle:@"準備完成" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"開始遊戲" forState:UIControlStateNormal];
             
             [[NetworkController sharedInstance]sendUpdatePlayerImage:playerImage withPlayerHeadImage:playerHeadImage];
             [[NetworkController sharedInstance]sendUpdatePlayerAlias:playerAlias];
@@ -361,17 +359,17 @@
             
         case NetworkStatePendingMatch:
             
-            [self.networkStateButton setTitle:@"準備中" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"準備中" forState:UIControlStateNormal];
             break;
             
         case NetworkStatePendingMatchStart:
             
-            [self.networkStateButton setTitle:@"準備中" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"準備中" forState:UIControlStateNormal];
             break;
             
         case NetworkStateMatchActive:
             
-            [self.networkStateButton setTitle:@"已開始" forState:UIControlStateNormal];
+            [self.playBtn setTitle:@"已開始" forState:UIControlStateNormal];
             break;
     }
 }
